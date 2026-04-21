@@ -41,6 +41,7 @@ import {
   Rocket,
   Building2,
   Cable,
+  Keyboard,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -181,9 +182,27 @@ const SOURCES = [
   { id: 'S1', url: 'https://www.npmjs.com/package/@z_ai/coding-helper', desc: 'NPM Package' },
   { id: 'S2', url: 'https://docs.z.ai/devpack/extension/coding-tool-helper', desc: 'Coding Tool Helper Docs' },
   { id: 'S3', url: 'https://docs.z.ai/devpack/quick-start', desc: 'Quick Start Guide' },
+  { id: 'S4', url: 'https://docs.z.ai/devpack/tool/others', desc: 'Other Tools' },
   { id: 'S5', url: 'https://docs.z.ai/devpack/overview', desc: 'DevPack Overview' },
+  { id: 'S6', url: 'https://docs.z.ai/scenario-example/develop-tools/claude', desc: 'Claude Integration' },
+  { id: 'S7', url: 'https://docs.z.ai/devpack/extension/usage-query-plugin', desc: 'Usage Query Plugin' },
+  { id: 'S8', url: 'https://github.com/zai-org/zai-coding-plugins', desc: 'ZAI Coding Plugins' },
+  { id: 'S9', url: 'https://docs.z.ai/devpack/extension/usage-query-plugin', desc: 'Usage Query Plugin' },
+  { id: 'S10', url: 'https://www.reddit.com/r/ZaiGLM/comments/1ron472/ensuring_the_model_in_claude_code_cli_w_zai', desc: 'Reddit Discussion' },
+  { id: 'S11', url: 'https://docs.z.ai/devpack/tool/others', desc: 'Manual Setup Instructions' },
+  { id: 'S12', url: 'https://docs.z.ai/devpack/mcp/search-mcp-server', desc: 'Search MCP Server' },
+  { id: 'S13', url: 'https://docs.z.ai/devpack/mcp/vision-mcp-server', desc: 'Vision MCP Server' },
+  { id: 'S14', url: 'https://docs.z.ai/devpack/mcp/reader-mcp-server', desc: 'Reader MCP Server' },
+  { id: 'S15', url: 'https://jpcaparas.medium.com/search-vs-reader-vs-zread-a-claude-code-guide-to-z-ai-mcp-servers-134cece1ad96', desc: 'MCP Servers Guide' },
+  { id: 'S16', url: 'https://docs.z.ai/devpack/quick-start', desc: 'Setup Methods' },
+  { id: 'S17', url: 'https://docs.z.ai/devpack/resources/best-practice', desc: 'Best Practices' },
+  { id: 'S18', url: 'https://github.com/zai-org', desc: 'ZAI Organization' },
   { id: 'S19', url: 'https://docs.z.ai/', desc: 'Z.AI Documentation' },
+  { id: 'S20', url: 'https://docs.z.ai/devpack/using5.1', desc: 'Using GLM-5.1' },
   { id: 'S21', url: 'https://stagewise.io', desc: 'Stagewise Official Site' },
+  { id: 'S22', url: 'https://docs.stagewise.io', desc: 'Stagewise Documentation' },
+  { id: 'S23', url: 'https://github.com/stagewise-io/stagewise', desc: 'Stagewise GitHub' },
+  { id: 'S24', url: 'https://www.npmjs.com/package/@stagewise/agent-interface', desc: 'Stagewise Agent Interface' },
 ]
 
 /* ───────────────────── FLOATING PARTICLES ───────────────────── */
@@ -335,6 +354,63 @@ function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void })
   )
 }
 
+/* ───────────────────── KEYBOARD SHORTCUTS DIALOG ───────────────────── */
+
+function KeyboardShortcutsDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const shortcuts = [
+    { keys: ['Ctrl', 'K'], action: 'Поиск по разделам' },
+    { keys: ['Esc'], action: 'Закрыть диалог' },
+    { keys: ['↑', '↓'], action: 'Навигация по результатам' },
+  ]
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) onClose()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [open, onClose])
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+            onClick={onClose}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -20 }}
+            className="fixed top-[20%] left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[101] bg-[oklch(0.14_0_0)] border border-white/10 rounded-xl shadow-2xl overflow-hidden"
+          >
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10">
+              <Keyboard className="w-4 h-4 text-[var(--nyc-taxi)]" />
+              <span className="font-bold text-sm">Клавиатурные сокращения</span>
+            </div>
+            <div className="p-4 space-y-2.5">
+              {shortcuts.map(s => (
+                <div key={s.action} className="flex items-center justify-between text-xs">
+                  <span className="text-[var(--nyc-concrete)]">{s.action}</span>
+                  <div className="flex items-center gap-1">
+                    {s.keys.map(k => (
+                      <kbd key={k} className="px-2 py-0.5 rounded bg-white/5 border border-white/10 font-mono text-[10px] text-[var(--nyc-steel)]">{k}</kbd>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  )
+}
+
 /* ───────────────────── COMPONENTS ───────────────────── */
 
 function CopyButton({ text }: { text: string }) {
@@ -430,6 +506,7 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState('hero')
   const [mobileNav, setMobileNav] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [shortcutsOpen, setShortcutsOpen] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
 
   const toggleCheck = (id: string) => {
@@ -470,10 +547,11 @@ export default function Home() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen flex flex-col bg-background nyc-grid-bg">
+      <div className="min-h-screen flex flex-col bg-background nyc-grid-bg" style={{ backgroundColor: 'oklch(0.1 0 0)' }}>
         <FloatingParticles />
         <ReadingProgress />
         <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
+        <KeyboardShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
 
         {/* ── SIDE NAV (Desktop) ── */}
         <nav className="hidden lg:flex fixed left-0 top-0 h-full w-16 flex-col items-center py-6 gap-1 z-50 bg-background/80 backdrop-blur-md border-r border-white/5">
@@ -504,6 +582,13 @@ export default function Home() {
             className="w-10 h-10 flex items-center justify-center rounded text-xs text-white/30 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors mt-2"
           >
             <Search className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => setShortcutsOpen(true)}
+            className="w-10 h-10 flex items-center justify-center rounded text-xs text-white/30 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            title="Keyboard Shortcuts"
+          >
+            <Keyboard className="w-3.5 h-3.5" />
           </button>
 
           <div className="mt-auto flex flex-col items-center gap-3">
@@ -579,7 +664,8 @@ export default function Home() {
                 alt="New York City industrial skyline"
                 className="w-full h-full object-cover opacity-25"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-background via-background/85 to-background" />
+              <div className="absolute inset-0 bg-gradient-to-b from-background via-background/70 to-background" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/50 via-transparent to-background/50" />
             </div>
             <div className="absolute inset-0 nyc-grid-dense opacity-50 z-[1]" />
             <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-20">
@@ -604,7 +690,7 @@ export default function Home() {
                 <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-[0.9] mb-5">
                   ЕДИНОЕ
                   <br />
-                  <span className="text-[var(--nyc-taxi)] nyc-glow-subtle inline-block">РУКОВОДСТВО</span>
+                  <span className="nyc-gradient-text inline-block">РУКОВОДСТВО</span>
                 </h1>
                 <p className="text-base sm:text-lg text-[var(--nyc-steel)] max-w-2xl mb-8 leading-relaxed">
                   Подробный гайд по установке и настройке AI-инструментов
@@ -655,6 +741,14 @@ export default function Home() {
                   >
                     <Command className="w-3.5 h-3.5" />
                     <span className="text-xs">Ctrl+K</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="text-white/40 hover:text-[var(--nyc-taxi)] gap-2"
+                    onClick={() => setShortcutsOpen(true)}
+                  >
+                    <Keyboard className="w-3.5 h-3.5" />
+                    <span className="text-xs">Сочетания</span>
                   </Button>
                 </div>
               </motion.div>
@@ -1413,6 +1507,73 @@ export default function Home() {
 
             <TaxiDivider />
 
+            {/* ═══════════════ 08.5 — PLAN WIZARD ═══════════════ */}
+            <section id="wizard" className="py-16">
+              <SectionHeader number="08.5" title="Мастер выбора плана" subtitle="plan_comparison_wizard" />
+
+              <Card className="nyc-card p-6">
+                <CardContent className="p-0">
+                  <p className="text-sm text-[var(--nyc-steel)] mb-6">Ответьте на несколько вопросов, чтобы подобрать оптимальный план:</p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-xs font-mono text-[var(--nyc-taxi)] uppercase tracking-wider mb-2">Тип использования</h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { label: 'Обучение', value: 'learn' },
+                          { label: 'Фриланс', value: 'freelance' },
+                          { label: 'Команда', value: 'team' },
+                        ].map(opt => (
+                          <div key={opt.value} className="p-3 rounded-lg border border-white/[0.06] bg-white/[0.02] text-center text-xs hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03] cursor-pointer transition-all nyc-hover-lift">
+                            <span className="text-[var(--nyc-concrete)]">{opt.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-mono text-[var(--nyc-taxi)] uppercase tracking-wider mb-2">Бюджет</h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { label: '$0', value: 'free' },
+                          { label: '$20-60', value: 'mid' },
+                          { label: '$100+', value: 'pro' },
+                        ].map(opt => (
+                          <div key={opt.value} className="p-3 rounded-lg border border-white/[0.06] bg-white/[0.02] text-center text-xs hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03] cursor-pointer transition-all nyc-hover-lift">
+                            <span className="text-[var(--nyc-concrete)]">{opt.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-mono text-[var(--nyc-taxi)] uppercase tracking-wider mb-2">Ключевые инструменты</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {['Magic MCP', 'Stitch MCP', 'UI UX Pro Max', 'OpenCode', 'Stagewise', 'GLM Coding Plan'].map(tool => (
+                          <Badge key={tool} className="text-[10px] bg-white/[0.03] text-[var(--nyc-concrete)] border-white/[0.06] hover:bg-[var(--nyc-taxi)]/10 hover:text-[var(--nyc-taxi)] hover:border-[var(--nyc-taxi)]/20 cursor-pointer transition-all">
+                            {tool}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/[0.06]">
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-[var(--nyc-taxi)]/[0.05] border border-[var(--nyc-taxi)]/10">
+                        <Zap className="w-4 h-4 text-[var(--nyc-taxi)] shrink-0" />
+                        <div className="text-xs">
+                          <span className="text-[var(--nyc-concrete)]">Рекомендация: </span>
+                          <span className="text-[var(--nyc-taxi)] font-bold">GLM Coding Plan Pro ($38/мес)</span>
+                          <span className="text-[var(--nyc-steel)]"> — оптимальный баланс цены и возможностей для регулярной разработки</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+
+            <TaxiDivider />
+
             {/* ═══════════════ 09 — TROUBLESHOOTING ═══════════════ */}
             <section id="troubleshoot" className="py-16">
               <SectionHeader number="09" title="Диагностика и решение проблем" subtitle="troubleshooting_guide" />
@@ -1604,7 +1765,7 @@ export default function Home() {
                   <BookOpen className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Источники
                 </h3>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs max-h-64 overflow-y-auto">
                   {SOURCES.map(s => (
                     <a
                       key={s.id}

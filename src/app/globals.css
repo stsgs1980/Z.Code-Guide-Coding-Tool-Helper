@@ -92,62 +92,68 @@
   --nyc-silver: #C0C0C0;
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.175 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.175 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.22 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.22 0 0);
-  --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.22 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.78 0.16 85);
-  --chart-2: oklch(0.65 0.12 50);
-  --chart-3: oklch(0.5 0.08 30);
-  --chart-4: oklch(0.6 0.15 65);
-  --chart-5: oklch(0.45 0.1 40);
-  --sidebar: oklch(0.17 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.985 0 0);
-  --sidebar-primary-foreground: oklch(0.145 0 0);
-  --sidebar-accent: oklch(0.22 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv01", "cv02", "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-/* NYC Industrial Theme Custom Styles */
+/* Dark theme override - MUST be outside @layer to override Tailwind v4's generated :root */
+html.dark {
+  color-scheme: dark;
+  --background: oklch(0.1 0 0);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.14 0 0);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.14 0 0);
+  --popover-foreground: oklch(0.96 0 0);
+  --primary: oklch(0.96 0 0);
+  --primary-foreground: oklch(0.1 0 0);
+  --secondary: oklch(0.18 0 0);
+  --secondary-foreground: oklch(0.96 0 0);
+  --muted: oklch(0.18 0 0);
+  --muted-foreground: oklch(0.62 0 0);
+  --accent: oklch(0.18 0 0);
+  --accent-foreground: oklch(0.96 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.78 0.16 85);
+  --chart-2: oklch(0.65 0.12 50);
+  --chart-3: oklch(0.5 0.08 30);
+  --chart-4: oklch(0.6 0.15 65);
+  --chart-5: oklch(0.45 0.1 40);
+  --sidebar: oklch(0.12 0 0);
+  --sidebar-foreground: oklch(0.96 0 0);
+  --sidebar-primary: oklch(0.96 0 0);
+  --sidebar-primary-foreground: oklch(0.1 0 0);
+  --sidebar-accent: oklch(0.18 0 0);
+  --sidebar-accent-foreground: oklch(0.96 0 0);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* ─── NYC Industrial Theme Custom Styles ─── */
+
 @layer utilities {
   .nyc-grid-bg {
     background-image:
-      linear-gradient(to right, oklch(1 0 0 / 4%) 1px, transparent 1px),
-      linear-gradient(to bottom, oklch(1 0 0 / 4%) 1px, transparent 1px);
-    background-size: 60px 60px;
+      linear-gradient(to right, oklch(1 0 0 / 3%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(1 0 0 / 3%) 1px, transparent 1px);
+    background-size: 80px 80px;
   }
 
   .nyc-grid-dense {
     background-image:
-      linear-gradient(to right, oklch(1 0 0 / 3%) 1px, transparent 1px),
-      linear-gradient(to bottom, oklch(1 0 0 / 3%) 1px, transparent 1px);
+      linear-gradient(to right, oklch(1 0 0 / 2%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(1 0 0 / 2%) 1px, transparent 1px);
     background-size: 20px 20px;
   }
 
@@ -182,42 +188,120 @@
     color: var(--nyc-concrete);
   }
 
+  /* Premium card with gradient and depth */
+  .nyc-card {
+    background: linear-gradient(135deg, oklch(0.15 0 0) 0%, oklch(0.12 0 0) 100%);
+    border: 1px solid oklch(1 0 0 / 6%);
+    border-radius: 12px;
+    box-shadow:
+      0 1px 2px oklch(0 0 0 / 20%),
+      0 4px 8px oklch(0 0 0 / 10%),
+      inset 0 1px 0 oklch(1 0 0 / 4%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .nyc-card:hover {
+    border-color: oklch(1 0 0 / 10%);
+    box-shadow:
+      0 2px 4px oklch(0 0 0 / 25%),
+      0 8px 16px oklch(0 0 0 / 12%),
+      inset 0 1px 0 oklch(1 0 0 / 6%);
+    transform: translateY(-1px);
+  }
+
+  /* Highlighted card with taxi accent */
+  .nyc-card-highlight {
+    background: linear-gradient(135deg, oklch(0.16 0 0) 0%, oklch(0.13 0 0) 100%);
+    border: 1px solid var(--nyc-taxi) / 15%;
+    border-radius: 12px;
+    box-shadow:
+      0 1px 2px oklch(0 0 0 / 20%),
+      0 4px 8px oklch(0 0 0 / 10%),
+      0 0 20px oklch(0.78 0.16 85 / 5%),
+      inset 0 1px 0 oklch(1 0 0 / 4%);
+  }
+
+  /* Code block with terminal aesthetic */
   .code-block {
-    background: oklch(0.12 0 0);
-    border: 1px solid oklch(1 0 0 / 8%);
-    border-radius: 4px;
+    background: linear-gradient(180deg, oklch(0.11 0 0) 0%, oklch(0.09 0 0) 100%);
+    border: 1px solid oklch(1 0 0 / 6%);
+    border-radius: 8px;
     font-family: var(--font-geist-mono);
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 3%),
+      0 2px 4px oklch(0 0 0 / 15%);
   }
 
   .section-number {
     font-family: var(--font-geist-mono);
     color: var(--nyc-taxi);
     font-size: 0.75rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
+  }
+
+  /* Gradient text effect */
+  .nyc-gradient-text {
+    background: linear-gradient(135deg, var(--nyc-taxi) 0%, var(--nyc-amber) 50%, var(--nyc-taxi) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Animated gradient border */
+  .nyc-border-glow {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nyc-border-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--nyc-taxi), transparent);
+    animation: borderSweep 4s ease-in-out infinite;
+  }
+
+  /* Tooltip / Hover card effect */
+  .nyc-hover-lift {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .nyc-hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px oklch(0 0 0 / 20%);
+  }
+
+  /* Shimmer animation for loading states */
+  .nyc-shimmer {
+    background: linear-gradient(
+      110deg,
+      oklch(0.14 0 0) 0%,
+      oklch(0.18 0 0) 40%,
+      oklch(0.14 0 0) 60%,
+      oklch(0.14 0 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
   }
 }
 
-/* Custom scrollbar for dark theme */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ─── Keyframe Animations ─── */
+
+@keyframes borderSweep {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
 }
 
-::-webkit-scrollbar-track {
-  background: oklch(0.15 0 0);
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-::-webkit-scrollbar-thumb {
-  background: oklch(0.3 0 0);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.4 0 0);
-}
-
-/* Typewriter animation */
 @keyframes typewriter {
   from { width: 0; }
   to { width: 100%; }
@@ -235,17 +319,20 @@
   animation: typewriter 2s steps(30) forwards, blink 0.8s step-end infinite;
 }
 
-/* Glow effect */
+/* ─── Glow Effects ─── */
+
 .nyc-glow {
-  box-shadow: 0 0 20px oklch(0.78 0.16 85 / 15%),
-              0 0 60px oklch(0.78 0.16 85 / 5%);
+  box-shadow:
+    0 0 20px oklch(0.78 0.16 85 / 15%),
+    0 0 60px oklch(0.78 0.16 85 / 5%);
 }
 
 .nyc-glow-subtle {
   box-shadow: 0 0 10px oklch(0.78 0.16 85 / 10%);
 }
 
-/* Scanline overlay */
+/* ─── Scanline Overlay ─── */
+
 .scanlines::after {
   content: '';
   position: absolute;
@@ -254,13 +341,41 @@
     0deg,
     transparent,
     transparent 2px,
-    oklch(0 0 0 / 3%) 2px,
-    oklch(0 0 0 / 3%) 4px
+    oklch(0 0 0 / 2%) 2px,
+    oklch(0 0 0 / 2%) 4px
   );
   pointer-events: none;
 }
 
-/* Smooth section transitions */
+/* ─── Custom Scrollbar ─── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(0.08 0 0);
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.25 0 0);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.35 0 0);
+}
+
+/* ─── Selection Color ─── */
+
+::selection {
+  background: oklch(0.78 0.16 85 / 30%);
+  color: oklch(1 0 0);
+}
+
+/* ─── Smooth Scroll ─── */
+
 html {
   scroll-behavior: smooth;
 }

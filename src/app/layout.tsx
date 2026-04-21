@@ -44,6 +44,7 @@ export default function RootLayout({
     <html lang="ru" className="dark" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        style={{ backgroundColor: '#1a1a1a', color: '#f5f5f5' }}
       >
         {children}
         <Toaster />
