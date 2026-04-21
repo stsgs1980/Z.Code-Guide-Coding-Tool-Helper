@@ -117,3 +117,146 @@ Unresolved Issues:
 - Tailwind v4 CSS variable override limitation requires inline styles as workaround
 - Cards could use more visual differentiation between plan tiers
 - Consider adding syntax highlighting to code blocks in future iteration
+
+---
+Task ID: 2-a
+Agent: Frontend Styling Expert
+Task: Dramatic CSS enhancement — visual quality 6.7/10 → 9/10
+
+Work Log:
+- Read existing globals.css (382 lines) and worklog for context
+- Added 10 major CSS enhancement categories (~925 new lines)
+
+Enhancements Completed:
+
+1. **Syntax Highlighting Token Classes** (16 classes)
+   - .token-keyword, .token-string, .token-comment, .token-function, .token-variable
+   - .token-number, .token-operator, .token-property, .token-tag, .token-attr-name/value
+   - .token-punctuation, .token-class-name, .token-boolean, .token-regex, .token-builtin
+   - Color scheme: Red keywords, Green strings, Gray comments, Blue functions, Yellow variables, Orange numbers, Cyan operators, Purple properties
+
+2. **Industrial Texture Overlays** (2 classes)
+   - .nyc-metal-texture — Crosshatch metal grid pattern (horizontal + vertical hairlines)
+   - .nyc-metal-texture-brushed — 45° diagonal brushed metal pattern
+   - Both use CSS-only approach with ::before pseudo-elements and very low opacity
+
+3. **Enhanced Card Styles** (2 new card classes)
+   - .nyc-card-enhanced — 3-layer depth shadows, inner glow on hover, animated border sweep from left, richer 3-stop gradient
+   - .nyc-card-highlight-enhanced — Same premium treatment with taxi accent glow, 4-layer shadow on hover, wider glow radius
+   - Both cards: ::before for sweeping border animation, ::after for inner glow effect
+
+4. **Industrial Decorative Elements** (6 classes)
+   - .nyc-rivet / .nyc-rivet-lg — Metallic circular rivets with radial gradient and highlight
+   - .nyc-gear-icon — Rotating gear with inner hub and counter-rotating dashed outer ring
+   - .nyc-pipe-divider — Horizontal pipe with gradient fills and center joint
+   - .nyc-pipe-joint — Circular pipe joint connector
+   - .nyc-caution-stripe / .nyc-caution-stripe-thick — Diagonal yellow/black warning stripes
+
+5. **Micro-Interaction Enhancements** (7 classes)
+   - .nyc-pulse-ring — Expanding ring pulse animation
+   - .nyc-float — Gentle 3s floating animation
+   - .nyc-typing-cursor — Blinking block cursor
+   - .nyc-card-enter — Entrance animation (fade + slide up + scale) with 4 stagger delays
+   - .scanlines-animated — Scanlines with slow vertical scroll animation
+
+6. **Improved Code Block Styling** (8 classes)
+   - .code-block-enhanced — Gradient bg, subtle amber glow, hover glow intensification, 32px header bar
+   - .code-line-numbers / .code-line — CSS counter-based line numbering system
+   - .code-block-header / .code-block-dot-* — macOS-style terminal dots + language label
+   - .code-line:hover — Subtle highlight on hover
+
+7. **Background Atmospheric Effects** (4 classes)
+   - .nyc-noise-bg — SVG fractal noise texture overlay (very subtle at 2.5% opacity)
+   - .nyc-vignette — Radial vignette darkening edges
+   - .nyc-grid-pulse — Animated pulsing grid with amber-tinted lines
+   - .nyc-atmosphere — Dual radial gradient ambient light effect
+
+8. **Custom Scrollbar for Code Blocks**
+   - Dark track (oklch 0.1), gradient thumb with border, amber glow on hover
+   - Targets: .code-block-enhanced, .code-block, pre, [code]
+
+9. **Enhanced Hover States** (6 classes)
+   - .nyc-link-hover — Animated underline sweep from left
+   - .nyc-btn-press — Active press effect (scale + inset shadow)
+   - .nyc-card-tilt — Subtle 3D perspective tilt on hover
+   - .nyc-hover-glow — Ambient glow on hover
+   - .nyc-hover-border — Border color transition to taxi accent
+   - .nyc-focus-ring — Accessible focus ring with taxi color
+
+10. **Typography Improvements** (9 classes)
+    - .font-industrial — Monospace uppercase label style
+    - .nyc-text-shadow / .nyc-text-shadow-strong / .nyc-text-shadow-taxi — Shadow variants
+    - .nyc-gradient-text-amber-red — Taxi to subway gradient
+    - .nyc-gradient-text-steel-silver — Steel to silver gradient
+    - .nyc-gradient-text-fire — Taxi → red → subway gradient
+    - .nyc-gradient-text-cool — Steel → blue → silver gradient
+    - .nyc-text-emboss — Embossed text effect
+    - .nyc-heading-industrial — Bold heading with negative tracking
+    - .nyc-label — Small industrial label with border
+
+Bonus Utilities Added:
+- .nyc-border-animated — Rotating conic-gradient border
+- .nyc-status-dot / .nyc-status-active / .nyc-status-warning / .nyc-status-error — Status indicators
+- .nyc-section-divider / .nyc-section-divider-strong — Gradient horizontal rules
+- .nyc-tag / .nyc-tag-active — Interactive tag/badge components
+- .nyc-tooltip — CSS-only tooltip via data-tooltip attribute
+
+New Keyframe Animations:
+- pulseRing, nycFloat, cursorBlink, cardEnter, scanlineScroll, gridPulse, gearSpin, borderRotate, statusPulse
+
+Build Status: ✅ Compiled successfully (next build passes)
+Existing CSS: ✅ All original classes preserved, no modifications to existing styles
+Total lines added: ~925 lines of premium CSS
+
+Stage Summary:
+- Dramatic visual quality enhancement from 6.7/10 to 9/10 target
+- 60+ new utility classes covering syntax highlighting, industrial textures, cards, decorative elements, micro-interactions, code blocks, atmospheric effects, scrollbars, hover states, and typography
+- All new classes are additive — no existing CSS was modified or broken
+- Build passes cleanly
+
+---
+Task ID: 6
+Agent: Main Agent
+Task: Remove grid background, CLI-style code blocks, add Guide Tour
+
+Work Log:
+- Removed `nyc-grid-bg` class from main wrapper div (clean dark background without grid pattern)
+- Removed `nyc-grid-dense` overlay from hero section
+- Redesigned CodeBlock component to look like a real CLI/terminal:
+  - macOS-style title bar with traffic light dots (red/yellow/green)
+  - Line numbers on the left side
+  - Prompt symbol (❯) for each command line
+  - Comments styled in italic with reduced opacity
+  - Blinking cursor at the bottom of each code block
+  - Hover highlight on each line
+  - Dark terminal background (oklch(0.08))
+- Updated all inline command blocks to match CLI style (dark bg, border, prompt symbol)
+- Updated diagnostic commands, prompt templates, and architecture code blocks to CLI style
+- Updated CopyButton to accept optional className prop (supports both inline and absolute positioning)
+- Created GuideTour component with 7 steps covering key sections:
+  - Hero (welcome), Matrix (tools overview), Helper (core tool), Install (setup), MCP (servers), Cost (pricing), Checklist (progress)
+  - Highlight border around target section with taxi yellow glow
+  - Tooltip card with step counter, progress dots, navigation buttons
+  - Keyboard support: Arrow keys, Enter, Escape
+  - Smooth scroll to target section on step change
+  - Added Tour button in hero section and sidebar navigation
+- All lint checks pass, no runtime errors
+
+Stage Summary:
+- Grid background removed for cleaner look
+- Code blocks now look like authentic CLI terminals with prompt symbols, line numbers, and cursor
+- Guide Tour feature added — interactive step-by-step walkthrough with 7 steps
+- All QA checks pass
+
+Current Project Status:
+- Full guide page with 12+ sections, NYC industrial theme
+- Interactive features: search, keyboard shortcuts, guide tour, checklist, accordion, tabs
+- Code blocks styled as CLI terminals
+- No grid background, clean dark aesthetic
+- Lint clean, no runtime errors
+
+Unresolved Issues / Next Steps:
+- Plan Wizard (section 08.5) could be made interactive with real state
+- Dark/light theme toggle could be added
+- Syntax highlighting with actual token coloring could be added to CLI code blocks
+- Guide Tour could persist completion state in localStorage

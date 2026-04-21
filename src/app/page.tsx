@@ -42,6 +42,8 @@ import {
   Building2,
   Cable,
   Keyboard,
+  Compass,
+  ChevronLeft,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -411,9 +413,242 @@ function KeyboardShortcutsDialog({ open, onClose }: { open: boolean; onClose: ()
   )
 }
 
+/* ───────────────────── GUIDE TOUR ───────────────────── */
+
+const TOUR_STEPS = [
+  {
+    target: 'hero',
+    title: 'Добро пожаловать!',
+    description: 'Это единое руководство по установке AI-инструментов разработки. Здесь вы найдёте всё, что нужно для старта.',
+    position: 'center' as const,
+  },
+  {
+    target: 'matrix',
+    title: 'Матрица инструментов',
+    description: 'Обзор всех доступных AI-инструментов: их типы, цены и совместимость с MCP.',
+    position: 'top' as const,
+  },
+  {
+    target: 'helper',
+    title: 'Coding Tool Helper',
+    description: 'Центральный узел интеграции — мастер настройки, система команд и конфигурация моделей GLM.',
+    position: 'top' as const,
+  },
+  {
+    target: 'install',
+    title: 'Установка и настройка',
+    description: 'Пошаговые команды установки и шаблоны конфигурации для всех платформ.',
+    position: 'top' as const,
+  },
+  {
+    target: 'mcp',
+    title: 'MCP-серверы',
+    description: 'Серверы Model Context Protocol: Web Search, Vision, Reader и Zread — расширяют возможности AI.',
+    position: 'top' as const,
+  },
+  {
+    target: 'cost',
+    title: 'Сценарии стоимости',
+    description: 'Сравнение планов от Free Stack до Enterprise — выберите оптимальный вариант.',
+    position: 'top' as const,
+  },
+  {
+    target: 'checklist',
+    title: 'Чек-лист',
+    description: 'Интерактивный чек-лист для отслеживания прогресса настройки. Отмечайте выполненные шаги!',
+    position: 'top' as const,
+  },
+]
+
+function GuideTour({ open, onClose, currentStep, onNext, onPrev }: {
+  open: boolean
+  onClose: () => void
+  currentStep: number
+  onNext: () => void
+  onPrev: () => void
+}) {
+  const [highlightRect, setHighlightRect] = useState<DOMRect | null>(null)
+  const step = TOUR_STEPS[currentStep]
+  const isFirst = currentStep === 0
+  const isLast = currentStep === TOUR_STEPS.length - 1
+
+  useEffect(() => {
+    if (open && step) {
+      const el = document.getElementById(step.target)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        setTimeout(() => {
+          const rect = el.getBoundingClientRect()
+          setHighlightRect(rect)
+        }, 500)
+      }
+    }
+  }, [open, currentStep, step])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!open) return
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowRight' || e.key === 'Enter') onNext()
+      if (e.key === 'ArrowLeft') onPrev()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [open, onClose, onNext, onPrev])
+
+  if (!highlightRect || !open) return null
+
+  const padding = 12
+  const tooltipTop = highlightRect.bottom + padding + 8
+  const tooltipLeft = Math.max(16, Math.min(
+    highlightRect.left + highlightRect.width / 2 - 200,
+    window.innerWidth - 432
+  ))
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* Dark overlay with cutout */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] pointer-events-auto"
+            style={{
+              background: `path('M 0 0 L ${window.innerWidth} 0 L ${window.innerWidth} ${window.innerHeight} L 0 ${window.innerHeight} Z M ${highlightRect.left - padding} ${highlightRect.top - padding} L ${highlightRect.right + padding} ${highlightRect.top - padding} L ${highlightRect.right + padding} ${highlightRect.bottom + padding} L ${highlightRect.left - padding} ${highlightRect.bottom + padding} Z')`,
+              fill: 'rgba(0,0,0,0.75)',
+              fillRule: 'evenodd',
+            }}
+            onClick={onClose}
+          />
+          {/* Fallback overlay */}
+          <div className="fixed inset-0 z-[199]" style={{ background: 'rgba(0,0,0,0.7)', pointerEvents: 'auto' }} onClick={onClose} />
+
+          {/* Highlight border */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed z-[201] rounded-lg pointer-events-none"
+            style={{
+              top: highlightRect.top - padding,
+              left: highlightRect.left - padding,
+              width: highlightRect.width + padding * 2,
+              height: highlightRect.height + padding * 2,
+              border: '2px solid var(--nyc-taxi)',
+              boxShadow: '0 0 20px oklch(0.78 0.16 85 / 20%), inset 0 0 20px oklch(0.78 0.16 85 / 5%)',
+            }}
+          />
+
+          {/* Tooltip card */}
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+            className="fixed z-[202] w-[400px] max-w-[calc(100vw-32px)] pointer-events-auto"
+            style={{
+              top: tooltipTop,
+              left: tooltipLeft,
+            }}
+          >
+            <div className="bg-[oklch(0.14_0_0)] border border-[var(--nyc-taxi)]/20 rounded-xl shadow-2xl overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.06]">
+                <div className="w-8 h-8 rounded-lg bg-[var(--nyc-taxi)]/15 flex items-center justify-center">
+                  <Compass className="w-4 h-4 text-[var(--nyc-taxi)]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-bold truncate">{step.title}</h3>
+                  <span className="text-[10px] text-[var(--nyc-steel)] font-mono">
+                    Шаг {currentStep + 1} из {TOUR_STEPS.length}
+                  </span>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="p-1.5 rounded hover:bg-white/5 text-white/30 hover:text-white/60 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="px-5 py-4">
+                <p className="text-sm text-[var(--nyc-concrete)] leading-relaxed">{step.description}</p>
+              </div>
+
+              {/* Progress dots */}
+              <div className="px-5 pb-2 flex items-center justify-center gap-1.5">
+                {TOUR_STEPS.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`rounded-full transition-all duration-300 ${
+                      i === currentStep
+                        ? 'w-6 h-1.5 bg-[var(--nyc-taxi)]'
+                        : i < currentStep
+                          ? 'w-1.5 h-1.5 bg-[var(--nyc-taxi)]/40'
+                          : 'w-1.5 h-1.5 bg-white/10'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-between px-5 py-3 border-t border-white/[0.06]">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onPrev}
+                  disabled={isFirst}
+                  className="text-white/40 hover:text-white gap-1 h-7 px-2 text-xs disabled:opacity-20"
+                >
+                  <ChevronLeft className="w-3 h-3" />
+                  Назад
+                </Button>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onClose}
+                    className="text-white/30 hover:text-white/60 h-7 px-2 text-xs"
+                  >
+                    Пропустить
+                  </Button>
+                  {isLast ? (
+                    <Button
+                      size="sm"
+                      onClick={onClose}
+                      className="bg-[var(--nyc-taxi)] text-black hover:bg-[var(--nyc-amber)] font-bold h-7 px-4 text-xs gap-1.5"
+                    >
+                      <Check className="w-3 h-3" />
+                      Завершить
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      onClick={onNext}
+                      className="bg-[var(--nyc-taxi)] text-black hover:bg-[var(--nyc-amber)] font-bold h-7 px-4 text-xs gap-1.5"
+                    >
+                      Далее
+                      <ArrowRight className="w-3 h-3" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  )
+}
+
 /* ───────────────────── COMPONENTS ───────────────────── */
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, className = '' }: { text: string; className?: string }) {
   const [copied, setCopied] = useState(false)
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(text)
@@ -423,32 +658,74 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="absolute top-2 right-2 p-1.5 rounded bg-white/5 hover:bg-[var(--nyc-taxi)]/10 transition-all duration-200 group"
+      className={`p-1 rounded bg-white/5 hover:bg-[var(--nyc-taxi)]/10 transition-all duration-200 group/copy ${className}`}
       aria-label="Copy code"
     >
       {copied
-        ? <Check className="w-3.5 h-3.5 text-green-400" />
-        : <Copy className="w-3.5 h-3.5 text-white/30 group-hover:text-[var(--nyc-taxi)]" />
+        ? <Check className="w-3 h-3 text-green-400" />
+        : <Copy className="w-3 h-3 text-white/30 group-hover/copy:text-[var(--nyc-taxi)]" />
       }
     </button>
   )
 }
 
 function CodeBlock({ code, lang = 'bash' }: { code: string; lang?: string }) {
+  const lines = code.split('\n')
   return (
-    <div className="relative group">
-      <div className="code-block p-4 pr-12 overflow-x-auto text-sm leading-relaxed">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-[var(--nyc-taxi)] text-[10px] font-mono uppercase tracking-wider opacity-70">{lang}</span>
-          <div className="flex gap-1">
-            <div className="w-2 h-2 rounded-full bg-red-400/40" />
-            <div className="w-2 h-2 rounded-full bg-yellow-400/40" />
-            <div className="w-2 h-2 rounded-full bg-green-400/40" />
+    <div className="relative group rounded-lg overflow-hidden border border-white/[0.08] shadow-lg shadow-black/20">
+      {/* Terminal title bar */}
+      <div className="flex items-center gap-2 px-4 py-2 bg-[oklch(0.14_0_0)] border-b border-white/[0.06]">
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]/80" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]/80" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]/80" />
+        </div>
+        <span className="font-mono text-[10px] text-white/25 tracking-wider uppercase ml-2">{lang}</span>
+        <div className="ml-auto flex items-center gap-2">
+          <CopyButton text={code} />
+        </div>
+      </div>
+      {/* Terminal body */}
+      <div className="bg-[oklch(0.08_0_0)] p-0 overflow-x-auto">
+        {lines.map((line, i) => {
+          const isComment = line.trimStart().startsWith('#') || line.trimStart().startsWith('//')
+          const isCommand = !isComment && line.trim().length > 0 && i === lines.findIndex(l => l.trim().length > 0)
+          return (
+            <div
+              key={i}
+              className="flex items-start gap-0 px-4 py-0 hover:bg-white/[0.02] transition-colors group/line"
+            >
+              {/* Line number */}
+              <span className="w-8 shrink-0 text-right pr-3 select-none font-mono text-[11px] leading-[1.8] text-white/10 group-hover/line:text-white/20 transition-colors">
+                {i + 1}
+              </span>
+              {/* Prompt + content */}
+              <div className="flex items-start gap-2 min-w-0 flex-1">
+                {(isCommand || (lang === 'bash' && line.trim().length > 0 && !isComment)) && (
+                  <span className="text-[var(--nyc-taxi)] font-mono text-sm leading-[1.8] shrink-0 select-none">❯</span>
+                )}
+                <pre className={`font-mono text-[13px] leading-[1.8] whitespace-pre ${
+                  isComment
+                    ? 'text-white/25 italic'
+                    : isCommand
+                      ? 'text-[var(--nyc-concrete)]'
+                      : 'text-[var(--nyc-concrete)]'
+                }`}>
+                  {line || ' '}
+                </pre>
+              </div>
+            </div>
+          )
+        })}
+        {/* Blinking cursor line */}
+        <div className="flex items-start gap-0 px-4 py-0">
+          <span className="w-8 shrink-0 text-right pr-3 select-none font-mono text-[11px] leading-[1.8] text-white/10">&nbsp;</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[var(--nyc-taxi)] font-mono text-sm leading-[1.8] shrink-0 select-none">❯</span>
+            <span className="nyc-typing-cursor font-mono text-sm leading-[1.8] text-[var(--nyc-concrete)]" />
           </div>
         </div>
-        <pre className="text-[var(--nyc-concrete)] font-mono whitespace-pre-wrap">{code}</pre>
       </div>
-      <CopyButton text={code} />
     </div>
   )
 }
@@ -508,6 +785,8 @@ export default function Home() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [shortcutsOpen, setShortcutsOpen] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
+  const [tourOpen, setTourOpen] = useState(false)
+  const [tourStep, setTourStep] = useState(0)
 
   const toggleCheck = (id: string) => {
     setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }))
@@ -547,11 +826,18 @@ export default function Home() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen flex flex-col bg-background nyc-grid-bg" style={{ backgroundColor: 'oklch(0.1 0 0)' }}>
+      <div className="min-h-screen flex flex-col bg-background" style={{ backgroundColor: 'oklch(0.1 0 0)' }}>
         <FloatingParticles />
         <ReadingProgress />
         <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
         <KeyboardShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
+        <GuideTour
+          open={tourOpen}
+          onClose={() => setTourOpen(false)}
+          currentStep={tourStep}
+          onNext={() => setTourStep(prev => Math.min(prev + 1, TOUR_STEPS.length - 1))}
+          onPrev={() => setTourStep(prev => Math.max(prev - 1, 0))}
+        />
 
         {/* ── SIDE NAV (Desktop) ── */}
         <nav className="hidden lg:flex fixed left-0 top-0 h-full w-16 flex-col items-center py-6 gap-1 z-50 bg-background/80 backdrop-blur-md border-r border-white/5">
@@ -589,6 +875,13 @@ export default function Home() {
             title="Keyboard Shortcuts"
           >
             <Keyboard className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => { setTourStep(0); setTourOpen(true) }}
+            className="w-10 h-10 flex items-center justify-center rounded text-xs text-white/30 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            title="Guide Tour"
+          >
+            <Compass className="w-3.5 h-3.5" />
           </button>
 
           <div className="mt-auto flex flex-col items-center gap-3">
@@ -667,7 +960,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-b from-background via-background/70 to-background" />
               <div className="absolute inset-0 bg-gradient-to-r from-background/50 via-transparent to-background/50" />
             </div>
-            <div className="absolute inset-0 nyc-grid-dense opacity-50 z-[1]" />
+
             <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-20">
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
@@ -749,6 +1042,14 @@ export default function Home() {
                   >
                     <Keyboard className="w-3.5 h-3.5" />
                     <span className="text-xs">Сочетания</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="text-white/40 hover:text-[var(--nyc-taxi)] gap-2"
+                    onClick={() => { setTourStep(0); setTourOpen(true) }}
+                  >
+                    <Compass className="w-3.5 h-3.5" />
+                    <span className="text-xs">Тур</span>
                   </Button>
                 </div>
               </motion.div>
@@ -966,12 +1267,12 @@ export default function Home() {
                       transition={{ delay: i * 0.04 }}
                       className="group relative"
                     >
-                      <div className="code-block px-4 py-2.5 pr-12 flex items-center gap-3 text-xs hover:border-[var(--nyc-taxi)]/15 transition-colors">
+                      <div className="flex items-center gap-3 text-xs rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] px-4 py-2.5 pr-12 hover:border-[var(--nyc-taxi)]/15 transition-colors">
                         <span className="text-[var(--nyc-taxi)] font-mono shrink-0">❯</span>
                         <span className="text-[var(--nyc-concrete)] font-mono">{cmd.cmd}</span>
                         <span className="text-white/15 hidden sm:inline">— {cmd.desc}</span>
                       </div>
-                      <CopyButton text={cmd.cmd} />
+                      <CopyButton text={cmd.cmd} className="absolute top-1.5 right-1.5" />
                     </motion.div>
                   ))}
                 </div>
@@ -1428,10 +1729,15 @@ export default function Home() {
                       </CardHeader>
                       <CardContent className="p-4">
                         <div className="relative">
-                          <div className="code-block p-3 pr-12 text-xs">
+                          <div className="relative rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] p-3 pr-12 text-xs">
+                            <div className="flex items-center gap-2 mb-1">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#FF5F56]/60" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#FFBD2E]/60" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#27C93F]/60" />
+                            </div>
                             <pre className="text-[var(--nyc-concrete)] font-mono whitespace-pre-wrap">{tmpl.prompt}</pre>
                           </div>
-                          <CopyButton text={tmpl.prompt} />
+                          <CopyButton text={tmpl.prompt} className="absolute top-1.5 right-1.5" />
                         </div>
                       </CardContent>
                     </Card>
@@ -1594,7 +1900,7 @@ export default function Home() {
                     { cmd: 'npx @_davideast/stitch-mcp --help', note: '' },
                     { cmd: 'npx skills list --global', note: '' },
                   ].map(diag => (
-                    <div key={diag.cmd} className="code-block px-3 py-2 text-xs flex items-center gap-2">
+                    <div key={diag.cmd} className="flex items-center gap-2 rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] px-3 py-2 text-xs">
                       <span className="text-[var(--nyc-taxi)]">❯</span>
                       <span className="text-[var(--nyc-concrete)] font-mono">{diag.cmd}</span>
                       {diag.note && <span className="text-white/15">{diag.note}</span>}
@@ -1640,7 +1946,7 @@ export default function Home() {
 
               <Card className="bg-white/[0.02] border-white/[0.06] overflow-hidden">
                 <CardContent className="p-4 sm:p-6">
-                  <div className="code-block p-4 text-xs sm:text-sm overflow-x-auto">
+                  <div className="rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] p-4 text-xs sm:text-sm overflow-x-auto">
                     <pre className="text-[var(--nyc-concrete)] font-mono leading-relaxed whitespace-pre">{`┌──────────────────────────────────────────────────┐
 │                  YOUR WORKSTATION                 │
 ├──────────────────────────────────────────────────┤

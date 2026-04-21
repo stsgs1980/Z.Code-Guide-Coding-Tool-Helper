@@ -379,3 +379,928 @@ html.dark {
 html {
   scroll-behavior: smooth;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   NYC INDUSTRIAL THEME — PREMIUM ENHANCEMENTS (Task 2-a)
+   Visual Quality: 6.7/10 → 9/10
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── 1. Syntax Highlighting Token Classes ─── */
+
+.token-keyword { color: #FF6B6B; font-weight: 500; }
+.token-string { color: #96CEB4; }
+.token-comment { color: #5C6370; font-style: italic; }
+.token-function { color: #61AFEF; }
+.token-variable { color: #E5C07B; }
+.token-number { color: #D19A66; }
+.token-operator { color: #56B6C2; }
+.token-property { color: #C678DD; }
+.token-tag { color: #E06C75; }
+.token-attr-name { color: #D19A66; }
+.token-attr-value { color: #96CEB4; }
+.token-punctuation { color: #ABB2BF; }
+.token-class-name { color: #E5C07B; font-weight: 500; }
+.token-boolean { color: #D19A66; }
+.token-regex { color: #98C379; }
+.token-builtin { color: #E5C07B; }
+
+/* ─── 2. Industrial Texture Overlays ─── */
+
+.nyc-metal-texture {
+  position: relative;
+  background:
+    linear-gradient(135deg, oklch(0.15 0 0) 0%, oklch(0.12 0 0) 100%);
+}
+
+.nyc-metal-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      oklch(1 0 0 / 8%) 2px,
+      oklch(1 0 0 / 8%) 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      oklch(1 0 0 / 5%) 2px,
+      oklch(1 0 0 / 5%) 3px
+    );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.nyc-metal-texture-brushed {
+  position: relative;
+  background:
+    linear-gradient(135deg, oklch(0.15 0 0) 0%, oklch(0.12 0 0) 100%);
+}
+
+.nyc-metal-texture-brushed::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 1px,
+      oklch(1 0 0 / 3%) 1px,
+      oklch(1 0 0 / 3%) 2px
+    );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ─── 3. Enhanced Card Styles ─── */
+
+.nyc-card-enhanced {
+  background: linear-gradient(145deg, oklch(0.16 0 0) 0%, oklch(0.11 0 0) 50%, oklch(0.13 0 0) 100%);
+  border: 1px solid oklch(1 0 0 / 6%);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px oklch(0 0 0 / 30%),
+    0 4px 8px oklch(0 0 0 / 15%),
+    0 12px 24px oklch(0 0 0 / 10%),
+    inset 0 1px 0 oklch(1 0 0 / 4%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nyc-card-enhanced::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  box-shadow: inset 0 0 30px oklch(0.78 0.16 85 / 6%);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.nyc-card-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--nyc-taxi), var(--nyc-amber), var(--nyc-taxi));
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.nyc-card-enhanced:hover {
+  border-color: oklch(1 0 0 / 12%);
+  box-shadow:
+    0 2px 4px oklch(0 0 0 / 35%),
+    0 8px 16px oklch(0 0 0 / 18%),
+    0 20px 40px oklch(0 0 0 / 12%),
+    inset 0 1px 0 oklch(1 0 0 / 6%);
+  transform: translateY(-2px);
+}
+
+.nyc-card-enhanced:hover::after {
+  opacity: 1;
+}
+
+.nyc-card-enhanced:hover::before {
+  width: 100%;
+}
+
+.nyc-card-highlight-enhanced {
+  background: linear-gradient(145deg, oklch(0.17 0.01 85) 0%, oklch(0.13 0 0) 50%, oklch(0.14 0.005 85) 100%);
+  border: 1px solid oklch(0.78 0.16 85 / 15%);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px oklch(0 0 0 / 30%),
+    0 4px 8px oklch(0 0 0 / 15%),
+    0 12px 24px oklch(0 0 0 / 10%),
+    0 0 30px oklch(0.78 0.16 85 / 5%),
+    inset 0 1px 0 oklch(1 0 0 / 4%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nyc-card-highlight-enhanced::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  box-shadow: inset 0 0 40px oklch(0.78 0.16 85 / 8%);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.nyc-card-highlight-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--nyc-taxi), var(--nyc-amber));
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.nyc-card-highlight-enhanced:hover {
+  border-color: oklch(0.78 0.16 85 / 25%);
+  box-shadow:
+    0 2px 4px oklch(0 0 0 / 35%),
+    0 8px 16px oklch(0 0 0 / 18%),
+    0 20px 40px oklch(0 0 0 / 12%),
+    0 0 50px oklch(0.78 0.16 85 / 8%),
+    inset 0 1px 0 oklch(1 0 0 / 6%);
+  transform: translateY(-2px);
+}
+
+.nyc-card-highlight-enhanced:hover::after {
+  opacity: 1;
+}
+
+.nyc-card-highlight-enhanced:hover::before {
+  width: 100%;
+}
+
+/* ─── 4. Industrial Decorative Elements ─── */
+
+.nyc-rivet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, oklch(0.5 0 0), oklch(0.25 0 0));
+  box-shadow:
+    inset 0 1px 1px oklch(1 0 0 / 20%),
+    0 1px 2px oklch(0 0 0 / 40%);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.nyc-rivet-lg {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, oklch(0.5 0 0), oklch(0.25 0 0));
+  box-shadow:
+    inset 0 1px 2px oklch(1 0 0 / 20%),
+    inset 0 -1px 1px oklch(0 0 0 / 30%),
+    0 2px 4px oklch(0 0 0 / 40%);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.nyc-gear-icon {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--nyc-steel);
+  border-radius: 50%;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: gearSpin 8s linear infinite;
+}
+
+.nyc-gear-icon::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid var(--nyc-steel);
+}
+
+.nyc-gear-icon::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 2px dashed oklch(0.5 0.02 250 / 30%);
+  border-radius: 50%;
+  animation: gearSpin 12s linear infinite reverse;
+}
+
+.nyc-pipe-divider {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  height: 6px;
+}
+
+.nyc-pipe-divider::before,
+.nyc-pipe-divider::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, oklch(0.3 0 0), oklch(0.4 0.01 250), oklch(0.3 0 0));
+  border-radius: 1px;
+}
+
+.nyc-pipe-divider::before {
+  background: linear-gradient(90deg, oklch(0.25 0 0), oklch(0.4 0.01 250));
+}
+
+.nyc-pipe-divider::after {
+  background: linear-gradient(90deg, oklch(0.4 0.01 250), oklch(0.25 0 0));
+}
+
+.nyc-pipe-joint {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, oklch(0.45 0.01 250), oklch(0.28 0 0));
+  box-shadow:
+    inset 0 1px 1px oklch(1 0 0 / 15%),
+    0 1px 2px oklch(0 0 0 / 30%);
+  flex-shrink: 0;
+}
+
+.nyc-caution-stripe {
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      var(--nyc-taxi),
+      var(--nyc-taxi) 10px,
+      oklch(0.12 0 0) 10px,
+      oklch(0.12 0 0) 20px
+    );
+  height: 4px;
+  width: 100%;
+}
+
+.nyc-caution-stripe-thick {
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      var(--nyc-taxi),
+      var(--nyc-taxi) 8px,
+      oklch(0.08 0 0) 8px,
+      oklch(0.08 0 0) 16px
+    );
+  height: 8px;
+  width: 100%;
+}
+
+/* ─── 5. Micro-Interaction Enhancements ─── */
+
+.nyc-pulse-ring {
+  position: relative;
+}
+
+.nyc-pulse-ring::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid var(--nyc-taxi);
+  border-radius: inherit;
+  opacity: 0;
+  animation: pulseRing 2s ease-out infinite;
+  pointer-events: none;
+}
+
+.nyc-float {
+  animation: nycFloat 3s ease-in-out infinite;
+}
+
+.nyc-typing-cursor::after {
+  content: '▊';
+  color: var(--nyc-taxi);
+  animation: cursorBlink 1s step-end infinite;
+  margin-left: 2px;
+}
+
+.nyc-card-enter {
+  animation: cardEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.nyc-card-enter-delay-1 { animation-delay: 0.1s; }
+.nyc-card-enter-delay-2 { animation-delay: 0.2s; }
+.nyc-card-enter-delay-3 { animation-delay: 0.3s; }
+.nyc-card-enter-delay-4 { animation-delay: 0.4s; }
+
+.scanlines-animated::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    oklch(0 0 0 / 2%) 2px,
+    oklch(0 0 0 / 2%) 4px
+  );
+  pointer-events: none;
+  animation: scanlineScroll 8s linear infinite;
+}
+
+/* ─── 6. Improved Code Block Styling ─── */
+
+.code-block-enhanced {
+  background: linear-gradient(180deg, oklch(0.12 0 0) 0%, oklch(0.09 0 0) 100%);
+  border: 1px solid oklch(1 0 0 / 8%);
+  border-radius: 8px;
+  font-family: var(--font-geist-mono);
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 3%),
+    0 2px 4px oklch(0 0 0 / 15%),
+    0 0 30px oklch(0.78 0.16 85 / 3%);
+  transition: box-shadow 0.3s ease;
+}
+
+.code-block-enhanced:hover {
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 5%),
+    0 2px 4px oklch(0 0 0 / 20%),
+    0 0 40px oklch(0.78 0.16 85 / 5%);
+}
+
+.code-block-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: linear-gradient(180deg, oklch(0.14 0 0), oklch(0.12 0 0));
+  border-bottom: 1px solid oklch(1 0 0 / 6%);
+}
+
+.code-line-numbers {
+  counter-reset: line;
+  padding-left: 3.5rem;
+  position: relative;
+}
+
+.code-line-numbers::before {
+  content: '';
+  position: absolute;
+  left: 2.5rem;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: oklch(1 0 0 / 6%);
+}
+
+.code-line {
+  counter-increment: line;
+  position: relative;
+  min-height: 1.5em;
+}
+
+.code-line::before {
+  content: counter(line);
+  position: absolute;
+  left: -3rem;
+  width: 2rem;
+  text-align: right;
+  color: oklch(0.4 0 0);
+  font-size: 0.75em;
+  user-select: none;
+}
+
+.code-line:hover {
+  background: oklch(1 0 0 / 2%);
+}
+
+.code-block-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.code-block-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.code-block-dot-red { background: #FF5F56; }
+.code-block-dot-yellow { background: #FFBD2E; }
+.code-block-dot-green { background: #27C93F; }
+
+.code-block-title {
+  font-size: 0.7rem;
+  color: oklch(0.5 0 0);
+  margin-left: auto;
+  font-family: var(--font-geist-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ─── 7. Background Atmospheric Effects ─── */
+
+.nyc-noise-bg {
+  position: relative;
+}
+
+.nyc-noise-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.nyc-vignette {
+  position: relative;
+}
+
+.nyc-vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    oklch(0 0 0 / 20%) 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.nyc-grid-pulse {
+  position: relative;
+  overflow: hidden;
+}
+
+.nyc-grid-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background-image:
+    linear-gradient(to right, oklch(0.78 0.16 85 / 3%) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.78 0.16 85 / 3%) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridPulse 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.nyc-atmosphere {
+  position: relative;
+}
+
+.nyc-atmosphere::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, oklch(0.78 0.16 85 / 3%) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, oklch(0.5 0.1 250 / 2%) 0%, transparent 40%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ─── 8. Custom Scrollbar for Code Blocks ─── */
+
+.code-block-enhanced::-webkit-scrollbar,
+.code-block::-webkit-scrollbar,
+[code]::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.code-block-enhanced::-webkit-scrollbar-track,
+.code-block::-webkit-scrollbar-track,
+[code]::-webkit-scrollbar-track,
+pre::-webkit-scrollbar-track {
+  background: oklch(0.1 0 0);
+  border-radius: 3px;
+}
+
+.code-block-enhanced::-webkit-scrollbar-thumb,
+.code-block::-webkit-scrollbar-thumb,
+[code]::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, oklch(0.3 0 0), oklch(0.22 0 0));
+  border-radius: 3px;
+  border: 1px solid oklch(0.15 0 0);
+}
+
+.code-block-enhanced::-webkit-scrollbar-thumb:hover,
+.code-block::-webkit-scrollbar-thumb:hover,
+[code]::-webkit-scrollbar-thumb:hover,
+pre::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, oklch(0.78 0.16 85 / 40%), oklch(0.78 0.16 85 / 25%));
+}
+
+/* ─── 9. Enhanced Hover States for Interactive Elements ─── */
+
+.nyc-link-hover {
+  position: relative;
+  text-decoration: none;
+  color: var(--nyc-taxi);
+  transition: color 0.2s ease;
+}
+
+.nyc-link-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--nyc-taxi), var(--nyc-amber));
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nyc-link-hover:hover::after {
+  width: 100%;
+}
+
+.nyc-link-hover:hover {
+  color: var(--nyc-amber);
+}
+
+.nyc-btn-press {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nyc-btn-press:active {
+  transform: scale(0.97) translateY(1px);
+  box-shadow:
+    0 0px 0px oklch(0 0 0 / 20%),
+    inset 0 2px 4px oklch(0 0 0 / 15%);
+}
+
+.nyc-card-tilt {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.nyc-card-tilt:hover {
+  transform: perspective(1000px) rotateX(1deg) rotateY(-1deg) translateY(-2px);
+}
+
+.nyc-hover-glow {
+  transition: box-shadow 0.3s ease;
+}
+
+.nyc-hover-glow:hover {
+  box-shadow: 0 0 20px oklch(0.78 0.16 85 / 15%);
+}
+
+.nyc-hover-border {
+  transition: border-color 0.3s ease;
+  border: 1px solid oklch(1 0 0 / 6%);
+}
+
+.nyc-hover-border:hover {
+  border-color: oklch(0.78 0.16 85 / 25%);
+}
+
+.nyc-focus-ring:focus-visible {
+  outline: 2px solid var(--nyc-taxi);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── 10. Typography Improvements ─── */
+
+.font-industrial {
+  font-family: var(--font-geist-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.7em;
+  color: var(--nyc-steel);
+}
+
+.nyc-text-shadow {
+  text-shadow: 0 2px 4px oklch(0 0 0 / 40%);
+}
+
+.nyc-text-shadow-strong {
+  text-shadow:
+    0 2px 4px oklch(0 0 0 / 50%),
+    0 4px 8px oklch(0 0 0 / 30%);
+}
+
+.nyc-text-shadow-taxi {
+  text-shadow: 0 0 20px oklch(0.78 0.16 85 / 30%);
+}
+
+.nyc-gradient-text-amber-red {
+  background: linear-gradient(135deg, var(--nyc-taxi) 0%, var(--nyc-subway) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nyc-gradient-text-steel-silver {
+  background: linear-gradient(135deg, var(--nyc-steel) 0%, var(--nyc-silver) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nyc-gradient-text-fire {
+  background: linear-gradient(135deg, var(--nyc-taxi) 0%, #FF6B6B 50%, var(--nyc-subway) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nyc-gradient-text-cool {
+  background: linear-gradient(135deg, var(--nyc-steel) 0%, #61AFEF 50%, var(--nyc-silver) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nyc-text-emboss {
+  color: oklch(0.85 0 0);
+  text-shadow:
+    0 1px 0 oklch(1 0 0 / 10%),
+    0 -1px 0 oklch(0 0 0 / 40%);
+}
+
+.nyc-heading-industrial {
+  font-family: var(--font-geist-sans);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 4px oklch(0 0 0 / 30%);
+}
+
+.nyc-label {
+  font-family: var(--font-geist-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--nyc-steel);
+  padding: 2px 8px;
+  border: 1px solid oklch(1 0 0 / 8%);
+  border-radius: 3px;
+  display: inline-block;
+}
+
+/* ─── Keyframe Animations (Enhanced) ─── */
+
+@keyframes pulseRing {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes nycFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scanlineScroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100vh; }
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.02); }
+}
+
+@keyframes gearSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Utility: Animated gradient border (full perimeter) ─── */
+
+.nyc-border-animated {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.nyc-border-animated::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    var(--nyc-taxi) 10%,
+    transparent 20%,
+    transparent 100%
+  );
+  animation: borderRotate 4s linear infinite;
+  z-index: -1;
+  border-radius: inherit;
+}
+
+.nyc-border-animated::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: oklch(0.13 0 0);
+  border-radius: inherit;
+  z-index: -1;
+}
+
+@keyframes borderRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Utility: Status indicators ─── */
+
+.nyc-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.nyc-status-active {
+  background: #27C93F;
+  box-shadow: 0 0 6px oklch(0.7 0.2 145 / 50%);
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+.nyc-status-warning {
+  background: var(--nyc-taxi);
+  box-shadow: 0 0 6px oklch(0.78 0.16 85 / 50%);
+}
+
+.nyc-status-error {
+  background: #FF5F56;
+  box-shadow: 0 0 6px oklch(0.6 0.2 25 / 50%);
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ─── Utility: Section dividers ─── */
+
+.nyc-section-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(1 0 0 / 8%) 15%,
+    oklch(0.78 0.16 85 / 15%) 50%,
+    oklch(1 0 0 / 8%) 85%,
+    transparent 100%
+  );
+  margin: 2rem 0;
+}
+
+.nyc-section-divider-strong {
+  border: none;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--nyc-taxi) 20%,
+    var(--nyc-amber) 50%,
+    var(--nyc-taxi) 80%,
+    transparent 100%
+  );
+  margin: 2rem 0;
+  opacity: 0.4;
+}
+
+/* ─── Utility: Tag / Badge ─── */
+
+.nyc-tag {
+  font-family: var(--font-geist-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid oklch(1 0 0 / 8%);
+  background: oklch(1 0 0 / 3%);
+  color: var(--nyc-steel);
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.nyc-tag:hover {
+  border-color: oklch(0.78 0.16 85 / 20%);
+  color: var(--nyc-taxi);
+  background: oklch(0.78 0.16 85 / 5%);
+}
+
+.nyc-tag-active {
+  border-color: oklch(0.78 0.16 85 / 25%);
+  color: var(--nyc-taxi);
+  background: oklch(0.78 0.16 85 / 8%);
+}
+
+/* ─── Utility: Tooltip ─── */
+
+.nyc-tooltip {
+  position: relative;
+}
+
+.nyc-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: oklch(0.15 0 0);
+  border: 1px solid oklch(1 0 0 / 10%);
+  color: oklch(0.9 0 0);
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  z-index: 50;
+  font-family: var(--font-geist-mono);
+}
+
+.nyc-tooltip:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
