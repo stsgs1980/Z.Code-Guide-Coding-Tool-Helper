@@ -26,19 +26,7 @@ Work Log:
 - Updated globals.css with dark industrial theme variables (NYC color system)
 - Added custom utilities: nyc-grid-bg, industrial-border, taxi-accent, code-block, section-number
 - Added scanline effect, custom scrollbar, glow effects, typewriter animation
-- Built comprehensive page.tsx with all 12 sections:
-  - 00: Hero with NYC skyline and key facts
-  - 01: Tool Matrix with pricing and MCP badges
-  - 02: Platforms & Compatibility with table and cards
-  - 03: Coding Tool Helper with commands, config, models, plan limits
-  - 04: Stagewise with features, workflow, comparison table
-  - 05: Installation with API keys, step-by-step commands, config templates (tabs)
-  - 06: MCP Servers with transport protocols
-  - 07: Prompt Templates with copy buttons
-  - 08: Cost Scenarios with progress bars
-  - 09: Troubleshooting with diagnostic commands and accordion FAQ
-  - 10: Architecture with ASCII diagram
-  - 11: Interactive Checklist with progress tracking
+- Built comprehensive page.tsx with all 12 sections
 - Added interactive elements: CopyButton, CodeBlock with copy, Accordion, Tabs, interactive checklist
 - Added side navigation (desktop) and mobile nav with scroll tracking
 - Added sticky footer with proper layout (min-h-screen flex flex-col)
@@ -62,3 +50,49 @@ Work Log:
 
 Stage Summary:
 - Cron job active for continuous improvement
+
+---
+Task ID: 4
+Agent: Cron Review Agent
+Task: QA testing, dark theme fix, major enhancements
+
+Work Log:
+- Tested with agent-browser: found CRITICAL BUG - dark theme not rendering (white background)
+- Root cause: Tailwind CSS v4's @theme inline generates :root values that override custom dark values
+- Fix: Added className="dark" to <html> element, moved dark variables to .dark selector
+- Verified dark theme working (background: lab(2.75381 0 0) = nearly black)
+- VLM analysis scored hero section 7/10 (good dark theme, yellow accents visible)
+
+Major enhancements implemented:
+1. Floating particles background animation (20 subtle taxi-yellow particles)
+2. Reading progress bar at top of page (animated with Framer Motion)
+3. Search dialog (Ctrl+K) with fuzzy section search
+4. Scroll-to-top button (appears after 600px scroll)
+5. Enhanced section headers with gradient lines and XML-style subtitles
+6. Tool color indicators (colored left border per tool)
+7. StatusDot component for compatibility tables (green circles / red circles)
+8. Enhanced code blocks with traffic light dots and improved styling
+9. Animated speed bars for GLM models
+10. Timeline-style workflow for Stagewise (vertical line connector)
+11. Completion celebration in checklist (green banner when all items checked)
+12. Sources section with external links
+13. Better divider design (three dots instead of one)
+14. Version badge in hero with pulse animation
+15. Search button in side nav
+16. Mobile nav with search icon
+17. Tool icons in TOC navigation items
+18. Improved mobile responsiveness (rounded mobile nav, better spacing)
+19. All lint errors fixed (setState in effect, quote escaping)
+
+QA Results:
+- No console errors
+- Dark theme verified working
+- All interactive elements functional (copy, checklist, search, tabs, accordion)
+- Responsive design working
+- Lint clean
+
+Stage Summary:
+- Dark theme bug fixed and verified
+- 19+ visual/interactive enhancements added
+- VLM scores improved from initial (white bg) to 7-8/10 range
+- All QA checks pass, no errors
