@@ -39,7 +39,6 @@ import {
   Rocket,
   Building2,
   Cable,
-  Keyboard,
   Compass,
   ChevronLeft,
   ChevronRight,
@@ -376,65 +375,6 @@ function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void })
   )
 }
 
-/* ───────────────────── KEYBOARD SHORTCUTS DIALOG ───────────────────── */
-
-function KeyboardShortcutsDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const shortcuts = [
-    { keys: ['Ctrl', 'K'], action: 'Поиск по разделам' },
-    { keys: ['Esc'], action: 'Закрыть диалог' },
-    { keys: ['↑', '↓'], action: 'Навигация по результатам' },
-    { keys: ['T'], action: 'Переключить тему' },
-    { keys: ['J'], action: 'Следующий раздел' },
-    { keys: ['K'], action: 'Предыдущий раздел' },
-  ]
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) onClose()
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [open, onClose])
-
-  return (
-    <AnimatePresence>
-      {open && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
-            onClick={onClose}
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            className="fixed top-[20%] left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[101] bg-[oklch(0.14_0_0)] border border-white/10 rounded-xl shadow-2xl overflow-hidden"
-          >
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10">
-              <Keyboard className="w-4 h-4 text-[var(--nyc-taxi)]" />
-              <span className="text-sm font-semibold tracking-tight">Клавиатурные сокращения</span>
-            </div>
-            <div className="p-4 space-y-2.5">
-              {shortcuts.map(s => (
-                <div key={s.action} className="flex items-center justify-between text-xs">
-                  <span className="text-[var(--nyc-concrete)]">{s.action}</span>
-                  <div className="flex items-center gap-1">
-                    {s.keys.map(k => (
-                      <kbd key={k} className="px-2 py-0.5 rounded bg-white/5 border border-white/10 font-mono text-[10px] text-[var(--nyc-steel)]">{k}</kbd>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  )
-}
 
 /* ───────────────────── GUIDE TOUR ───────────────────── */
 
@@ -938,47 +878,7 @@ function CodeBlock({ code, lang = 'bash' }: { code: string; lang?: string }) {
   )
 }
 
-/* ───────────────────── ANIMATED COUNTER ───────────────────── */
 
-function AnimatedCounter({ value, suffix = '' }: { value: string; suffix?: string }) {
-  const [display, setDisplay] = useState(value)
-  const ref = useRef<HTMLSpanElement>(null)
-  const hasAnimated = useRef(false)
-
-  useEffect(() => {
-    if (hasAnimated.current) return
-    const num = parseFloat(value.replace(/[^0-9.]/g, ''))
-    if (isNaN(num)) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true
-          const duration = 1200
-          const start = performance.now()
-          const animate = (now: number) => {
-            const elapsed = now - start
-            const progress = Math.min(elapsed / duration, 1)
-            const eased = 1 - Math.pow(1 - progress, 3) // ease-out cubic
-            const current = num * eased
-            // Reconstruct the original format
-            const prefix = value.match(/^[^0-9]*/)?.[0] || ''
-            const decimals = (value.match(/\.(\d+)/) || [])[1]?.length || 0
-            setDisplay(`${prefix}${current.toFixed(decimals)}${suffix}`)
-            if (progress < 1) requestAnimationFrame(animate)
-            else setDisplay(value)
-          }
-          requestAnimationFrame(animate)
-        }
-      },
-      { threshold: 0.5 }
-    )
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [value, suffix])
-
-  return <span ref={ref}>{display}</span>
-}
 
 function SectionHeader({ number, title, subtitle }: { number: string; title: string; subtitle?: string }) {
   const [shareCopied, setShareCopied] = useState(false)
@@ -1378,7 +1278,6 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState('hero')
   const [mobileNav, setMobileNav] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [shortcutsOpen, setShortcutsOpen] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [showQuickStart, setShowQuickStart] = useState(false)
   const [tourOpen, setTourOpen] = useState(false)
@@ -1589,9 +1488,8 @@ export default function Home() {
     <TooltipProvider>
       <div className={`min-h-screen flex flex-col bg-background ${theme === 'light' ? 'nyc-light-mode' : ''}`} style={{ backgroundColor: theme === 'dark' ? 'oklch(0.1 0 0)' : 'oklch(0.97 0 0)' }}>
         <ReadingProgress />
-        <div className="nyc-caution-stripe fixed top-0 left-0 right-0 z-[61]" />
+
         <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
-        <KeyboardShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
         <GuideTour
           open={tourOpen}
           onClose={() => {
@@ -1607,42 +1505,32 @@ export default function Home() {
 
         {/* ── SIDE NAV (Desktop) ── */}
         <nav className="hidden lg:flex fixed left-0 top-0 h-full w-14 flex-col items-center py-5 gap-1 z-50 bg-background/80 backdrop-blur-md border-r border-white/5">
-          <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45 mb-4 nyc-glow-subtle" />
+          <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45 mb-4" />
           {TOC_ITEMS.map(item => (
             <Tooltip key={item.id}>
               <TooltipTrigger asChild>
                 <a
                   href={`#${item.id}`}
-                  className={`w-9 h-9 flex items-center justify-center rounded-md text-[11px] font-mono transition-all duration-300 relative ${
+                  className={`w-9 h-9 flex items-center justify-center rounded-md text-[11px] font-mono transition-all duration-300 ${
                     activeSection === item.id
                       ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] font-bold nyc-sidebar-active'
-                      : visitedSections.has(item.id)
-                        ? 'text-white/50 hover:text-white/70 hover:bg-white/5'
-                        : 'text-white/35 hover:text-white/60 hover:bg-white/5'
+                      : 'text-white/35 hover:text-white/60 hover:bg-white/5'
                   }`}
                 >
                   {item.label}
-                  {bookmarks.has(item.id) && (
-                    <span className="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-[var(--nyc-taxi)]" />
-                  )}
-                  {visitedSections.has(item.id) && activeSection !== item.id && !bookmarks.has(item.id) && (
-                    <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[var(--nyc-taxi)]/40" />
-                  )}
                 </a>
               </TooltipTrigger>
               <TooltipContent side="right" className="font-mono text-xs bg-[oklch(0.17_0_0)] border-white/10">
                 {item.title}
-                {bookmarks.has(item.id) && <Star className="w-2.5 h-2.5 ml-1.5 text-[var(--nyc-taxi)] inline fill-[var(--nyc-taxi)]" />}
-                {!bookmarks.has(item.id) && visitedSections.has(item.id) && <span className="ml-1.5 text-green-400/50">✓</span>}
               </TooltipContent>
             </Tooltip>
           ))}
 
-          {/* Search button */}
+          {/* Utility buttons */}
           <div className="w-8 border-t border-white/[0.06] my-1" />
           <button
             onClick={() => setSearchOpen(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors mt-2"
+            className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
           >
             <Search className="w-3.5 h-3.5" />
           </button>
@@ -1654,20 +1542,6 @@ export default function Home() {
             <List className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => setShortcutsOpen(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
-            title="Keyboard Shortcuts"
-          >
-            <Keyboard className="w-3.5 h-3.5" />
-          </button>
-          <button
-            onClick={() => { setTourCompleted(false); setTourStep(0); setTourOpen(true) }}
-            className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
-            title={tourCompleted ? '✓ Tour completed' : 'Guide Tour'}
-          >
-            {tourCompleted ? <Check className="w-3.5 h-3.5 text-green-400/60" /> : <Compass className="w-3.5 h-3.5" />}
-          </button>
-          <button
             onClick={toggleTheme}
             className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
             title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
@@ -1675,19 +1549,8 @@ export default function Home() {
             {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
 
-          <div className="mt-auto flex flex-col items-center gap-2">
-            {visitedSections.size > 0 && (
-              <span className="text-[10px] font-mono text-[var(--nyc-steel)]" title="Разделов прочитано">
-                {visitedSections.size}/{TOC_ITEMS.length}
-              </span>
-            )}
-            {readingProgress > 0 && readingProgress < 100 && (
-              <span className="text-[10px] font-mono text-[var(--nyc-steel)]">📖 {readingProgress}%</span>
-            )}
-            {readingProgress >= 100 && (
-              <span className="text-[10px] font-mono text-green-400">✓ Done</span>
-            )}
-            <div className="w-1.5 h-1.5 rounded-full bg-[var(--nyc-taxi)] animate-pulse" />
+          <div className="mt-auto">
+            <div className="w-1.5 h-1.5 rounded-full bg-[var(--nyc-taxi)]/40 mx-auto" />
           </div>
         </nav>
 
@@ -1719,28 +1582,6 @@ export default function Home() {
                   </button>
                 </div>
                 <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
-                  {/* Bookmarks section */}
-                  {bookmarks.size > 0 && (
-                    <div className="mb-3">
-                      <div className="flex items-center gap-2 px-3 py-1.5">
-                        <Star className="w-3 h-3 text-[var(--nyc-taxi)] fill-[var(--nyc-taxi)]" />
-                        <span className="text-[10px] font-mono text-[var(--nyc-taxi)] uppercase tracking-wider font-bold">Закладки</span>
-                      </div>
-                      {TOC_ITEMS.filter(item => bookmarks.has(item.id)).map(item => (
-                        <a
-                          key={`bm-${item.id}`}
-                          href={`#${item.id}`}
-                          onClick={() => setTocPanelOpen(false)}
-                          className="flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-[var(--nyc-taxi)]/80 hover:text-[var(--nyc-taxi)] hover:bg-[var(--nyc-taxi)]/5 transition-colors"
-                        >
-                          <Star className="w-3 h-3 fill-[var(--nyc-taxi)] shrink-0" />
-                          <span className="font-mono text-xs w-6 shrink-0">{item.label}</span>
-                          <span className="truncate flex-1 text-xs">{item.title}</span>
-                        </a>
-                      ))}
-                      <div className="h-px bg-white/5 my-2 mx-3" />
-                    </div>
-                  )}
                   {TOC_ITEMS.map(item => (
                     <a
                       key={item.id}
@@ -1749,37 +1590,14 @@ export default function Home() {
                       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                         activeSection === item.id
                           ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)]'
-                          : visitedSections.has(item.id)
-                            ? 'text-white/60 hover:text-white/80 hover:bg-white/5'
-                            : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+                          : 'text-white/50 hover:text-white/80 hover:bg-white/5'
                       }`}
                     >
                       <item.icon className="w-4 h-4 shrink-0" />
                       <span className="font-mono text-xs w-6 shrink-0">{item.label}</span>
                       <span className="truncate flex-1">{item.title}</span>
-                      {bookmarks.has(item.id) && (
-                        <Star className="w-2.5 h-2.5 text-[var(--nyc-taxi)] fill-[var(--nyc-taxi)] shrink-0" />
-                      )}
-                      {!bookmarks.has(item.id) && visitedSections.has(item.id) && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-400/40 shrink-0" />
-                      )}
                     </a>
                   ))}
-                </div>
-                {/* Reading progress in TOC panel */}
-                <div className="border-t border-white/[0.06] px-4 py-3">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-mono text-[var(--nyc-steel)] uppercase tracking-wider">Прочитано</span>
-                    <span className="text-[10px] font-mono text-[var(--nyc-taxi)] font-bold">{visitedSections.size}/{TOC_ITEMS.length}</span>
-                  </div>
-                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-[var(--nyc-taxi)] rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(visitedSections.size / TOC_ITEMS.length) * 100}%` }}
-                      transition={{ duration: 0.5 }}
-                    />
-                  </div>
                 </div>
               </motion.div>
             </>
@@ -1965,71 +1783,22 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               >
-                {/* Version badge */}
+                {/* Version + reading badge */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--nyc-taxi)]/10 border border-[var(--nyc-taxi)]/30 mb-6"
+                  className="inline-flex items-center gap-3 px-3 py-1.5 rounded-full bg-[var(--nyc-taxi)]/10 border border-[var(--nyc-taxi)]/30 mb-6"
                 >
                   <div className="w-1.5 h-1.5 rounded-full bg-[var(--nyc-taxi)] animate-pulse" />
                   <span className="font-mono text-[10px] text-[var(--nyc-taxi)] tracking-widest uppercase">
-                    v1.0 · Production Ready · 22.04.2026
+                    v1.0 · Production Ready
                   </span>
-                </motion.div>
-
-                {/* Reading progress badge */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--nyc-steel)]/10 border border-[var(--nyc-steel)]/20 mb-6 ml-2"
-                >
-                  <AnimatePresence mode="wait">
-                    {readingProgress === 0 ? (
-                      <motion.span
-                        key="reading-time"
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -5 }}
-                        transition={{ duration: 0.2 }}
-                        className="flex items-center gap-2"
-                      >
-                        <BookOpen className="w-3 h-3 text-[oklch(0.65_0_0)]" />
-                        <span className="font-mono text-[10px] text-[oklch(0.65_0_0)] tracking-widest">
-                          ~14 мин чтения
-                        </span>
-                      </motion.span>
-                    ) : readingProgress >= 100 ? (
-                      <motion.span
-                        key="reading-done"
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -5 }}
-                        transition={{ duration: 0.2 }}
-                        className="flex items-center gap-2"
-                      >
-                        <Check className="w-3 h-3 text-green-400" />
-                        <span className="font-mono text-[10px] text-green-400 tracking-widest">
-                          ✓ Прочитано!
-                        </span>
-                      </motion.span>
-                    ) : (
-                      <motion.span
-                        key={`reading-${readingProgress}`}
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -5 }}
-                        transition={{ duration: 0.2 }}
-                        className="flex items-center gap-2"
-                      >
-                        <BookOpen className="w-3 h-3 text-[var(--nyc-taxi)]" />
-                        <span className="font-mono text-[10px] text-[var(--nyc-taxi)] tracking-widest">
-                          📖 Прочитано {readingProgress}%
-                        </span>
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
+                  <span className="text-white/10">|</span>
+                  <BookOpen className="w-3 h-3 text-[var(--nyc-taxi)]/60" />
+                  <span className="font-mono text-[10px] text-[var(--nyc-taxi)]/60 tracking-widest">
+                    ~14 мин
+                  </span>
                 </motion.div>
 
                 <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-[0.9] mb-5 nyc-text-shadow-strong">
@@ -2061,7 +1830,7 @@ export default function Home() {
                         <fact.icon className="w-3.5 h-3.5 text-[var(--nyc-taxi)]" />
                         <span className="text-[10px] text-[var(--nyc-steel)] font-mono uppercase tracking-wider">{fact.label}</span>
                       </div>
-                      <span className="text-xl font-black text-[oklch(0.95_0_0)]"><AnimatedCounter value={fact.value} /></span>
+                      <span className="text-xl font-black text-[oklch(0.95_0_0)]">{fact.value}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -3336,8 +3105,7 @@ export default function Home() {
 
         {/* ── FOOTER ── */}
         <footer className="mt-auto relative z-10">
-          <div className="nyc-caution-stripe" />
-          <div className="nyc-footer-glow-line bg-gradient-to-b from-[oklch(0.08_0_0)] to-[oklch(0.06_0_0)] border-t border-white/5">
+          <div className="bg-gradient-to-b from-[oklch(0.08_0_0)] to-[oklch(0.06_0_0)] border-t border-white/5">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:ml-14">
               <div className="grid sm:grid-cols-3 gap-6 items-start">
                 {/* Left: Brand */}

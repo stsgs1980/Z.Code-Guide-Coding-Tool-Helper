@@ -846,3 +846,86 @@ Stage Summary:
 - All lint checks pass cleanly (0 errors)
 - Dev server compiling successfully
 - No breaking changes to existing functionality
+
+---
+Task ID: 14
+Agent: Main Agent (Simplification Round)
+Task: QA testing, simplification, remove visual clutter
+
+Work Log:
+- Read worklog.md (Tasks 1-13 completed, VLM Hero 6/10)
+- Performed QA via agent-browser: no page errors, dev server compiling
+- VLM analysis: Hero 6/10, Mid 7/10 — identified visual clutter
+- User directive: "Не усложнять!" — focus on SIMPLIFICATION, not adding features
+
+Changes Made (Simplification):
+
+1. **Removed caution-stripe** (2 occurrences)
+   - Fixed top bar (z-61) — visual noise
+   - Footer divider — unnecessary decoration
+
+2. **Removed AnimatedCounter component** (~40 lines)
+   - Replaced with static text in hero stats
+   - IntersectionObserver + requestAnimationFrame complexity removed
+
+3. **Simplified hero badges**
+   - Merged version badge + reading time badge into one clean badge
+   - Removed AnimatePresence reading progress animation (~30 lines)
+   - Badge now: "v1.0 · Production Ready | 📖 ~14 мин"
+
+4. **Simplified sidebar**
+   - Removed bookmark indicator dots on nav items
+   - Removed visited section indicator dots
+   - Removed bookmark/visited indicators in tooltips
+   - Removed keyboard shortcuts button (dialog removed entirely)
+   - Removed tour button from sidebar
+   - Removed reading progress text/emoji at bottom
+   - Reduced pulse dot to simple static dot
+   - Kept: search, TOC panel, theme toggle (3 utility buttons)
+
+5. **Simplified TOC panel**
+   - Removed bookmarks section
+   - Removed visited section indicators
+   - Removed reading progress bar at bottom
+   - Clean list with just icons + labels + titles
+
+6. **Removed KeyboardShortcutsDialog** (~60 lines)
+   - No button to trigger it after sidebar cleanup
+   - Removed state variable and JSX reference
+
+7. **Cleaned up globals.css** (1642 → 919 lines, -43%)
+   - Removed 40+ unused CSS class groups:
+     - Grid backgrounds (nyc-grid-bg, nyc-grid-dense)
+     - Industrial textures (metal, brushed)
+     - Decorative elements (rivets, gears, pipes, joints)
+     - Micro-interactions (pulse-ring, float, typing-cursor, card-enter)
+     - Atmospheric effects (noise, vignette, grid-pulse, atmosphere)
+     - Enhanced code blocks (code-block-enhanced, line numbers)
+     - Gradient text variants (4 unused variants)
+     - Tags, tooltips, hover states, tier accents
+     - 11 @keyframes animations no longer referenced
+
+8. **Removed unused import** (Keyboard icon)
+
+VLM QA Scores:
+- Hero: 6/10 → 8/10
+- Mid-section: 7/10 → 8/10
+- Overall: 8/10
+
+Build Status:
+- Lint: ✅ Clean
+- Dev server: ✅ Compiling successfully
+- No runtime errors
+
+Current Project Status:
+- Full guide page with 13+ sections, NYC industrial theme
+- Cleaner, less cluttered UI — 8/10 VLM score
+- Total lines: 5070 → 4116 (-19%)
+- CSS lines: 1642 → 919 (-43%)
+- Interactive features preserved: search, guide tour, checklist, accordion, tabs, Plan Wizard, theme toggle, FAQ, Copy All, CLI code blocks with syntax highlighting, section share, command filter
+
+Unresolved Issues / Next Steps:
+- Mobile nav could be simplified further
+- Some state variables (bookmarks, visitedSections) still exist but are less visible in UI
+- Could add a subtle hover effect on section cards for better interactivity
+- Light mode could use more polish
