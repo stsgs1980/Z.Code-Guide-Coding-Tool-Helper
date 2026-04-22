@@ -7,7 +7,6 @@ import {
   Copy,
   Check,
   ChevronDown,
-  ChevronRight,
   Zap,
   DollarSign,
   Settings,
@@ -43,9 +42,11 @@ import {
   Keyboard,
   Compass,
   ChevronLeft,
+  ChevronRight,
   Sun,
   Moon,
   ClipboardList,
+  List,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -77,6 +78,7 @@ const TOC_ITEMS = [
   { id: 'mcp', label: '06', title: 'MCP-серверы', icon: Cable },
   { id: 'prompts', label: '07', title: 'Промпт-шаблоны', icon: Sparkles },
   { id: 'cost', label: '08', title: 'Стоимость', icon: DollarSign },
+  { id: 'wizard', label: '08.5', title: 'Мастер плана', icon: Zap },
   { id: 'troubleshoot', label: '09', title: 'Диагностика', icon: AlertTriangle },
   { id: 'faq', label: '09.5', title: 'FAQ', icon: MessageSquare },
   { id: 'architecture', label: '10', title: 'Архитектура', icon: Cpu },
@@ -243,9 +245,11 @@ function ReadingProgress() {
 
 function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [query, setQuery] = useState('')
+  const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const handleClose = useCallback(() => {
     setQuery('')
+    setSelectedIndex(0)
     onClose()
   }, [onClose])
 
@@ -273,6 +277,21 @@ function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void })
       )
     : TOC_ITEMS
 
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setSelectedIndex(prev => Math.min(prev + 1, results.length - 1))
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setSelectedIndex(prev => Math.max(prev - 1, 0))
+    }
+    if (e.key === 'Enter' && results[selectedIndex]) {
+      handleClose()
+      document.getElementById(results[selectedIndex].id)?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <AnimatePresence>
       {open && (
@@ -295,23 +314,32 @@ function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void })
               <input
                 ref={inputRef}
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0) }}
+                onKeyDown={handleSearchKeyDown}
                 placeholder="Поиск по разделам..."
                 className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/30"
               />
-              <kbd className="text-[10px] text-white/30 font-mono bg-white/5 px-1.5 py-0.5 rounded">ESC</kbd>
+              <div className="flex items-center gap-1">
+                <kbd className="text-[10px] text-white/20 font-mono bg-white/5 px-1 py-0.5 rounded">↑↓</kbd>
+                <kbd className="text-[10px] text-white/20 font-mono bg-white/5 px-1 py-0.5 rounded">↵</kbd>
+                <kbd className="text-[10px] text-white/30 font-mono bg-white/5 px-1.5 py-0.5 rounded">ESC</kbd>
+              </div>
             </div>
             <div className="max-h-64 overflow-y-auto p-2">
-              {results.map(item => (
+              {results.map((item, index) => (
                 <a
                   key={item.id}
                   href={`#${item.id}`}
                   onClick={handleClose}
-                  className="flex items-center gap-3 px-3 py-2 rounded text-sm hover:bg-white/5 transition-colors"
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                    index === selectedIndex
+                      ? 'bg-[var(--nyc-taxi)]/10 text-[var(--nyc-taxi)]'
+                      : 'hover:bg-white/5'
+                  }`}
                 >
-                  <span className="font-mono text-[var(--nyc-taxi)] text-xs w-5">{item.label}</span>
-                  <item.icon className="w-3.5 h-3.5 text-white/40" />
-                  <span className="text-white/70">{item.title}</span>
+                  <span className="font-mono text-xs w-5 shrink-0">{item.label}</span>
+                  <item.icon className={`w-3.5 h-3.5 shrink-0 ${index === selectedIndex ? 'text-[var(--nyc-taxi)]' : 'text-white/40'}`} />
+                  <span className={index === selectedIndex ? 'text-[var(--nyc-taxi)]' : 'text-white/70'}>{item.title}</span>
                 </a>
               ))}
               {results.length === 0 && (
@@ -363,7 +391,7 @@ function KeyboardShortcutsDialog({ open, onClose }: { open: boolean; onClose: ()
           >
             <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10">
               <Keyboard className="w-4 h-4 text-[var(--nyc-taxi)]" />
-              <span className="font-bold text-sm">Клавиатурные сокращения</span>
+              <span className="text-sm font-semibold tracking-tight">Клавиатурные сокращения</span>
             </div>
             <div className="p-4 space-y-2.5">
               {shortcuts.map(s => (
@@ -610,6 +638,40 @@ function GuideTour({ open, onClose, currentStep, onNext, onPrev }: {
   )
 }
 
+/* ───────────────────── SECTION NAVIGATION ───────────────────── */
+
+function SectionNav({ currentId }: { currentId: string }) {
+  const currentIndex = TOC_ITEMS.findIndex(item => item.id === currentId)
+  if (currentIndex < 0) return null
+  const prev = currentIndex > 0 ? TOC_ITEMS[currentIndex - 1] : null
+  const next = currentIndex < TOC_ITEMS.length - 1 ? TOC_ITEMS[currentIndex + 1] : null
+
+  return (
+    <div className="flex items-center justify-between mt-8 mb-2">
+      {prev ? (
+        <a
+          href={`#${prev.id}`}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white/40 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-all group/nav"
+        >
+          <ChevronLeft className="w-3.5 h-3.5 group-hover/nav:-translate-x-0.5 transition-transform" />
+          <span className="font-mono">{prev.label}</span>
+          <span className="hidden sm:inline">{prev.title}</span>
+        </a>
+      ) : <div />}
+      {next ? (
+        <a
+          href={`#${next.id}`}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white/40 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-all group/nav"
+        >
+          <span className="hidden sm:inline">{next.title}</span>
+          <span className="font-mono">{next.label}</span>
+          <ChevronRight className="w-3.5 h-3.5 group-hover/nav:translate-x-0.5 transition-transform" />
+        </a>
+      ) : <div />}
+    </div>
+  )
+}
+
 /* ───────────────────── COMPONENTS ───────────────────── */
 
 function CopyButton({ text, className = '' }: { text: string; className?: string }) {
@@ -824,7 +886,7 @@ function CodeBlock({ code, lang = 'bash' }: { code: string; lang?: string }) {
               className="flex items-start gap-0 px-4 py-0 hover:bg-white/[0.02] transition-colors group/line"
             >
               {/* Line number */}
-              <span className="w-8 shrink-0 text-right pr-3 select-none font-mono text-[11px] leading-[1.8] text-white/10 group-hover/line:text-white/20 transition-colors">
+              <span className="w-8 shrink-0 text-right pr-3 select-none font-mono text-[11px] leading-[1.8] text-white/15 group-hover/line:text-white/20 transition-colors">
                 {i + 1}
               </span>
               {/* Prompt + content */}
@@ -841,7 +903,7 @@ function CodeBlock({ code, lang = 'bash' }: { code: string; lang?: string }) {
         })}
         {/* Blinking cursor line */}
         <div className="flex items-start gap-0 px-4 py-0">
-          <span className="w-8 shrink-0 text-right pr-3 select-none font-mono text-[11px] leading-[1.8] text-white/10">&nbsp;</span>
+          <span className="w-8 shrink-0 text-right pr-3 select-none font-mono text-[11px] leading-[1.8] text-white/15">&nbsp;</span>
           <div className="flex items-center gap-2">
             <span className="text-[var(--nyc-taxi)] font-mono text-sm leading-[1.8] shrink-0 select-none">❯</span>
             <span className="nyc-typing-cursor font-mono text-sm leading-[1.8] text-[var(--nyc-concrete)]" />
@@ -900,7 +962,7 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
     const sectionMap: Record<string, string> = {
       '00': 'hero', '01': 'matrix', '02': 'platforms', '03': 'helper',
       '04': 'stagewise', '05': 'install', '06': 'mcp', '07': 'prompts',
-      '08': 'cost', '09': 'troubleshoot', '09.5': 'faq', '10': 'architecture', '11': 'checklist',
+      '08': 'cost', '08.5': 'wizard', '09': 'troubleshoot', '09.5': 'faq', '10': 'architecture', '11': 'checklist',
     }
     const sectionId = sectionMap[number.trim()] || 'hero'
     const shareUrl = `${window.location.origin}${window.location.pathname}#${sectionId}`
@@ -923,17 +985,32 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
           <span className="section-number font-mono">{number}</span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-r from-[var(--nyc-taxi)]/30 to-transparent" />
-        <button
-          onClick={handleShare}
-          className="p-1 rounded text-white/15 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-all"
-          title="Скопировать ссылку на раздел"
-        >
-          {shareCopied ? <Check className="w-3 h-3 text-green-400" /> : <Hash className="w-3 h-3" />}
-        </button>
+        <div className="relative">
+          <button
+            onClick={handleShare}
+            className="p-1 rounded text-white/15 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-all"
+            title="Скопировать ссылку на раздел"
+          >
+            {shareCopied ? <Check className="w-3 h-3 text-green-400" /> : <Hash className="w-3 h-3" />}
+          </button>
+          <AnimatePresence>
+            {shareCopied && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="absolute top-full left-1/2 -translate-x-1/2 mt-1 whitespace-nowrap bg-[oklch(0.14_0_0)] border border-[var(--nyc-taxi)]/20 rounded-lg px-3 py-1.5 text-xs text-green-400 flex items-center gap-1.5 z-10"
+              >
+                <Check className="w-3 h-3" />
+                Ссылка скопирована!
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
       <h2 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">{title}</h2>
       {subtitle && (
-        <p className="text-[var(--nyc-steel)] mt-2 text-xs font-mono tracking-widest uppercase">
+        <p className="text-[oklch(0.6_0_0)] mt-2 text-xs font-mono tracking-widest uppercase">
           {'<'}{subtitle}{' />'}
         </p>
       )}
@@ -943,9 +1020,9 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
 
 function TaxiDivider() {
   return (
-    <div className="flex items-center gap-3 my-16 relative">
+    <div className="flex items-center gap-3 my-12 relative">
       <motion.div
-        className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent"
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true }}
@@ -958,12 +1035,12 @@ function TaxiDivider() {
         viewport={{ once: true }}
         transition={{ delay: 0.3, duration: 0.4 }}
       >
-        <div className="w-1 h-1 bg-[var(--nyc-taxi)]/40" />
-        <div className="w-2 h-2 bg-[var(--nyc-taxi)] rotate-45" />
-        <div className="w-1 h-1 bg-[var(--nyc-taxi)]/40" />
+        <div className="w-1 h-1 bg-[var(--nyc-taxi)]/50" />
+        <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45 shadow-sm shadow-[var(--nyc-taxi)]/30" />
+        <div className="w-1 h-1 bg-[var(--nyc-taxi)]/50" />
       </motion.div>
       <motion.div
-        className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent"
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true }}
@@ -975,13 +1052,112 @@ function TaxiDivider() {
 
 function StatusDot({ status }: { status: boolean | string }) {
   if (status === true) return (
-    <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-green-500/15 text-green-400 text-xs font-bold border border-green-500/20">✓</span>
+    <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-green-500/15 text-green-400 text-xs font-bold border border-green-500/20">✓</span>
   )
   if (status === false) return (
-    <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-red-500/10 text-red-400/70 text-xs font-bold border border-red-500/15">✗</span>
+    <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-red-500/10 text-red-400/70 text-xs font-bold border border-red-500/15">✗</span>
   )
   return (
     <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-[var(--nyc-taxi)]/10 text-[var(--nyc-taxi)] border border-[var(--nyc-taxi)]/15">{status as string}</span>
+  )
+}
+
+/* ───────────────────── COPY SUMMARY BUTTON ───────────────────── */
+
+function generateSummary(): string {
+  const lines: string[] = []
+
+  lines.push('UI Generation Stack — Единое руководство v1.0')
+  lines.push('')
+
+  // 01. Матрица инструментов
+  lines.push('01. Матрица инструментов')
+  for (const tool of TOOLS) {
+    lines.push(`- ${tool.name} (${tool.type}) — ${tool.price}${tool.mcp ? ' [MCP]' : ''}`)
+  }
+  lines.push('')
+
+  // 02. Платформы
+  lines.push('02. Платформы')
+  for (const p of PLATFORMS) {
+    lines.push(`- ${p.name} — ${p.desc}`)
+  }
+  lines.push('')
+
+  // 03. Coding Tool Helper
+  lines.push('03. Coding Tool Helper')
+  for (const cmd of HELPER_COMMANDS) {
+    lines.push(`  ${cmd.cmd} — ${cmd.desc}`)
+  }
+  lines.push('')
+
+  // 04. Stagewise (brief mention)
+  lines.push('04. Stagewise — AI-браузер для веб-разработки (Free)')
+  lines.push('')
+
+  // 05. Установка
+  lines.push('05. Установка')
+  lines.push('npx @z_ai/coding-helper init')
+  lines.push('coding-helper auth')
+  lines.push('coding-helper lang set ru')
+  lines.push('coding-helper doctor')
+  lines.push('')
+
+  // 06. MCP-серверы
+  lines.push('06. MCP-серверы')
+  for (const server of MCP_SERVERS) {
+    lines.push(`- ${server.name} (${server.tool}) — ${server.desc}`)
+  }
+  lines.push('')
+
+  // 07. Промпт-шаблоны
+  lines.push('07. Промпт-шаблоны')
+  for (const tmpl of PROMPT_TEMPLATES) {
+    lines.push(`- ${tmpl.category}`)
+  }
+  lines.push('')
+
+  // 08. Стоимость
+  lines.push('08. Стоимость')
+  for (const scenario of COST_SCENARIOS) {
+    lines.push(`- ${scenario.name}: ${scenario.price} — ${scenario.tools}`)
+  }
+  lines.push('')
+
+  // 09. Диагностика
+  lines.push('09. Диагностика')
+  for (const err of ERRORS) {
+    lines.push(`- ${err.error} → ${err.fix}`)
+  }
+  lines.push('')
+
+  // Checklist
+  lines.push('11. Чек-лист')
+  for (const item of CHECKLIST_ITEMS) {
+    lines.push(`☐ ${item.label}`)
+  }
+
+  return lines.join('\n')
+}
+
+function CopySummaryButton() {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(generateSummary())
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }, [])
+
+  return (
+    <Button
+      variant="outline"
+      onClick={handleCopy}
+      className="border-white/20 hover:bg-white/5 hover:border-[var(--nyc-taxi)]/30 gap-2"
+    >
+      {copied ? <Check className="w-4 h-4 text-green-400" /> : <ClipboardList className="w-4 h-4" />}
+      {copied ? 'Скопировано!' : 'Скопировать сводку'}
+    </Button>
   )
 }
 
@@ -1000,6 +1176,7 @@ export default function Home() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [shortcutsOpen, setShortcutsOpen] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
+  const [showQuickStart, setShowQuickStart] = useState(false)
   const [tourOpen, setTourOpen] = useState(false)
   const [tourStep, setTourStep] = useState(0)
   const [tourCompleted, setTourCompleted] = useState(() => {
@@ -1014,6 +1191,31 @@ export default function Home() {
     return (localStorage.getItem('nyc-theme') as 'dark' | 'light') || 'dark'
   })
   const [helperFilter, setHelperFilter] = useState('')
+  const [errorExpanded, setErrorExpanded] = useState<string[]>([])
+  const [faqExpanded, setFaqExpanded] = useState<string[]>([])
+  const [readingProgress, setReadingProgress] = useState(0)
+  const [tocPanelOpen, setTocPanelOpen] = useState(false)
+  const [quickJumpOpen, setQuickJumpOpen] = useState(false)
+  const [visitedSections, setVisitedSections] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set()
+    try {
+      const saved = localStorage.getItem('nyc-visited')
+      return saved ? new Set(JSON.parse(saved)) : new Set()
+    } catch { return new Set() }
+  })
+  const quickJumpRef = useRef<HTMLDivElement>(null)
+
+  // Close quick jump on click outside
+  useEffect(() => {
+    if (!quickJumpOpen) return
+    const handleClick = (e: MouseEvent) => {
+      if (quickJumpRef.current && !quickJumpRef.current.contains(e.target as Node)) {
+        setQuickJumpOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [quickJumpOpen])
 
   const toggleWizardTool = (tool: string) => {
     setWizardTools(prev =>
@@ -1047,13 +1249,22 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 600)
+      setShowQuickStart(window.scrollY > 400 && activeSection !== 'install' && activeSection !== 'hero')
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
+      const progress = scrollHeight > 0 ? Math.round((window.scrollY / scrollHeight) * 100) : 0
+      setReadingProgress(progress)
       const sections = TOC_ITEMS.map(item => document.getElementById(item.id))
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = sections[i]
         if (section) {
           const rect = section.getBoundingClientRect()
           if (rect.top <= 200) {
-            setActiveSection(TOC_ITEMS[i].id)
+            const sectionId = TOC_ITEMS[i].id
+            setActiveSection(sectionId)
+            setVisitedSections(prev => {
+              if (prev.has(sectionId)) return prev
+              return new Set([...prev, sectionId])
+            })
             break
           }
         }
@@ -1089,6 +1300,10 @@ export default function Home() {
   }, [tourCompleted])
 
   useEffect(() => {
+    localStorage.setItem('nyc-visited', JSON.stringify([...visitedSections]))
+  }, [visitedSections])
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't capture if user is typing in an input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
@@ -1102,6 +1317,10 @@ export default function Home() {
       if (e.key === 'k' && !e.metaKey && !e.ctrlKey) {
         const prev = TOC_ITEMS[Math.max(currentIndex - 1, 0)]
         document.getElementById(prev.id)?.scrollIntoView({ behavior: 'smooth' })
+      }
+      if (e.key === 'Escape') {
+        setTocPanelOpen(false)
+        setQuickJumpOpen(false)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -1137,69 +1356,167 @@ export default function Home() {
         />
 
         {/* ── SIDE NAV (Desktop) ── */}
-        <nav className="hidden lg:flex fixed left-0 top-0 h-full w-14 flex-col items-center py-5 gap-0.5 z-50 bg-background/80 backdrop-blur-md border-r border-white/5">
+        <nav className="hidden lg:flex fixed left-0 top-0 h-full w-14 flex-col items-center py-5 gap-1 z-50 bg-background/80 backdrop-blur-md border-r border-white/5">
           <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45 mb-4 nyc-glow-subtle" />
           {TOC_ITEMS.map(item => (
             <Tooltip key={item.id}>
               <TooltipTrigger asChild>
                 <a
                   href={`#${item.id}`}
-                  className={`w-9 h-9 flex items-center justify-center rounded-md text-[11px] font-mono transition-all duration-300 ${
+                  className={`w-9 h-9 flex items-center justify-center rounded-md text-[11px] font-mono transition-all duration-300 relative ${
                     activeSection === item.id
                       ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] font-bold nyc-sidebar-active'
-                      : 'text-white/25 hover:text-white/60 hover:bg-white/5'
+                      : visitedSections.has(item.id)
+                        ? 'text-white/50 hover:text-white/70 hover:bg-white/5'
+                        : 'text-white/35 hover:text-white/60 hover:bg-white/5'
                   }`}
                 >
                   {item.label}
+                  {visitedSections.has(item.id) && activeSection !== item.id && (
+                    <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[var(--nyc-taxi)]/40" />
+                  )}
                 </a>
               </TooltipTrigger>
               <TooltipContent side="right" className="font-mono text-xs bg-[oklch(0.17_0_0)] border-white/10">
                 {item.title}
+                {visitedSections.has(item.id) && <span className="ml-1.5 text-green-400/50">✓</span>}
               </TooltipContent>
             </Tooltip>
           ))}
 
           {/* Search button */}
+          <div className="w-8 border-t border-white/[0.06] my-1" />
           <button
             onClick={() => setSearchOpen(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-md text-white/25 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors mt-2"
+            className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors mt-2"
           >
             <Search className="w-3.5 h-3.5" />
           </button>
           <button
+            onClick={() => setTocPanelOpen(prev => !prev)}
+            className={`w-9 h-9 flex items-center justify-center rounded-md transition-colors ${tocPanelOpen ? 'text-[var(--nyc-taxi)] bg-[var(--nyc-taxi)]/15' : 'text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5'}`}
+            title="Оглавление"
+          >
+            <List className="w-3.5 h-3.5" />
+          </button>
+          <button
             onClick={() => setShortcutsOpen(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-md text-white/25 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
             title="Keyboard Shortcuts"
           >
             <Keyboard className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => { setTourCompleted(false); setTourStep(0); setTourOpen(true) }}
-            className="w-9 h-9 flex items-center justify-center rounded-md text-white/25 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
             title={tourCompleted ? '✓ Tour completed' : 'Guide Tour'}
           >
             {tourCompleted ? <Check className="w-3.5 h-3.5 text-green-400/60" /> : <Compass className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={toggleTheme}
-            className="w-9 h-9 flex items-center justify-center rounded-md text-white/25 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
             title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
           >
             {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
 
           <div className="mt-auto flex flex-col items-center gap-2">
+            {visitedSections.size > 0 && (
+              <span className="text-[10px] font-mono text-[var(--nyc-steel)]" title="Разделов прочитано">
+                {visitedSections.size}/{TOC_ITEMS.length}
+              </span>
+            )}
+            {readingProgress > 0 && readingProgress < 100 && (
+              <span className="text-[10px] font-mono text-[var(--nyc-steel)]">📖 {readingProgress}%</span>
+            )}
+            {readingProgress >= 100 && (
+              <span className="text-[10px] font-mono text-green-400">✓ Done</span>
+            )}
             <div className="w-1.5 h-1.5 rounded-full bg-[var(--nyc-taxi)] animate-pulse" />
           </div>
         </nav>
 
-        {/* ── MOBILE NAV ── */}
+        {/* ── TOC PANEL (Desktop) ── */}
+        <AnimatePresence>
+          {tocPanelOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/30 z-[50] hidden lg:block"
+                onClick={() => setTocPanelOpen(false)}
+              />
+              <motion.div
+                initial={{ x: -240 }}
+                animate={{ x: 0 }}
+                exit={{ x: -240 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="fixed left-14 top-0 bottom-0 w-60 z-[51] bg-[oklch(0.12_0_0)] border-r border-white/10 hidden lg:flex flex-col"
+              >
+                <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
+                  <span className="font-mono text-xs font-bold tracking-wider text-[var(--nyc-taxi)]">ОГЛАВЛЕНИЕ</span>
+                  <button
+                    onClick={() => setTocPanelOpen(false)}
+                    className="p-1.5 rounded hover:bg-white/5 text-white/30 hover:text-white/60 transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
+                  {TOC_ITEMS.map(item => (
+                    <a
+                      key={item.id}
+                      href={`#${item.id}`}
+                      onClick={() => setTocPanelOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                        activeSection === item.id
+                          ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)]'
+                          : visitedSections.has(item.id)
+                            ? 'text-white/60 hover:text-white/80 hover:bg-white/5'
+                            : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4 shrink-0" />
+                      <span className="font-mono text-xs w-6 shrink-0">{item.label}</span>
+                      <span className="truncate flex-1">{item.title}</span>
+                      {visitedSections.has(item.id) && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400/40 shrink-0" />
+                      )}
+                    </a>
+                  ))}
+                </div>
+                {/* Reading progress in TOC panel */}
+                <div className="border-t border-white/[0.06] px-4 py-3">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] font-mono text-[var(--nyc-steel)] uppercase tracking-wider">Прочитано</span>
+                    <span className="text-[10px] font-mono text-[var(--nyc-taxi)] font-bold">{visitedSections.size}/{TOC_ITEMS.length}</span>
+                  </div>
+                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-[var(--nyc-taxi)] rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(visitedSections.size / TOC_ITEMS.length) * 100}%` }}
+                      transition={{ duration: 0.5 }}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* ── MOBILE NAV BAR ── */}
         <div className="lg:hidden fixed top-0.5 left-0 right-0 z-50 mx-2 mt-1">
           <div className="bg-background/90 backdrop-blur-md border border-white/10 rounded-lg shadow-lg">
             <div className="flex items-center justify-between px-4 py-2.5">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45" />
                 <span className="font-mono text-xs font-bold tracking-wider">GUIDE</span>
+                {readingProgress > 0 && (
+                  <span className="text-[9px] font-mono text-[var(--nyc-steel)]">{readingProgress}%</span>
+                )}
               </div>
               <div className="flex items-center gap-1">
                 <button
@@ -1224,40 +1541,133 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <AnimatePresence>
-              {mobileNav && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden border-t border-white/5"
-                >
-                  <div className="max-h-80 overflow-y-auto p-3 space-y-0.5">
-                    {TOC_ITEMS.map(item => (
-                      <a
-                        key={item.id}
-                        href={`#${item.id}`}
-                        onClick={() => setMobileNav(false)}
-                        className={`flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors ${
-                          activeSection === item.id
-                            ? 'bg-[var(--nyc-taxi)]/10 text-[var(--nyc-taxi)]'
-                            : 'text-white/50 hover:text-white/80'
-                        }`}
-                      >
-                        <item.icon className="w-3.5 h-3.5" />
-                        <span className="font-mono text-xs w-5">{item.label}</span>
-                        <span>{item.title}</span>
-                      </a>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Mobile reading progress bar */}
+            <div className="h-0.5 bg-white/5">
+              <motion.div
+                className="h-full bg-[var(--nyc-taxi)]"
+                style={{ width: `${readingProgress}%` }}
+                transition={{ duration: 0.2 }}
+              />
+            </div>
           </div>
         </div>
 
+        {/* ── MOBILE TOC DRAWER ── */}
+        <AnimatePresence>
+          {mobileNav && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[99] lg:hidden"
+                onClick={() => setMobileNav(false)}
+              />
+              <motion.div
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="fixed left-0 top-0 bottom-0 w-72 z-[100] bg-[oklch(0.12_0_0)] border-r border-white/10 lg:hidden flex flex-col"
+              >
+                {/* Drawer header */}
+                <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45" />
+                    <span className="font-mono text-xs font-bold tracking-wider">GUIDE</span>
+                  </div>
+                  <button
+                    onClick={() => setMobileNav(false)}
+                    className="p-1.5 rounded hover:bg-white/5 text-white/30 hover:text-white/60 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Drawer TOC list */}
+                <div className="flex-1 overflow-y-auto p-3 space-y-0.5">
+                  {TOC_ITEMS.map(item => (
+                    <a
+                      key={item.id}
+                      href={`#${item.id}`}
+                      onClick={() => setMobileNav(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                        activeSection === item.id
+                          ? 'bg-[var(--nyc-taxi)]/10 text-[var(--nyc-taxi)]'
+                          : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4" />
+                      <span className="font-mono text-xs w-6">{item.label}</span>
+                      <span className="flex-1">{item.title}</span>
+                      {visitedSections.has(item.id) && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400/40 shrink-0" />
+                      )}
+                    </a>
+                  ))}
+                </div>
+
+                {/* Drawer footer with progress */}
+                <div className="border-t border-white/[0.06] p-4 space-y-3">
+                  <div className="flex items-center justify-between text-[10px] font-mono">
+                    <span className="text-[var(--nyc-steel)] uppercase tracking-wider">Прочитано</span>
+                    <span className="text-[var(--nyc-taxi)] font-bold">{visitedSections.size}/{TOC_ITEMS.length}</span>
+                  </div>
+                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-[var(--nyc-taxi)] rounded-full transition-all duration-300"
+                      style={{ width: `${(visitedSections.size / TOC_ITEMS.length) * 100}%` }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => { setMobileNav(false); setTourCompleted(false); setTourStep(0); setTourOpen(true) }}
+                    className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm text-white/50 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+                  >
+                    <Compass className="w-4 h-4" />
+                    <span>Guide Tour</span>
+                  </button>
+                  <button
+                    onClick={() => { setMobileNav(false); toggleTheme() }}
+                    className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm text-white/50 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+                  >
+                    {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                    <span>{theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}</span>
+                  </button>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
         {/* ── MAIN CONTENT ── */}
-        <main className="flex-1 lg:ml-14 pt-16 lg:pt-0 relative z-10">
+        <main className="flex-1 lg:ml-14 pt-16 lg:pt-10 relative z-10">
+          {/* Sticky Section Indicator */}
+          <AnimatePresence>
+            {activeSection !== 'hero' && (
+              <motion.div
+                key={activeSection}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="hidden lg:flex fixed top-1 left-14 right-0 z-40 h-10 items-center px-6 nyc-section-indicator bg-[oklch(0.1_0_0)]/80 border-b border-white/[0.06]"
+              >
+                <div className="max-w-7xl mx-auto w-full flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 bg-[var(--nyc-taxi)] rotate-45" />
+                  <span className="font-mono text-[10px] text-[var(--nyc-taxi)] tracking-wider">
+                    § {TOC_ITEMS.find(item => item.id === activeSection)?.label || '00'}
+                  </span>
+                  <span className="text-sm font-semibold tracking-tight text-white/70">
+                    {TOC_ITEMS.find(item => item.id === activeSection)?.title || ''}
+                  </span>
+                  <div className="flex-1" />
+                  <span className="text-[10px] font-mono text-white/20">
+                    {readingProgress}% прочитано
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           {/* ═══════════════ HERO ═══════════════ */}
           <section id="hero" className="relative overflow-hidden">
             <div className="absolute inset-0 z-0">
@@ -1289,17 +1699,58 @@ export default function Home() {
                   </span>
                 </motion.div>
 
-                {/* Reading time badge */}
+                {/* Reading progress badge */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 }}
                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--nyc-steel)]/10 border border-[var(--nyc-steel)]/20 mb-6 ml-2"
                 >
-                  <BookOpen className="w-3 h-3 text-[var(--nyc-steel)]" />
-                  <span className="font-mono text-[10px] text-[var(--nyc-steel)] tracking-widest">
-                    ~14 мин чтения
-                  </span>
+                  <AnimatePresence mode="wait">
+                    {readingProgress === 0 ? (
+                      <motion.span
+                        key="reading-time"
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center gap-2"
+                      >
+                        <BookOpen className="w-3 h-3 text-[var(--nyc-steel)]" />
+                        <span className="font-mono text-[10px] text-[var(--nyc-steel)] tracking-widest">
+                          ~14 мин чтения
+                        </span>
+                      </motion.span>
+                    ) : readingProgress >= 100 ? (
+                      <motion.span
+                        key="reading-done"
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Check className="w-3 h-3 text-green-400" />
+                        <span className="font-mono text-[10px] text-green-400 tracking-widest">
+                          ✓ Прочитано!
+                        </span>
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key={`reading-${readingProgress}`}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center gap-2"
+                      >
+                        <BookOpen className="w-3 h-3 text-[var(--nyc-taxi)]" />
+                        <span className="font-mono text-[10px] text-[var(--nyc-taxi)] tracking-widest">
+                          📖 Прочитано {readingProgress}%
+                        </span>
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
 
                 <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-[0.9] mb-5 nyc-text-shadow-strong">
@@ -1349,6 +1800,7 @@ export default function Home() {
                       Чек-лист
                     </Button>
                   </a>
+                  <CopySummaryButton />
                 </div>
               </motion.div>
             </div>
@@ -1357,9 +1809,9 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {/* ═══════════════ 01 — TOOL MATRIX ═══════════════ */}
-            <section id="matrix" className="py-16 lg:py-20">
+            <section id="matrix" className="py-12 lg:py-20">
               <SectionHeader number="01" title="Матрица инструментов" subtitle="tools_matrix" />
-              <div className="grid gap-2">
+              <div className="grid gap-4">
                 {TOOLS.map((tool, i) => (
                   <motion.div
                     key={tool.name}
@@ -1368,28 +1820,28 @@ export default function Home() {
                     viewport={{ once: true, margin: '-50px' }}
                     transition={{ delay: i * 0.04, duration: 0.3 }}
                   >
-                    <Card className="nyc-card-enhanced nyc-card-tilt group">
-                      <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                    <Card className="nyc-card-enhanced nyc-card-tilt rounded-xl group">
+                      <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center gap-3">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           <div
-                            className="w-1 h-8 rounded-full shrink-0 opacity-60 group-hover:opacity-100 transition-opacity"
+                            className="w-1.5 h-10 rounded-full shrink-0 opacity-60 group-hover:opacity-100 transition-opacity"
                             style={{ backgroundColor: tool.color }}
                           />
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 mb-0.5">
-                              <span className="font-bold text-sm">{tool.name}</span>
+                              <span className="text-sm font-semibold tracking-tight">{tool.name}</span>
                               {tool.mcp && (
                                 <Badge className="bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] border-[var(--nyc-taxi)]/30 text-[10px] px-1.5 py-0">
                                   MCP
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-sm text-[oklch(0.7_0_0)]">{tool.desc}</p>
+                            <p className="text-sm text-[oklch(0.7_0_0)] leading-relaxed">{tool.desc}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-4 text-xs shrink-0 sm:pl-4 sm:border-l border-white/5">
                           <span className="font-mono text-[var(--nyc-concrete)]">{tool.type}</span>
-                          <span className="text-[var(--nyc-taxi)] font-mono font-bold">{tool.price}</span>
+                          <span className="text-[var(--nyc-taxi)] font-mono font-bold text-xs">{tool.price}</span>
                         </div>
                       </CardContent>
                     </Card>
@@ -1402,11 +1854,11 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="mt-8 p-5 border border-[var(--nyc-taxi)]/10 rounded-lg bg-[var(--nyc-taxi)]/[0.02]"
+                className="mt-8 p-6 border border-[var(--nyc-taxi)]/10 rounded-lg bg-[var(--nyc-taxi)]/[0.02]"
               >
                 <div className="flex items-center gap-2 mb-4">
                   <DollarSign className="w-4 h-4 text-[var(--nyc-taxi)]" />
-                  <span className="font-bold text-sm">Бесплатные альтернативы 21st Magic</span>
+                  <span className="text-sm font-semibold tracking-tight">Бесплатные альтернативы 21st Magic</span>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-2 text-xs">
                   {[
@@ -1415,10 +1867,10 @@ export default function Home() {
                     ['Bolt.diy', '$0 (self-hosted)', 'Полная'],
                     ['Ollama + Local LLM', '$0', 'Полная'],
                   ].map(([name, price, compat]) => (
-                    <div key={name} className="flex items-center justify-between p-2.5 rounded bg-white/[0.03] border border-white/[0.05]">
+                    <div key={name} className="flex items-center justify-between p-2.5 rounded bg-[oklch(0.12_0_0)] border border-white/[0.08] hover:border-[var(--nyc-taxi)]/15 hover:shadow-md hover:shadow-black/10 transition-all duration-200">
                       <span className="font-mono text-[var(--nyc-concrete)]">{name}</span>
                       <div className="flex items-center gap-3">
-                        <span className="text-[var(--nyc-taxi)] font-bold">{price}</span>
+                        <span className="text-[var(--nyc-taxi)] font-bold text-xs">{price}</span>
                         <Badge variant="secondary" className="text-[10px] bg-white/5 text-white/40 border-0">{compat}</Badge>
                       </div>
                     </div>
@@ -1431,23 +1883,24 @@ export default function Home() {
               </motion.div>
             </section>
 
+            <SectionNav currentId="matrix" />
             <TaxiDivider />
 
             {/* ═══════════════ 02 — PLATFORMS ═══════════════ */}
-            <section id="platforms" className="py-16 lg:py-20">
+            <section id="platforms" className="py-12 lg:py-20">
               <SectionHeader number="02" title="Платформы и совместимость" subtitle="compatibility_matrix" />
 
               {/* Compatibility Matrix */}
-              <Card className="nyc-card-enhanced mb-8 overflow-hidden">
+              <Card className="nyc-card-enhanced rounded-xl mb-8 overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs">
+                  <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-[var(--nyc-taxi)]/15 bg-[oklch(0.14_0_0)]">
-                        <th className="text-left py-3 px-4 font-mono text-[oklch(0.7_0_0)]">Функция</th>
-                        <th className="text-center py-3 px-3 font-mono text-[var(--nyc-taxi)]">OpenCode</th>
-                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">VS Code+Cline</th>
-                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">Z Code</th>
-                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">chat.z.ai</th>
+                        <th className="text-left py-5 px-5 font-mono text-sm text-[oklch(0.8_0_0)] font-semibold">Функция</th>
+                        <th className="text-center py-5 px-5 font-mono text-sm text-[var(--nyc-taxi)] font-semibold">OpenCode</th>
+                        <th className="text-center py-5 px-5 font-mono text-sm text-[oklch(0.8_0_0)] font-semibold">VS Code+Cline</th>
+                        <th className="text-center py-5 px-5 font-mono text-sm text-[oklch(0.8_0_0)] font-semibold">Z Code</th>
+                        <th className="text-center py-5 px-5 font-mono text-sm text-[oklch(0.8_0_0)] font-semibold">chat.z.ai</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1459,10 +1912,10 @@ export default function Home() {
                         ['File system', true, true, true, false],
                         ['Visual preview', false, true, true, false],
                       ].map(([name, ...vals]) => (
-                        <tr key={name as string} className="border-b border-white/[0.08] hover:bg-white/[0.04] transition-colors">
-                          <td className="py-3.5 px-4 font-mono text-[oklch(0.75_0_0)] font-medium">{name as string}</td>
+                        <tr key={name as string} className="border-b border-white/[0.1] hover:bg-[var(--nyc-taxi)]/[0.03] transition-colors">
+                          <td className="py-5 px-5 font-mono text-[oklch(0.85_0_0)] font-semibold text-sm">{name as string}</td>
                           {vals.map((v, i) => (
-                            <td key={i} className="text-center py-3.5 px-3">
+                            <td key={i} className="text-center py-5 px-5 min-w-[60px]">
                               <StatusDot status={v as boolean | string} />
                             </td>
                           ))}
@@ -1474,7 +1927,7 @@ export default function Home() {
               </Card>
 
               {/* Platform Cards */}
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {PLATFORMS.map((p, i) => (
                   <motion.div
                     key={p.name}
@@ -1483,18 +1936,18 @@ export default function Home() {
                     viewport={{ once: true, margin: '-50px' }}
                     transition={{ delay: i * 0.05 }}
                   >
-                    <Card className="nyc-card-enhanced h-full">
-                      <CardHeader className="p-4 pb-2">
+                    <Card className="nyc-card-enhanced rounded-xl h-full">
+                      <CardHeader className="p-5 pb-2">
                         <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2">
                           <p.icon className="w-4 h-4 text-[var(--nyc-taxi)]" />
                           {p.name}
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="p-4 pt-0">
-                        <p className="text-sm text-[oklch(0.7_0_0)] mb-3">{p.desc}</p>
+                      <CardContent className="p-5 pt-0">
+                        <p className="text-sm text-[oklch(0.7_0_0)] leading-relaxed mb-3">{p.desc}</p>
                         <div className="flex flex-wrap gap-1">
                           {p.features.map(f => (
-                            <Badge key={f} variant="secondary" className="text-[10px] bg-white/5 text-white/50 border-0">
+                            <Badge key={f} variant="secondary" className="text-[10px] bg-white/[0.08] text-white/70 border border-white/[0.06]">
                               {f}
                             </Badge>
                           ))}
@@ -1506,16 +1959,17 @@ export default function Home() {
               </div>
             </section>
 
+            <SectionNav currentId="platforms" />
             <TaxiDivider />
 
             {/* ═══════════════ 03 — CODING TOOL HELPER ═══════════════ */}
-            <section id="helper" className="py-16 lg:py-20">
+            <section id="helper" className="py-12 lg:py-20">
               <SectionHeader number="03" title="Coding Tool Helper" subtitle="@z_ai/coding-helper — центральный узел интеграции" />
 
               {/* Setup Wizard */}
-              <Card className="bg-white/[0.02] border-white/[0.06] mb-6">
+              <Card className="nyc-card-enhanced mb-6">
                 <CardHeader className="p-4 pb-2">
-                  <CardTitle className="text-sm flex items-center gap-2">
+                  <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2">
                     <Settings className="w-4 h-4 text-[var(--nyc-taxi)]" />
                     Интерактивный мастер настройки
                   </CardTitle>
@@ -1541,7 +1995,7 @@ export default function Home() {
                         <span className="w-5 h-5 rounded-sm bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] flex items-center justify-center font-mono text-[10px] shrink-0">
                           {i + 1}
                         </span>
-                        <span className="text-[var(--nyc-concrete)]">{step}</span>
+                        <span className="text-[oklch(0.72_0_0)]">{step}</span>
                         {i < 5 && <div className="hidden sm:block w-px h-3 bg-[var(--nyc-taxi)]/20 ml-[-10px] mt-5" />}
                       </motion.div>
                     ))}
@@ -1577,7 +2031,7 @@ export default function Home() {
                       <div className="flex items-center gap-3 text-xs rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] px-4 py-2.5 pr-12 hover:border-[var(--nyc-taxi)]/15 transition-colors">
                         <span className="text-[var(--nyc-taxi)] font-mono shrink-0">❯</span>
                         <span className="text-[var(--nyc-concrete)] font-mono">{cmd.cmd}</span>
-                        <span className="text-white/15 hidden sm:inline">— {cmd.desc}</span>
+                        <span className="text-white/30 hidden sm:inline">— {cmd.desc}</span>
                       </div>
                       <CopyButton text={cmd.cmd} className="absolute top-1.5 right-1.5" />
                     </motion.div>
@@ -1586,9 +2040,9 @@ export default function Home() {
               </div>
 
               {/* Config File */}
-              <Card className="bg-white/[0.02] border-white/[0.06] mb-6">
+              <Card className="nyc-card-enhanced mb-6">
                 <CardHeader className="p-4 pb-2">
-                  <CardTitle className="text-sm flex items-center gap-2">
+                  <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2">
                     <FileCode className="w-4 h-4 text-[var(--nyc-taxi)]" />
                     Конфигурационный файл
                     <Badge className="text-[10px] bg-white/5 text-white/30 border-0 ml-auto font-mono">~/.chelper/config.yaml</Badge>
@@ -1608,7 +2062,7 @@ export default function Home() {
                   <Cpu className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Доступные модели GLM
                 </h3>
-                <div className="grid sm:grid-cols-3 gap-3">
+                <div className="grid sm:grid-cols-3 gap-4">
                   {GLM_MODELS.map((model, i) => (
                     <motion.div
                       key={model.tier}
@@ -1616,7 +2070,7 @@ export default function Home() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.08 }}
-                      className="p-4 border border-white/[0.06] rounded-lg bg-white/[0.02] hover:border-[var(--nyc-taxi)]/15 transition-colors"
+                      className="p-4 border border-white/[0.06] rounded-lg nyc-card-enhanced hover:border-[var(--nyc-taxi)]/15 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-mono text-[var(--nyc-taxi)] text-xs font-bold">{model.tier}</span>
@@ -1624,7 +2078,7 @@ export default function Home() {
                           {model.name}
                         </Badge>
                       </div>
-                      <p className="text-sm text-[oklch(0.7_0_0)] mb-3">{model.use}</p>
+                      <p className="text-sm text-[oklch(0.7_0_0)] leading-relaxed mb-3">{model.use}</p>
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] text-white/20 font-mono">Скорость</span>
                         <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
@@ -1664,16 +2118,16 @@ export default function Home() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="p-4 border border-white/[0.06] rounded-lg bg-white/[0.02]"
+                    className="p-4 border border-white/[0.06] rounded-lg nyc-card-enhanced"
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <span className="font-bold text-sm">{plan.plan}</span>
+                        <span className="text-sm font-semibold tracking-tight">{plan.plan}</span>
                         <span className="text-[var(--nyc-taxi)] font-mono text-xs font-bold">{plan.price}</span>
                       </div>
                     </div>
                     <Progress value={plan.pct} className="h-1 mb-3 [&>div]:bg-[var(--nyc-taxi)]" />
-                    <div className="flex justify-between text-xs text-[var(--nyc-steel)]">
+                    <div className="flex justify-between text-xs text-[oklch(0.6_0_0)]">
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> 5ч: {plan.fiveHour}</span>
                       <span>Неделя: {plan.weekly}</span>
                     </div>
@@ -1682,13 +2136,14 @@ export default function Home() {
               </div>
             </section>
 
+            <SectionNav currentId="helper" />
             <TaxiDivider />
 
             {/* ═══════════════ 04 — STAGEWISE ═══════════════ */}
-            <section id="stagewise" className="py-16 lg:py-20">
+            <section id="stagewise" className="py-12 lg:py-20">
               <SectionHeader number="04" title="Stagewise" subtitle="AI Browser для веб-разработчиков" />
 
-              <div className="grid sm:grid-cols-3 gap-3 mb-6">
+              <div className="grid sm:grid-cols-3 gap-4 mb-6">
                 {[
                   { label: 'Пользователи', value: '130K+', icon: Users },
                   { label: 'Технологии', value: 'Electron + React 19', icon: Cpu },
@@ -1700,17 +2155,17 @@ export default function Home() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="p-4 border border-white/[0.06] rounded-lg bg-white/[0.02] text-center hover:border-[var(--nyc-taxi)]/15 transition-colors"
+                    className="nyc-card-enhanced rounded-xl p-5 text-center hover:border-[var(--nyc-taxi)]/15 transition-colors"
                   >
                     <stat.icon className="w-5 h-5 text-[var(--nyc-taxi)] mx-auto mb-2" />
-                    <div className="font-black text-lg">{stat.value}</div>
+                    <div className="font-black text-xl">{stat.value}</div>
                     <div className="text-[10px] text-[var(--nyc-steel)] font-mono uppercase tracking-wider">{stat.label}</div>
                   </motion.div>
                 ))}
               </div>
 
               {/* Features */}
-              <div className="grid sm:grid-cols-2 gap-3 mb-6">
+              <div className="grid sm:grid-cols-2 gap-4 mb-6">
                 {[
                   { title: 'Визуальный контекст', desc: 'AI агент «видит» ваш DOM в реальном времени', icon: Eye },
                   { title: 'Console Monitoring', desc: 'Автоматический анализ ошибок консоли', icon: AlertTriangle },
@@ -1723,23 +2178,23 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.05 }}
-                    className="p-4 border border-white/[0.06] rounded-lg bg-white/[0.02] flex items-start gap-3 hover:border-[var(--nyc-taxi)]/15 hover:bg-white/[0.04] transition-all duration-300 group"
+                    className="nyc-card-enhanced rounded-xl p-5 flex items-start gap-3 hover:border-[var(--nyc-taxi)]/15 transition-all duration-300 group"
                   >
                     <div className="w-8 h-8 rounded bg-[var(--nyc-taxi)]/10 flex items-center justify-center shrink-0 group-hover:bg-[var(--nyc-taxi)]/20 transition-colors">
                       <feat.icon className="w-4 h-4 text-[var(--nyc-taxi)]" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold mb-0.5">{feat.title}</div>
-                      <div className="text-sm text-[oklch(0.7_0_0)]">{feat.desc}</div>
+                      <div className="text-sm font-semibold tracking-tight mb-0.5">{feat.title}</div>
+                      <div className="text-sm text-[oklch(0.7_0_0)] leading-relaxed">{feat.desc}</div>
                     </div>
                   </motion.div>
                 ))}
               </div>
 
               {/* Installation */}
-              <Card className="bg-white/[0.02] border-white/[0.06] mb-6">
-                <CardHeader className="p-4 pb-2">
-                  <CardTitle className="text-sm">Установка</CardTitle>
+              <Card className="nyc-card-enhanced rounded-xl mb-6">
+                <CardHeader className="p-5 pb-2">
+                  <CardTitle className="text-sm font-semibold tracking-tight">Установка</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 space-y-3">
                   <div>
@@ -1787,16 +2242,16 @@ export default function Home() {
               </div>
 
               {/* Comparison Table */}
-              <Card className="bg-white/[0.02] border-white/[0.06] overflow-hidden">
+              <Card className="nyc-card-enhanced overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b border-[var(--nyc-taxi)]/15 bg-[oklch(0.14_0_0)]">
-                        <th className="text-left py-3 px-4 font-mono text-[oklch(0.7_0_0)]">Функция</th>
+                        <th className="text-left py-3 px-4 font-mono text-[oklch(0.75_0_0)]">Функция</th>
                         <th className="text-center py-3 px-3 font-mono text-[var(--nyc-taxi)]">Stagewise</th>
-                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">Cursor AI</th>
-                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">Cline</th>
-                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">OpenCode</th>
+                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.75_0_0)]">Cursor AI</th>
+                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.75_0_0)]">Cline</th>
+                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.75_0_0)]">OpenCode</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1810,7 +2265,7 @@ export default function Home() {
                         ['Open Source', true, false, true, true],
                       ].map(([name, ...vals]) => (
                         <tr key={name as string} className="border-b border-white/[0.08] hover:bg-white/[0.04] transition-colors">
-                          <td className="py-3.5 px-4 font-mono text-[oklch(0.75_0_0)] font-medium">{name as string}</td>
+                          <td className="py-4 px-4 font-mono text-[oklch(0.85_0_0)] font-semibold text-sm">{name as string}</td>
                           {vals.map((v, i) => (
                             <td key={i} className="text-center py-2.5 px-3">
                               <StatusDot status={v as boolean | string} />
@@ -1824,10 +2279,11 @@ export default function Home() {
               </Card>
             </section>
 
+            <SectionNav currentId="stagewise" />
             <TaxiDivider />
 
             {/* ═══════════════ 05 — INSTALLATION ═══════════════ */}
-            <section id="install" className="py-16 lg:py-20">
+            <section id="install" className="py-12 lg:py-20">
               <SectionHeader number="05" title="Установка и настройка" subtitle="step_by_step_guide" />
 
               {/* API Keys */}
@@ -1844,7 +2300,7 @@ export default function Home() {
                     { key: 'Anthropic Key', source: 'console.anthropic.com', purpose: 'Claude модели', store: 'config provider' },
                     { key: 'OpenAI Key', source: 'platform.openai.com', purpose: 'GPT модели', store: 'config provider' },
                   ].map(k => (
-                    <div key={k.key} className="p-3 border border-white/[0.06] rounded-lg bg-white/[0.02] flex flex-col sm:flex-row sm:items-center gap-2 text-xs hover:border-[var(--nyc-taxi)]/10 transition-colors">
+                    <div key={k.key} className="p-3 border border-white/[0.06] rounded-lg bg-[oklch(0.12_0_0)] flex flex-col sm:flex-row sm:items-center gap-2 text-xs hover:border-[var(--nyc-taxi)]/10 transition-colors">
                       <span className="font-bold text-[var(--nyc-taxi)] min-w-[130px] flex items-center gap-2">
                         <Key className="w-3 h-3" />
                         {k.key}
@@ -1875,7 +2331,7 @@ export default function Home() {
                   <div key={step.num}>
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs font-mono text-[var(--nyc-taxi)] font-bold">{step.num}</span>
-                      <span className="text-sm font-bold">{step.title}</span>
+                      <span className="text-sm font-semibold tracking-tight">{step.title}</span>
                     </div>
                     <CodeBlock code={step.code} />
                   </div>
@@ -1884,9 +2340,9 @@ export default function Home() {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-xs font-mono text-[var(--nyc-taxi)] font-bold">05</span>
-                    <span className="text-sm font-bold">Cline (VS Code)</span>
+                    <span className="text-sm font-semibold tracking-tight">Cline (VS Code)</span>
                   </div>
-                  <div className="p-4 border border-white/[0.06] rounded-lg bg-white/[0.02] text-xs space-y-1.5 text-[var(--nyc-concrete)]">
+                  <div className="p-4 border border-white/[0.06] rounded-lg bg-white/[0.04] text-xs space-y-1.5 text-[var(--nyc-concrete)]">
                     <p className="flex items-start gap-2"><span className="text-[var(--nyc-taxi)]">1.</span> Open VS Code</p>
                     <p className="flex items-start gap-2"><span className="text-[var(--nyc-taxi)]">2.</span> Ctrl+Shift+X → Search &quot;Cline&quot; → Install</p>
                     <p className="flex items-start gap-2"><span className="text-[var(--nyc-taxi)]">3.</span> Restart VS Code</p>
@@ -1960,13 +2416,14 @@ export default function Home() {
               </div>
             </section>
 
+            <SectionNav currentId="install" />
             <TaxiDivider />
 
             {/* ═══════════════ 06 — MCP SERVERS ═══════════════ */}
-            <section id="mcp" className="py-16 lg:py-20">
+            <section id="mcp" className="py-12 lg:py-20">
               <SectionHeader number="06" title="MCP-серверы" subtitle="model_context_protocol_servers" />
 
-              <div className="grid sm:grid-cols-2 gap-3 mb-6">
+              <div className="grid sm:grid-cols-2 gap-4 mb-6">
                 {MCP_SERVERS.map((server, i) => (
                   <motion.div
                     key={server.name}
@@ -1975,15 +2432,15 @@ export default function Home() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
                   >
-                    <Card className="nyc-card-enhanced h-full">
-                      <CardContent className="p-4">
+                    <Card className="nyc-card-enhanced rounded-xl h-full border-l-2 border-l-taxi-accent">
+                      <CardContent className="p-5">
                         <div className="flex items-center gap-3 mb-2">
                           <div className="w-8 h-8 rounded bg-[var(--nyc-taxi)]/10 flex items-center justify-center">
                             <server.icon className="w-4 h-4 text-[var(--nyc-taxi)]" />
                           </div>
-                          <span className="font-bold text-sm">{server.name}</span>
+                          <span className="text-sm font-semibold tracking-tight">{server.name}</span>
                         </div>
-                        <p className="text-sm text-[oklch(0.7_0_0)] mb-2">{server.desc}</p>
+                        <p className="text-sm text-[oklch(0.7_0_0)] leading-relaxed mb-2">{server.desc}</p>
                         <Badge className="text-[10px] bg-white/5 text-[var(--nyc-concrete)] font-mono border-0">
                           {server.tool}
                         </Badge>
@@ -1994,7 +2451,7 @@ export default function Home() {
               </div>
 
               {/* Transport Protocols */}
-              <div className="p-4 border border-white/[0.06] rounded-lg bg-white/[0.02]">
+              <div className="p-4 border border-white/[0.06] rounded-lg nyc-card-enhanced">
                 <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
                   <Globe className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Транспортные протоколы
@@ -2007,18 +2464,19 @@ export default function Home() {
                     ['Crush', 'JSON Schema'],
                   ].map(([client, transport]) => (
                     <div key={client} className="flex items-center justify-between p-2.5 rounded bg-white/[0.03] border border-white/[0.04]">
-                      <span className="font-mono text-[var(--nyc-concrete)]">{client}</span>
-                      <span className="text-white/30 text-[10px]">{transport}</span>
+                      <span className="font-mono text-[oklch(0.72_0_0)]">{client}</span>
+                      <span className="text-white/45 text-[10px]">{transport}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </section>
 
+            <SectionNav currentId="mcp" />
             <TaxiDivider />
 
             {/* ═══════════════ 07 — PROMPT TEMPLATES ═══════════════ */}
-            <section id="prompts" className="py-16 lg:py-20">
+            <section id="prompts" className="py-12 lg:py-20">
               <SectionHeader number="07" title="Промпт-шаблоны" subtitle="ready_to_use_prompt_templates" />
 
               <div className="space-y-4 mb-8">
@@ -2030,7 +2488,7 @@ export default function Home() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
                   >
-                    <Card className="bg-white/[0.02] border-white/[0.06]">
+                    <Card className="nyc-card-enhanced">
                       <CardHeader className="p-4 pb-2">
                         <CardTitle className="text-sm flex items-center gap-2">
                           <tmpl.icon className="w-4 h-4 text-[var(--nyc-taxi)]" />
@@ -2056,7 +2514,7 @@ export default function Home() {
               </div>
 
               {/* Ready Prompts */}
-              <div className="p-5 border border-white/[0.06] rounded-lg bg-white/[0.02]">
+              <div className="p-5 border border-white/[0.06] rounded-lg nyc-card-enhanced">
                 <h3 className="text-base font-semibold mb-3">Готовые промпты</h3>
                 <div className="space-y-2.5">
                   {READY_PROMPTS.map(p => (
@@ -2071,13 +2529,14 @@ export default function Home() {
               </div>
             </section>
 
+            <SectionNav currentId="prompts" />
             <TaxiDivider />
 
             {/* ═══════════════ 08 — COST SCENARIOS ═══════════════ */}
-            <section id="cost" className="py-16 lg:py-20">
+            <section id="cost" className="py-12 lg:py-20">
               <SectionHeader number="08" title="Сценарии стоимости" subtitle="cost_scenarios" />
 
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-2 gap-5">
                 {COST_SCENARIOS.map((scenario, i) => (
                   <motion.div
                     key={scenario.name}
@@ -2086,17 +2545,17 @@ export default function Home() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
                   >
-                    <Card className={`${i === 3 ? 'nyc-card-highlight-enhanced' : 'nyc-card-enhanced'} h-full nyc-card-inner-light`}>
-                      <CardHeader className="p-4 pb-2">
+                    <Card className={`${i === 3 ? 'nyc-card-highlight-enhanced shadow-xl shadow-[var(--nyc-taxi)]/10' : i === 0 ? 'nyc-card-enhanced border-l-2 border-l-green-500/30' : i === 1 ? 'nyc-card-enhanced border-l-2 border-l-blue-400/30' : 'nyc-card-enhanced border-l-2 border-l-[var(--nyc-taxi)]/40'} rounded-xl h-full nyc-card-inner-light`}>
+                      <CardHeader className="p-5 pb-2">
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-sm flex items-center gap-2">
-                            <span>{scenario.emoji}</span>
+                            <span className="text-xl">{scenario.emoji}</span>
                             {scenario.name}
                           </CardTitle>
                           <span className="text-lg font-black text-[var(--nyc-taxi)]">{scenario.price}</span>
                         </div>
                       </CardHeader>
-                      <CardContent className="p-4 space-y-3">
+                      <CardContent className="p-5 space-y-3">
                         <Progress value={scenario.pct} className="h-1.5 [&>div]:bg-[var(--nyc-taxi)]" />
                         <div className="space-y-2 text-xs">
                           <div>
@@ -2119,10 +2578,11 @@ export default function Home() {
               </div>
             </section>
 
+            <SectionNav currentId="cost" />
             <TaxiDivider />
 
             {/* ═══════════════ 08.5 — PLAN WIZARD ═══════════════ */}
-            <section id="wizard" className="py-16 lg:py-20">
+            <section id="wizard" className="py-12 lg:py-20">
               <SectionHeader number="08.5" title="Мастер выбора плана" subtitle="plan_comparison_wizard" />
 
               <Card className="nyc-card-enhanced p-6">
@@ -2226,16 +2686,17 @@ export default function Home() {
               </Card>
             </section>
 
+            <SectionNav currentId="wizard" />
             <TaxiDivider />
 
             {/* ═══════════════ 09 — TROUBLESHOOTING ═══════════════ */}
-            <section id="troubleshoot" className="py-16 lg:py-20">
+            <section id="troubleshoot" className="py-12 lg:py-20">
               <SectionHeader number="09" title="Диагностика и решение проблем" subtitle="troubleshooting_guide" />
 
               {/* Diagnostic Commands */}
-              <Card className="bg-white/[0.02] border-white/[0.06] mb-6">
+              <Card className="nyc-card-enhanced mb-6">
                 <CardHeader className="p-4 pb-2">
-                  <CardTitle className="text-sm flex items-center gap-2">
+                  <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2">
                     <Terminal className="w-4 h-4 text-[var(--nyc-taxi)]" />
                     Диагностические команды
                   </CardTitle>
@@ -2258,12 +2719,30 @@ export default function Home() {
               </Card>
 
               {/* Error Accordion */}
-              <Accordion type="multiple" className="space-y-1.5">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-semibold">Ошибки и решения</h3>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setErrorExpanded(ERRORS.map((_, i) => `error-${i}`))}
+                    className="text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                  >
+                    Раскрыть все
+                  </button>
+                  <span className="text-white/10">|</span>
+                  <button
+                    onClick={() => setErrorExpanded([])}
+                    className="text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                  >
+                    Свернуть все
+                  </button>
+                </div>
+              </div>
+              <Accordion type="multiple" value={errorExpanded} onValueChange={setErrorExpanded} className="space-y-1.5">
                 {ERRORS.map((err, i) => (
                   <AccordionItem
                     key={i}
                     value={`error-${i}`}
-                    className="border border-white/[0.06] rounded-lg bg-white/[0.02] px-4 data-[state=open]:border-[var(--nyc-taxi)]/20 data-[state=open]:bg-[var(--nyc-taxi)]/[0.02]"
+                    className="border border-white/[0.08] rounded-lg bg-[oklch(0.11_0_0)] px-4 data-[state=open]:border-[var(--nyc-taxi)]/20 data-[state=open]:bg-[var(--nyc-taxi)]/[0.04]"
                   >
                     <AccordionTrigger className="text-xs hover:no-underline py-3 gap-2">
                       <div className="flex items-center gap-2 text-left">
@@ -2286,22 +2765,41 @@ export default function Home() {
               </Accordion>
             </section>
 
+            <SectionNav currentId="troubleshoot" />
             <TaxiDivider />
 
             {/* ═══════════════ 09.5 — FAQ ═══════════════ */}
-            <section id="faq" className="py-16 lg:py-20">
+            <section id="faq" className="py-12 lg:py-20">
               <SectionHeader number="09.5" title="Часто задаваемые вопросы" subtitle="faq" />
 
-              <Accordion type="multiple" className="space-y-1.5">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-semibold">Ответы</h3>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setFaqExpanded(FAQ_ITEMS.map((_, i) => `faq-${i}`))}
+                    className="text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                  >
+                    Раскрыть все
+                  </button>
+                  <span className="text-white/10">|</span>
+                  <button
+                    onClick={() => setFaqExpanded([])}
+                    className="text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                  >
+                    Свернуть все
+                  </button>
+                </div>
+              </div>
+              <Accordion type="multiple" value={faqExpanded} onValueChange={setFaqExpanded} className="space-y-1.5">
                 {FAQ_ITEMS.map((faq, i) => (
                   <AccordionItem
                     key={i}
                     value={`faq-${i}`}
-                    className="border border-white/[0.06] rounded-lg bg-white/[0.02] px-4 data-[state=open]:border-[var(--nyc-taxi)]/20 data-[state=open]:bg-[var(--nyc-taxi)]/[0.02]"
+                    className="border border-white/[0.08] rounded-lg bg-[oklch(0.11_0_0)] px-4 data-[state=open]:border-[var(--nyc-taxi)]/20 data-[state=open]:bg-[var(--nyc-taxi)]/[0.04]"
                   >
                     <AccordionTrigger className="text-xs hover:no-underline py-3 gap-2">
                       <div className="flex items-center gap-2 text-left">
-                        <MessageSquare className="w-3.5 h-3.5 text-[var(--nyc-taxi)]/60 shrink-0" />
+                        <MessageSquare className="w-3.5 h-3.5 text-[var(--nyc-taxi)]/80 shrink-0" />
                         <span className="font-bold text-[var(--nyc-concrete)]">{faq.q}</span>
                       </div>
                     </AccordionTrigger>
@@ -2313,13 +2811,14 @@ export default function Home() {
               </Accordion>
             </section>
 
+            <SectionNav currentId="faq" />
             <TaxiDivider />
 
             {/* ═══════════════ 10 — ARCHITECTURE ═══════════════ */}
-            <section id="architecture" className="py-16 lg:py-20">
+            <section id="architecture" className="py-12 lg:py-20">
               <SectionHeader number="10" title="Архитектура системы" subtitle="system_architecture_diagram" />
 
-              <Card className="nyc-card-enhanced overflow-hidden">
+              <Card className="nyc-card-enhanced rounded-xl overflow-hidden">
                 <CardContent className="p-4 sm:p-6">
                   <div className="rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] p-4 text-xs sm:text-sm overflow-x-auto">
                     <pre className="text-[var(--nyc-concrete)] font-mono leading-relaxed whitespace-pre">{`┌──────────────────────────────────────────────────┐
@@ -2360,9 +2859,9 @@ export default function Home() {
                   { name: 'Crush', status: 'Поддерживается', desc: 'JSON Schema конфигурация' },
                   { name: 'Factory Droid', status: 'Поддерживается', desc: 'Конфигурационные файлы' },
                 ].map(tool => (
-                  <div key={tool.name} className="p-3 border border-white/[0.06] rounded-lg bg-white/[0.02] hover:border-[var(--nyc-taxi)]/10 transition-colors">
+                  <div key={tool.name} className="p-4 border border-white/[0.08] rounded-lg bg-[oklch(0.12_0_0)] hover:border-[var(--nyc-taxi)]/15 hover:shadow-md hover:shadow-black/10 transition-all duration-200">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-bold">{tool.name}</span>
+                      <span className="text-sm font-semibold tracking-tight">{tool.name}</span>
                       <Badge className={`text-[10px] border-0 ${
                         tool.status === 'Основной'
                           ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)]'
@@ -2377,19 +2876,18 @@ export default function Home() {
               </div>
             </section>
 
+            <SectionNav currentId="architecture" />
             <TaxiDivider />
 
             {/* ═══════════════ 11 — CHECKLIST ═══════════════ */}
-            <section id="checklist" className="py-16 pb-24">
+            <section id="checklist" className="py-12 pb-16 lg:py-20 lg:pb-20">
               <SectionHeader number="11" title="Чек-лист перед началом работы" subtitle="pre_launch_checklist" />
 
-              <Card className="bg-white/[0.02] border-white/[0.06]">
+              <Card className="nyc-card-enhanced">
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-bold">Прогресс настройки</span>
-                    <span className="text-[var(--nyc-taxi)] font-mono text-sm font-bold">
-                      {checkedCount}/{CHECKLIST_ITEMS.length}
-                    </span>
+                    <span className="text-sm font-semibold tracking-tight">Прогресс настройки</span>
+                    <span className="text-[var(--nyc-taxi)] font-mono font-bold text-xs">{checkedCount}/{CHECKLIST_ITEMS.length}</span>
                   </div>
                   <Progress
                     value={(checkedCount / CHECKLIST_ITEMS.length) * 100}
@@ -2441,30 +2939,80 @@ export default function Home() {
               </Card>
 
               {/* Sources */}
-              <div className="mt-8 p-4 border border-white/[0.06] rounded-lg bg-white/[0.02]">
-                <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-[var(--nyc-taxi)]" />
-                  Источники
-                </h3>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs max-h-64 overflow-y-auto">
-                  {SOURCES.map(s => (
-                    <a
-                      key={s.id}
-                      href={s.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="nyc-link-hover flex items-center gap-2 p-2 rounded bg-white/[0.02] hover:bg-white/[0.05] transition-colors group"
-                    >
-                      <span className="text-[var(--nyc-taxi)] font-mono text-[10px]">{s.id}</span>
-                      <span className="text-[var(--nyc-concrete)] group-hover:text-[var(--nyc-taxi)] transition-colors">{s.desc}</span>
-                      <ExternalLink className="w-2.5 h-2.5 text-[var(--nyc-taxi)]/30 group-hover:text-[var(--nyc-taxi)] ml-auto transition-colors" />
-                    </a>
-                  ))}
-                </div>
-              </div>
+              <Card className="nyc-card-enhanced mt-8">
+                <CardContent className="p-5">
+                  <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-[var(--nyc-taxi)]" />
+                    Источники
+                  </h3>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs max-h-80 overflow-y-auto">
+                    {SOURCES.map(s => (
+                      <a
+                        key={s.id}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="nyc-link-hover flex items-center gap-2 p-2 rounded bg-white/[0.02] hover:bg-white/[0.05] transition-colors group"
+                      >
+                        <span className="text-[var(--nyc-taxi)] font-mono text-[10px]">{s.id}</span>
+                        <span className="text-[var(--nyc-concrete)] group-hover:text-[var(--nyc-taxi)] transition-colors">{s.desc}</span>
+                        <ExternalLink className="w-2.5 h-2.5 text-[var(--nyc-taxi)]/30 group-hover:text-[var(--nyc-taxi)] ml-auto transition-colors" />
+                      </a>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </section>
           </div>
         </main>
+
+        {/* ── QUICK JUMP WIDGET ── */}
+        <AnimatePresence>
+          {showQuickStart && (
+            <div ref={quickJumpRef} className="fixed bottom-20 right-6 lg:bottom-6 z-30 flex flex-col items-end gap-2">
+              <AnimatePresence>
+                {quickJumpOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="bg-[oklch(0.14_0_0)] border border-white/10 rounded-xl shadow-2xl overflow-hidden w-48"
+                  >
+                    <div className="px-3 py-2 border-b border-white/[0.06]">
+                      <span className="font-mono text-[10px] text-[var(--nyc-steel)] tracking-wider uppercase">Быстрый переход</span>
+                    </div>
+                    {[
+                      { label: 'Установка', id: 'install', icon: Terminal },
+                      { label: 'MCP Серверы', id: 'mcp', icon: Cable },
+                      { label: 'Чек-лист', id: 'checklist', icon: CheckCircle2 },
+                    ].map(item => (
+                      <a
+                        key={item.id}
+                        href={`#${item.id}`}
+                        onClick={() => setQuickJumpOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-white/60 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+                      >
+                        <item.icon className="w-3.5 h-3.5 shrink-0" />
+                        <span>{item.label}</span>
+                      </a>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                onClick={() => setQuickJumpOpen(prev => !prev)}
+                className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--nyc-taxi)] text-black shadow-lg shadow-[var(--nyc-taxi)]/25 hover:bg-[var(--nyc-amber)] transition-all nyc-pulse-ring"
+                aria-label="Быстрый переход"
+              >
+                <Rocket className="w-5 h-5" />
+              </motion.button>
+            </div>
+          )}
+        </AnimatePresence>
 
         {/* ── SCROLL TO TOP ── */}
         <AnimatePresence>
@@ -2484,28 +3032,67 @@ export default function Home() {
         </AnimatePresence>
 
         {/* ── FOOTER ── */}
-        <footer className="mt-auto border-t border-white/5 bg-background/80 backdrop-blur-sm relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:ml-16">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45" />
-                <span className="font-mono text-[10px] text-[var(--nyc-steel)] tracking-wider">
-                  UI GENERATION STACK + CODING TOOL HELPER — V1.1
-                </span>
-              </div>
-              <div className="flex items-center gap-4 text-[10px] text-white/25 font-mono">
-                <span>22.04.2026</span>
-                <span className="text-white/10">|</span>
-                <span>PRODUCTION READY</span>
-                <span className="text-white/10">|</span>
-                <a
-                  href="https://docs.z.ai"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-[var(--nyc-taxi)] transition-colors flex items-center gap-1"
-                >
-                  DOCS.Z.AI <ExternalLink className="w-2.5 h-2.5" />
-                </a>
+        <footer className="mt-auto relative z-10">
+          <div className="nyc-caution-stripe" />
+          <div className="bg-[oklch(0.08_0_0)] border-t border-white/5">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:ml-14">
+              <div className="grid sm:grid-cols-3 gap-6 items-start">
+                {/* Left: Brand */}
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-3 h-3 bg-[var(--nyc-taxi)] rotate-45 nyc-glow-subtle" />
+                    <span className="font-mono text-xs font-bold tracking-wider text-[var(--nyc-taxi)]">
+                      UI GENERATION STACK
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--nyc-steel)] leading-relaxed max-w-xs">
+                    Единое руководство по установке и настройке AI-инструментов разработки. Coding Tool Helper, OpenCode, Stagewise и MCP-серверы.
+                  </p>
+                </div>
+                {/* Center: Quick Nav */}
+                <div className="flex flex-col items-center gap-2">
+                  <span className="font-mono text-[10px] text-white/25 uppercase tracking-widest mb-1">Навигация</span>
+                  <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                    {[
+                      { href: '#matrix', label: 'Матрица' },
+                      { href: '#install', label: 'Установка' },
+                      { href: '#cost', label: 'Стоимость' },
+                      { href: '#faq', label: 'FAQ' },
+                      { href: '#checklist', label: 'Чек-лист' },
+                    ].map(link => (
+                      <a key={link.href} href={link.href} className="text-xs text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] transition-colors">
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+                {/* Right: Meta */}
+                <div className="flex flex-col items-start sm:items-end gap-1.5">
+                  <div className="flex items-center gap-2 text-[10px] text-white/25 font-mono">
+                    <span>v1.0</span>
+                    <span className="text-white/10">·</span>
+                    <span>22.04.2026</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    <span className="text-green-400/70">PRODUCTION READY</span>
+                  </div>
+                  <button
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    className="flex items-center gap-1.5 text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] transition-colors mt-2"
+                  >
+                    <ArrowUp className="w-2.5 h-2.5" /> НАВЕРХ
+                  </button>
+                  <a
+                    href="https://docs.z.ai"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-[10px] text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] transition-colors font-mono mt-1"
+                  >
+                    DOCS.Z.AI <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                  <span className="text-[9px] text-white/15 font-mono mt-2">© 2026 Z.AI</span>
+                </div>
               </div>
             </div>
           </div>

@@ -800,3 +800,28 @@ Unresolved Issues / Next Steps:
 - Mobile responsiveness could be enhanced further
 - Card design could benefit from more visual differentiation at wider widths
 - Consider removing unused CSS (nyc-pipe-divider styles in globals.css)
+
+---
+Task ID: 13-a
+Agent: Frontend Styling Expert
+Task: Fix critical VLM-identified styling issues — card depth, text contrast, color inconsistency
+
+Work Log:
+- Free Alternatives cards: changed bg-white/[0.03] border-white/[0.05] → bg-[oklch(0.12_0_0)] border-white/[0.08] with hover effects and shadow
+- Free Alternatives price text: font-bold → font-bold text-xs for slightly larger display
+- Cost Scenario cards: added tier-specific left border accents (green-500/30 for Free, blue-400/30 for Budget, taxi/40 for Professional, existing highlight for Team)
+- Setup wizard step text: text-[var(--nyc-concrete)] → text-[oklch(0.72_0_0)] for better readability
+- Helper command descriptions: text-white/15 → text-white/30 (was way too faint)
+- Plan limits stats: text-[var(--nyc-steel)] → text-[oklch(0.6_0_0)] for better contrast
+- Transport protocol client names: text-[var(--nyc-concrete)] → text-[oklch(0.72_0_0)]
+- Transport protocol values: text-white/30 → text-white/45
+- Error accordion: bg-white/[0.02] → bg-[oklch(0.11_0_0)], border-white/[0.06] → border-white/[0.08], open bg 0.02 → 0.04
+- FAQ accordion: same upgrades as error accordion + icon color taxi/60 → taxi/80
+- Architecture Supported Tools cards: p-3 bg-white/[0.04] border-white/[0.06] → p-4 bg-[oklch(0.12_0_0)] border-white/[0.08] with hover shadow and transition
+- API Keys section cards: bg-white/[0.04] → bg-[oklch(0.12_0_0)]
+- Added new CSS to globals.css: nyc-tier-free/budget/pro, nyc-accordion-item, nyc-section-indicator, print-friendly @media print styles
+
+Stage Summary:
+- 7 targeted styling fixes applied to page.tsx (card depth, text contrast, accordion, tier colors)
+- 6 new CSS utility classes + print-friendly stylesheet added to globals.css
+- All lint checks pass cleanly (0 errors)
