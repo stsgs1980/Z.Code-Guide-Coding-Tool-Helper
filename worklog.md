@@ -559,3 +559,171 @@ Unresolved Issues / Next Steps:
 - Mobile responsiveness could be enhanced further
 - Consider adding a print-friendly stylesheet
 - FAQ could be expanded with more items based on user feedback
+
+---
+Task ID: 10-b
+Agent: Full-Stack Feature Developer
+Task: Add new features and functionality — AnimatedCounter, Share Section, Scroll-to-Top label, Command Filter, Card Tilt
+
+Work Log:
+
+1. **Animated Number Counter in Hero Stats**
+   - Created `AnimatedCounter` component with IntersectionObserver-based trigger
+   - Animates numbers from 0 to target value with ease-out cubic easing (1200ms duration)
+   - Reconstructs original format (prefix, decimals, suffix) during animation
+   - Applied to all 4 hero fact values: Version 1.0, Package 0.0.7, Node ≥18, Dependencies 6
+   - Uses `hasAnimated` ref to ensure animation only plays once
+
+2. **"Share Section" Button in SectionHeader**
+   - Added share button to every SectionHeader with Hash icon
+   - Maps section numbers (01-11, 09.5) to section IDs (matrix, helper, etc.)
+   - Copies full URL with section hash to clipboard on click
+   - Shows green Check icon for 2 seconds after copying
+   - Subtle styling: text-white/15, hover turns taxi yellow
+
+3. **"Scroll to Top" with Text Label "Наверх"**
+   - Replaced simple icon-only button with rounded pill button
+   - Now includes ArrowUp icon + "Наверх" text label in font-mono
+   - Changed from solid taxi yellow bg to dark glass style (oklch(0.14) bg, white/10 border, backdrop-blur)
+   - Hover effect: text and border transition to taxi yellow
+   - Changed animation from scale to y-translate for smoother appearance
+
+4. **Command Search/Filter for Helper Commands**
+   - Added `helperFilter` state variable
+   - Added filter input above HELPER_COMMANDS list in section 03
+   - Input: dark bg, subtle border, focus turns taxi yellow border
+   - Filters commands by matching against both cmd and desc fields (case-insensitive)
+   - Real-time filtering as user types
+
+5. **Tool Comparison Highlight (nyc-card-tilt)**
+   - Added `nyc-card-tilt` CSS class to Tool Matrix cards
+   - Provides subtle 3D perspective tilt on hover (defined in globals.css by agent 2-a)
+   - Works alongside existing `nyc-card-enhanced group` classes
+
+QA Results:
+- `bun run lint` — clean, 0 errors
+- Dev server compiling successfully
+- All existing features preserved and functional
+
+Stage Summary:
+- 5 features implemented (AnimatedCounter, Share Section, Scroll-to-Top label, Command Filter, Card Tilt)
+- All lint checks pass cleanly
+- No compilation errors
+- No breaking changes to existing functionality
+
+---
+Task ID: 10-a
+Agent: Frontend Styling Expert
+Task: Fix critical VLM-identified visual issues — contrast, depth, table readability, section separation
+
+Work Log:
+
+1. **StatusDot Component — CRITICAL (Compatibility Matrix)**
+   - Replaced nearly-invisible status dots with highly visible indicators:
+     - ✓ (true): w-6 h-6 rounded-md, green-500/15 bg, green-400 text, bold, green border
+     - ✗ (false): w-6 h-6 rounded-md, red-500/10 bg, red-400/70 text, bold, red border
+     - String values: Pill badge with taxi bg/10, taxi text, taxi border/15
+   - Previous: w-5 h-5 rounded-full, nearly invisible bg (400/10), faded text (400/50 for false)
+   - New: Larger (w-6), bordered, bold, proper contrast ratios
+
+2. **Compatibility Matrix Table — CRITICAL**
+   - Table 1 (Platforms section) and Table 2 (Stagewise section):
+     - Header row: `border-white/10 bg-white/[0.02]` → `border-[var(--nyc-taxi)]/15 bg-[oklch(0.14_0_0)]`
+     - Non-taxi header columns: `text-[var(--nyc-steel)]` → `text-[oklch(0.7_0_0)]` (much brighter)
+     - Data rows: `border-white/5 hover:bg-white/[0.02]` → `border-white/[0.08] hover:bg-white/[0.04]`
+     - First column cells: `py-3 px-4 text-[var(--nyc-concrete)]` → `py-3.5 px-4 text-[oklch(0.75_0_0)] font-medium`
+   - All 4 table header rows, 4 data row patterns, and 4 cell patterns updated
+
+3. **Hero Info Cards — Better Depth**
+   - Card background: `bg-white/[0.03] border-white/[0.08]` → `bg-[oklch(0.14_0_0)] border-white/[0.10]`
+   - Padding: p-3 → p-3.5
+   - Hover border: `hover:border-[var(--nyc-taxi)]/20` → `hover:border-[var(--nyc-taxi)]/25`
+   - Added shadow depth: `shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 hover:-translate-y-0.5`
+   - Fact value: `text-lg font-black` → `text-xl font-black text-[oklch(0.95_0_0)]`
+
+4. **Section Background Alternation**
+   - Added `.nyc-section-alt` CSS class to globals.css:
+     - Semi-transparent background (oklch(0.12 0 0 / 50%))
+     - 16px border-radius, negative margins for full-width bleed
+     - Padding compensation for content
+   - Applied to sections: platforms (02), stagewise (04), mcp (06), cost (08), faq (09.5), architecture (10)
+
+5. **Sidebar Active Item — Refined**
+   - Changed from `bg-[var(--nyc-taxi)] text-black font-bold nyc-glow-subtle` (full yellow bg)
+   - To `bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] font-bold` (subtle 15% yellow bg with yellow text)
+   - Keeps active item visible but less distracting than solid yellow
+
+6. **Hero Buttons Consistency**
+   - Added `items-center` to button container: `flex flex-wrap gap-3` → `flex flex-wrap gap-3 items-center`
+
+Build Status: ✅ Lint clean, no errors
+QA: All changes are CSS/className only, no functional logic modified
+
+Stage Summary:
+- 6 critical visual fixes applied targeting VLM-identified issues
+- Table contrast dramatically improved (oklch(0.7) headers, oklch(0.75) cells)
+- Status dots now clearly visible with borders, larger size, bold text
+- Cards have real depth with shadows and hover lift
+- Alternating section backgrounds provide visual rhythm
+- Sidebar active state no longer overwhelms the page
+- All lint checks pass
+
+---
+Task ID: 10
+Agent: Main Agent (Cron Review Round 5)
+Task: QA testing, fix critical VLM issues, improve styling, add features
+
+Work Log:
+- Read worklog.md (Tasks 1-9 completed, VLM 8/10)
+- Performed QA via agent-browser: no page errors, no console errors, dev server compiling
+- Lint clean
+- VLM analysis revealed critical regression:
+  - Hero: Visual 7, Readability 6, Card Depth 5, Color 7, Overall 6
+  - Mid-section: Visual 3, Card 2, Text Contrast 2, Layout 3, Overall 4
+- Key issues: StatusDot nearly invisible, table contrast terrible, hero cards flat, sidebar too bright
+- Dispatched sub-agents 10-a (styling) and 10-b (features) in parallel
+
+VLM QA Scores (before this round):
+- Hero: 6/10 (cards flat 5/10, sidebar distracting)
+- Mid: 4/10 (table contrast 2/10, card design 2/10, text 2/10)
+
+VLM QA Scores (after this round):
+- Hero: 8.5/10 (Visual 9, Readability 8.5, Card Depth 8, Color 9, Overall 8.5)
+- Mid: 7/10 (Visual 7, Card 6, Text Contrast 8, Layout 7, Overall 7)
+- Significant improvement confirmed: Hero 6→8.5, Mid 4→7
+
+Styling Fixes (by sub-agent 10-a):
+- StatusDot: w-5→w-6, rounded-full→rounded-md, added borders, bold text, proper contrast
+- Table headers: text-[var(--nyc-steel)]→text-[oklch(0.7_0_0)] for much better contrast
+- Table rows: border-white/5→border-white/[0.08], better hover
+- Table cells: text-[var(--nyc-concrete)]→text-[oklch(0.75_0_0)] font-medium
+- Hero cards: bg-white/[0.03]→bg-[oklch(0.14_0_0)], shadow-md, hover:-translate-y-0.5
+- Section alternation: added nyc-section-alt to 6 sections
+- Sidebar active: bg-[var(--nyc-taxi)] text-black→bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)]
+
+New Features (by sub-agent 10-b):
+- AnimatedCounter: hero stats animate from 0 to target with ease-out cubic
+- Share Section: Hash icon button in each SectionHeader copies URL+hash
+- Scroll-to-Top: pill button with ArrowUp + "Наверх" text label
+- Command Filter: filter input for HELPER_COMMANDS in section 03
+- Card Tilt: nyc-card-tilt on Tool Matrix cards
+
+Stage Summary:
+- Critical visual issues fixed (table contrast, StatusDot, card depth)
+- Hero improved 6→8.5/10, Mid improved 4→7/10 per VLM
+- 5 new features added, 6 styling fixes
+- All QA checks pass, lint clean
+
+Current Project Status:
+- Full guide page with 13+ sections, NYC industrial theme
+- Interactive features: search, keyboard shortcuts, guide tour, checklist, accordion, tabs, Plan Wizard, theme toggle, breadcrumb trail, FAQ, Copy All, scroll progress mini-map, animated counters, section share, command filter, card tilt
+- Code blocks styled as CLI terminals with syntax highlighting
+- Light/dark theme support
+- VLM scores: Hero 8.5/10, Mid 7/10
+
+Unresolved Issues / Next Steps:
+- Card design still 6/10 in mid-section — could add more visual differentiation
+- Light mode card/text color overrides could be more refined
+- Mobile responsiveness could be enhanced further
+- Consider adding a print-friendly stylesheet
+- Could add keyboard shortcut for section share

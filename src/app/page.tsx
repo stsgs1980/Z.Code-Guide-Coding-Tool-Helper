@@ -904,7 +904,63 @@ function CodeBlock({ code, lang = 'bash' }: { code: string; lang?: string }) {
   )
 }
 
+/* ───────────────────── ANIMATED COUNTER ───────────────────── */
+
+function AnimatedCounter({ value, suffix = '' }: { value: string; suffix?: string }) {
+  const [display, setDisplay] = useState(value)
+  const ref = useRef<HTMLSpanElement>(null)
+  const hasAnimated = useRef(false)
+
+  useEffect(() => {
+    if (hasAnimated.current) return
+    const num = parseFloat(value.replace(/[^0-9.]/g, ''))
+    if (isNaN(num)) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true
+          const duration = 1200
+          const start = performance.now()
+          const animate = (now: number) => {
+            const elapsed = now - start
+            const progress = Math.min(elapsed / duration, 1)
+            const eased = 1 - Math.pow(1 - progress, 3) // ease-out cubic
+            const current = num * eased
+            // Reconstruct the original format
+            const prefix = value.match(/^[^0-9]*/)?.[0] || ''
+            const decimals = (value.match(/\.(\d+)/) || [])[1]?.length || 0
+            setDisplay(`${prefix}${current.toFixed(decimals)}${suffix}`)
+            if (progress < 1) requestAnimationFrame(animate)
+            else setDisplay(value)
+          }
+          requestAnimationFrame(animate)
+        }
+      },
+      { threshold: 0.5 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [value, suffix])
+
+  return <span ref={ref}>{display}</span>
+}
+
 function SectionHeader({ number, title, subtitle }: { number: string; title: string; subtitle?: string }) {
+  const [shareCopied, setShareCopied] = useState(false)
+  const handleShare = () => {
+    const sectionMap: Record<string, string> = {
+      '00': 'hero', '01': 'matrix', '02': 'platforms', '03': 'helper',
+      '04': 'stagewise', '05': 'install', '06': 'mcp', '07': 'prompts',
+      '08': 'cost', '09': 'troubleshoot', '09.5': 'faq', '10': 'architecture', '11': 'checklist',
+    }
+    const sectionId = sectionMap[number.trim()] || 'hero'
+    const shareUrl = `${window.location.origin}${window.location.pathname}#${sectionId}`
+    navigator.clipboard.writeText(shareUrl)
+    setShareCopied(true)
+    setTimeout(() => setShareCopied(false), 2000)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -919,6 +975,13 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
           <span className="section-number font-mono">{number}</span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-r from-[var(--nyc-taxi)]/30 to-transparent" />
+        <button
+          onClick={handleShare}
+          className="p-1 rounded text-white/15 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-all"
+          title="Скопировать ссылку на раздел"
+        >
+          {shareCopied ? <Check className="w-3 h-3 text-green-400" /> : <Hash className="w-3 h-3" />}
+        </button>
       </div>
       <h2 className="text-2xl sm:text-3xl font-black tracking-tight">{title}</h2>
       {subtitle && (
@@ -963,9 +1026,15 @@ function TaxiDivider() {
 }
 
 function StatusDot({ status }: { status: boolean | string }) {
-  if (status === true) return <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-400/10 text-green-400 text-xs">✓</span>
-  if (status === false) return <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-400/10 text-red-400/50 text-xs">✗</span>
-  return <span className="text-[var(--nyc-amber)] text-[10px] font-mono">{status as string}</span>
+  if (status === true) return (
+    <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-green-500/15 text-green-400 text-xs font-bold border border-green-500/20">✓</span>
+  )
+  if (status === false) return (
+    <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-red-500/10 text-red-400/70 text-xs font-bold border border-red-500/15">✗</span>
+  )
+  return (
+    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-[var(--nyc-taxi)]/10 text-[var(--nyc-taxi)] border border-[var(--nyc-taxi)]/15">{status as string}</span>
+  )
 }
 
 /* ───────────────────── MAIN PAGE ───────────────────── */
@@ -996,6 +1065,7 @@ export default function Home() {
     if (typeof window === 'undefined') return 'dark'
     return (localStorage.getItem('nyc-theme') as 'dark' | 'light') || 'dark'
   })
+  const [helperFilter, setHelperFilter] = useState('')
 
   const { scrollYProgress } = useScroll()
   const [scrollProgress, setScrollProgress] = useState(0)
@@ -1136,7 +1206,7 @@ export default function Home() {
                   href={`#${item.id}`}
                   className={`w-10 h-10 flex items-center justify-center rounded text-xs font-mono transition-all duration-300 ${
                     activeSection === item.id
-                      ? 'bg-[var(--nyc-taxi)] text-black font-bold nyc-glow-subtle nyc-hover-glow nyc-sidebar-active'
+                      ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] font-bold nyc-sidebar-active nyc-hover-glow'
                       : 'text-white/30 hover:text-white/70 hover:bg-white/5'
                   }`}
                 >
@@ -1322,18 +1392,18 @@ export default function Home() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 + i * 0.1 }}
-                      className="bg-white/[0.03] border border-white/[0.08] rounded-lg p-3 hover:border-[var(--nyc-taxi)]/20 transition-all duration-300"
+                      className="bg-[oklch(0.14_0_0)] border border-white/[0.10] rounded-lg p-3.5 hover:border-[var(--nyc-taxi)]/25 transition-all duration-300 shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 hover:-translate-y-0.5"
                     >
                       <div className="flex items-center gap-2 mb-1.5">
                         <fact.icon className="w-3.5 h-3.5 text-[var(--nyc-taxi)]" />
                         <span className="text-[10px] text-[var(--nyc-steel)] font-mono uppercase tracking-wider">{fact.label}</span>
                       </div>
-                      <span className="text-lg font-black">{fact.value}</span>
+                      <span className="text-xl font-black text-[oklch(0.95_0_0)]"><AnimatedCounter value={fact.value} /></span>
                     </motion.div>
                   ))}
                 </div>
 
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-3 items-center">
                   <a href="#install">
                     <Button className="bg-[var(--nyc-taxi)] text-black hover:bg-[var(--nyc-amber)] font-bold gap-2 shadow-xl shadow-[var(--nyc-taxi)]/30 nyc-cta-glow">
                       <Terminal className="w-4 h-4" />
@@ -1389,7 +1459,7 @@ export default function Home() {
                     viewport={{ once: true, margin: '-50px' }}
                     transition={{ delay: i * 0.04, duration: 0.3 }}
                   >
-                    <Card className="nyc-card-enhanced group">
+                    <Card className="nyc-card-enhanced nyc-card-tilt group">
                       <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-3">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           <div
@@ -1456,7 +1526,7 @@ export default function Home() {
             <div className="nyc-pipe-divider my-4" />
 
             {/* ═══════════════ 02 — PLATFORMS ═══════════════ */}
-            <section id="platforms" className="py-16 lg:py-20">
+            <section id="platforms" className="py-16 lg:py-20 nyc-section-alt">
               <SectionHeader number="02" title="Платформы и совместимость" subtitle="compatibility_matrix" />
 
               {/* Compatibility Matrix */}
@@ -1464,12 +1534,12 @@ export default function Home() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="border-b border-white/10 bg-white/[0.02]">
-                        <th className="text-left py-3 px-4 font-mono text-[var(--nyc-steel)]">Функция</th>
+                      <tr className="border-b border-[var(--nyc-taxi)]/15 bg-[oklch(0.14_0_0)]">
+                        <th className="text-left py-3 px-4 font-mono text-[oklch(0.7_0_0)]">Функция</th>
                         <th className="text-center py-3 px-3 font-mono text-[var(--nyc-taxi)]">OpenCode</th>
-                        <th className="text-center py-3 px-3 font-mono text-[var(--nyc-steel)]">VS Code+Cline</th>
-                        <th className="text-center py-3 px-3 font-mono text-[var(--nyc-steel)]">Z Code</th>
-                        <th className="text-center py-3 px-3 font-mono text-[var(--nyc-steel)]">chat.z.ai</th>
+                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">VS Code+Cline</th>
+                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">Z Code</th>
+                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">chat.z.ai</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1481,10 +1551,10 @@ export default function Home() {
                         ['File system', true, true, true, false],
                         ['Visual preview', false, true, true, false],
                       ].map(([name, ...vals]) => (
-                        <tr key={name as string} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                          <td className="py-3 px-4 font-mono text-[var(--nyc-concrete)]">{name as string}</td>
+                        <tr key={name as string} className="border-b border-white/[0.08] hover:bg-white/[0.04] transition-colors">
+                          <td className="py-3.5 px-4 font-mono text-[oklch(0.75_0_0)] font-medium">{name as string}</td>
                           {vals.map((v, i) => (
-                            <td key={i} className="text-center py-3 px-3">
+                            <td key={i} className="text-center py-3.5 px-3">
                               <StatusDot status={v as boolean | string} />
                             </td>
                           ))}
@@ -1577,8 +1647,17 @@ export default function Home() {
                   <Terminal className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Система команд
                 </h3>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    value={helperFilter}
+                    onChange={(e) => setHelperFilter(e.target.value)}
+                    placeholder="Фильтр команд..."
+                    className="w-full bg-[oklch(0.08_0_0)] border border-white/[0.08] rounded-md px-3 py-2 text-xs text-white/80 placeholder:text-white/20 outline-none focus:border-[var(--nyc-taxi)]/30 transition-colors"
+                  />
+                </div>
                 <div className="space-y-1.5">
-                  {HELPER_COMMANDS.map((cmd, i) => (
+                  {HELPER_COMMANDS.filter(cmd => !helperFilter || cmd.cmd.toLowerCase().includes(helperFilter.toLowerCase()) || cmd.desc.toLowerCase().includes(helperFilter.toLowerCase())).map((cmd, i) => (
                     <motion.div
                       key={cmd.cmd}
                       initial={{ opacity: 0, x: -5 }}
@@ -1699,7 +1778,7 @@ export default function Home() {
             <div className="nyc-pipe-divider my-4" />
 
             {/* ═══════════════ 04 — STAGEWISE ═══════════════ */}
-            <section id="stagewise" className="py-16 lg:py-20">
+            <section id="stagewise" className="py-16 lg:py-20 nyc-section-alt">
               <SectionHeader number="04" title="Stagewise" subtitle="AI Browser для веб-разработчиков" />
 
               <div className="grid sm:grid-cols-3 gap-3 mb-6">
@@ -1805,12 +1884,12 @@ export default function Home() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="border-b border-white/10 bg-white/[0.02]">
-                        <th className="text-left py-3 px-4 font-mono text-[var(--nyc-steel)]">Функция</th>
+                      <tr className="border-b border-[var(--nyc-taxi)]/15 bg-[oklch(0.14_0_0)]">
+                        <th className="text-left py-3 px-4 font-mono text-[oklch(0.7_0_0)]">Функция</th>
                         <th className="text-center py-3 px-3 font-mono text-[var(--nyc-taxi)]">Stagewise</th>
-                        <th className="text-center py-3 px-3 font-mono text-[var(--nyc-steel)]">Cursor AI</th>
-                        <th className="text-center py-3 px-3 font-mono text-[var(--nyc-steel)]">Cline</th>
-                        <th className="text-center py-3 px-3 font-mono text-[var(--nyc-steel)]">OpenCode</th>
+                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">Cursor AI</th>
+                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">Cline</th>
+                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.7_0_0)]">OpenCode</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1823,8 +1902,8 @@ export default function Home() {
                         ['MCP Support', 'plugin', true, true, true],
                         ['Open Source', true, false, true, true],
                       ].map(([name, ...vals]) => (
-                        <tr key={name as string} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                          <td className="py-2.5 px-4 font-mono text-[var(--nyc-concrete)]">{name as string}</td>
+                        <tr key={name as string} className="border-b border-white/[0.08] hover:bg-white/[0.04] transition-colors">
+                          <td className="py-3.5 px-4 font-mono text-[oklch(0.75_0_0)] font-medium">{name as string}</td>
                           {vals.map((v, i) => (
                             <td key={i} className="text-center py-2.5 px-3">
                               <StatusDot status={v as boolean | string} />
@@ -1978,7 +2057,7 @@ export default function Home() {
             <div className="nyc-pipe-divider my-4" />
 
             {/* ═══════════════ 06 — MCP SERVERS ═══════════════ */}
-            <section id="mcp" className="py-16 lg:py-20">
+            <section id="mcp" className="py-16 lg:py-20 nyc-section-alt">
               <SectionHeader number="06" title="MCP-серверы" subtitle="model_context_protocol_servers" />
 
               <div className="grid sm:grid-cols-2 gap-3 mb-6">
@@ -2089,7 +2168,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 08 — COST SCENARIOS ═══════════════ */}
-            <section id="cost" className="py-16 lg:py-20">
+            <section id="cost" className="py-16 lg:py-20 nyc-section-alt">
               <SectionHeader number="08" title="Сценарии стоимости" subtitle="cost_scenarios" />
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -2304,7 +2383,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 09.5 — FAQ ═══════════════ */}
-            <section id="faq" className="py-16 lg:py-20">
+            <section id="faq" className="py-16 lg:py-20 nyc-section-alt">
               <SectionHeader number="09.5" title="Часто задаваемые вопросы" subtitle="faq" />
 
               <Accordion type="multiple" className="space-y-1.5">
@@ -2331,7 +2410,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 10 — ARCHITECTURE ═══════════════ */}
-            <section id="architecture" className="py-16 lg:py-20">
+            <section id="architecture" className="py-16 lg:py-20 nyc-section-alt">
               <SectionHeader number="10" title="Архитектура системы" subtitle="system_architecture_diagram" />
 
               <Card className="nyc-card-enhanced overflow-hidden">
@@ -2500,14 +2579,15 @@ export default function Home() {
         <AnimatePresence>
           {showScrollTop && (
             <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-lg bg-[var(--nyc-taxi)] text-black flex items-center justify-center shadow-lg shadow-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-amber)] transition-colors"
+              className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full bg-[oklch(0.14_0_0)] border border-white/10 text-white/60 hover:text-[var(--nyc-taxi)] hover:border-[var(--nyc-taxi)]/20 shadow-lg shadow-black/30 backdrop-blur-sm transition-all"
               aria-label="Scroll to top"
             >
-              <ArrowUp className="w-4 h-4" />
+              <ArrowUp className="w-3.5 h-3.5" />
+              <span className="text-xs font-mono">Наверх</span>
             </motion.button>
           )}
         </AnimatePresence>

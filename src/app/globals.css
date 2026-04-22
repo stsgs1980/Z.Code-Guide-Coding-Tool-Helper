@@ -1466,3 +1466,13 @@ pre::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(90deg, transparent, oklch(1 0 0 / 8%), transparent);
   pointer-events: none;
 }
+
+/* Section background alternation for visual separation */
+.nyc-section-alt {
+  background: oklch(0.12 0 0 / 50%);
+  border-radius: 16px;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
