@@ -607,7 +607,7 @@ html {
 }
 
 .nyc-card-enhanced:hover {
-  border-color: oklch(1 0 0 / 12%);
+  border-color: oklch(1 0 0 / 15%);
   box-shadow:
     0 2px 4px oklch(0 0 0 / 35%),
     0 8px 16px oklch(0 0 0 / 18%),
@@ -1380,6 +1380,7 @@ pre::-webkit-scrollbar-thumb:hover {
   border-color: oklch(0.78 0.16 85 / 25%);
   color: var(--nyc-taxi);
   background: oklch(0.78 0.16 85 / 8%);
+  box-shadow: 0 0 8px oklch(0.78 0.16 85 / 10%);
 }
 
 /* ─── Utility: Tooltip ─── */
@@ -1507,8 +1508,106 @@ pre::-webkit-scrollbar-thumb:hover {
 
 /* ─── Sticky section indicator ─── */
 .nyc-section-indicator {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   NYC INDUSTRIAL THEME — STYLING IMPROVEMENTS (Task 12-a)
+   Hero depth, ambient bg, section polish, card glow, badge glow,
+   footer enhancement, code block polish, section indicator blur
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Hero card inner glow ─── */
+.nyc-hero-card-glow {
+  position: relative;
+}
+.nyc-hero-card-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 6%), inset 0 0 20px oklch(0.78 0.16 85 / 4%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.nyc-hero-card-glow:hover::after {
+  opacity: 1;
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 8%), inset 0 0 30px oklch(0.78 0.16 85 / 8%);
+}
+
+/* ─── Ambient background glow ─── */
+.nyc-ambient-bg {
+  position: relative;
+}
+.nyc-ambient-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 40%;
+  background: radial-gradient(
+    ellipse at center top,
+    oklch(0.78 0.16 85 / 2.5%) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Section hover border ─── */
+.nyc-section-hover-border {
+  border-left: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+.nyc-section-hover-border:hover {
+  border-left-color: oklch(0.78 0.16 85 / 20%);
+}
+
+/* ─── Card glow on hover ─── */
+.nyc-card-glow-hover {
+  transition: box-shadow 0.4s ease;
+}
+.nyc-card-glow-hover:hover {
+  box-shadow: 0 0 20px oklch(0.78 0.16 85 / 8%), 0 8px 16px oklch(0 0 0 / 15%);
+}
+
+/* ─── Code block hover bottom border glow ─── */
+.code-block-hover-glow {
+  position: relative;
+}
+.code-block-hover-glow::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, oklch(0.78 0.16 85 / 30%), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.code-block-hover-glow:hover::after {
+  opacity: 1;
+}
+
+/* ─── Footer top glow line ─── */
+.nyc-footer-glow-line {
+  position: relative;
+}
+.nyc-footer-glow-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, oklch(0.78 0.16 85 / 20%), transparent);
+  pointer-events: none;
 }
 
 /* ─── Print-friendly styles ─── */

@@ -825,3 +825,24 @@ Stage Summary:
 - 7 targeted styling fixes applied to page.tsx (card depth, text contrast, accordion, tier colors)
 - 6 new CSS utility classes + print-friendly stylesheet added to globals.css
 - All lint checks pass cleanly (0 errors)
+
+---
+Task ID: 14-b
+Agent: Full-Stack Feature Developer
+Task: Add new features — theme keyboard shortcut, section completion toast, enhanced command runner
+
+Work Log:
+- Added 'T' key keyboard shortcut for toggling dark/light theme in the keyboard handler useEffect (alongside existing J/K shortcuts)
+- Added 'T' shortcut entry to KeyboardShortcutsDialog component (keys: ['T'], action: 'Переключить тему')
+- Added section completion toast notification (AnimatePresence + motion.div) that appears when visitedSections.size equals TOC_ITEMS.length — shows green "Все разделы прочитаны!" message at bottom-center
+- Enhanced CopyButton component with optional onCopied callback prop
+- Added runningCmd state variable to track which command was just copied
+- Enhanced command rows in HELPER_COMMANDS section with conditional styling: taxi yellow border + shadow when "running", green pulsing dot + "copied" text indicator
+- CopyButton onCopied callback sets runningCmd for 1500ms to trigger the visual animation
+- Added "Сбросить" (Reset) button in checklist section next to "Прогресс настройки" label — appears only when checkedCount > 0, resets checkedItems to {}
+
+Stage Summary:
+- 4 features implemented (theme keyboard shortcut, section completion toast, enhanced command runner animation, reset progress button)
+- All lint checks pass cleanly (0 errors)
+- Dev server compiling successfully
+- No breaking changes to existing functionality

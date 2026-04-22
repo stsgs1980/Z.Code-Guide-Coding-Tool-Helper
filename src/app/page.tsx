@@ -47,6 +47,7 @@ import {
   Moon,
   ClipboardList,
   List,
+  Star,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -221,6 +222,28 @@ const SOURCES = [
   { id: 'S24', url: 'https://www.npmjs.com/package/@stagewise/agent-interface', desc: 'Stagewise Agent Interface' },
 ]
 
+/* ───────────────────── CONTEXTS ───────────────────── */
+
+const ToastContext = React.createContext<{
+  addToast: (message: string, type: 'success' | 'info') => void;
+}>({ addToast: () => {} });
+
+const BookmarkContext = React.createContext<{
+  bookmarks: Set<string>;
+  toggleBookmark: (sectionId: string) => void;
+}>({ bookmarks: new Set(), toggleBookmark: () => {} });
+
+/* ───────────────────── INSTALL SCRIPT TOOLS ───────────────────── */
+
+const INSTALL_TOOLS = [
+  { name: 'OpenCode', command: 'curl -fsSL https://opencode.ai/install | bash' },
+  { name: 'Coding Tool Helper', command: 'npx @z_ai/coding-helper' },
+  { name: 'Stitch MCP', command: 'npx @_davideast/stitch-mcp init' },
+  { name: 'UI UX Pro Max Skill', command: 'npx skills add nextlevelbuilder/ui-ux-pro-max-skill --global' },
+  { name: 'Magic MCP', command: 'npx -y 21st-dev/magic-mcp' },
+  { name: 'Cline (VS Code)', command: '# Install Cline from VS Code Marketplace\n# Search: "Cline" in Extensions' },
+]
+
 /* ───────────────────── READING PROGRESS ───────────────────── */
 
 function ReadingProgress() {
@@ -360,6 +383,7 @@ function KeyboardShortcutsDialog({ open, onClose }: { open: boolean; onClose: ()
     { keys: ['Ctrl', 'K'], action: 'Поиск по разделам' },
     { keys: ['Esc'], action: 'Закрыть диалог' },
     { keys: ['↑', '↓'], action: 'Навигация по результатам' },
+    { keys: ['T'], action: 'Переключить тему' },
     { keys: ['J'], action: 'Следующий раздел' },
     { keys: ['K'], action: 'Предыдущий раздел' },
   ]
@@ -674,13 +698,14 @@ function SectionNav({ currentId }: { currentId: string }) {
 
 /* ───────────────────── COMPONENTS ───────────────────── */
 
-function CopyButton({ text, className = '' }: { text: string; className?: string }) {
+function CopyButton({ text, className = '', onCopied }: { text: string; className?: string; onCopied?: () => void }) {
   const [copied, setCopied] = useState(false)
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(text)
     setCopied(true)
+    onCopied?.()
     setTimeout(() => setCopied(false), 2000)
-  }, [text])
+  }, [text, onCopied])
   return (
     <button
       onClick={handleCopy}
@@ -698,7 +723,7 @@ function CopyButton({ text, className = '' }: { text: string; className?: string
 /* ───────────────────── COPY ALL BUTTON ───────────────────── */
 
 function CopyAllButton() {
-  const [copied, setCopied] = useState(false)
+  const { addToast } = React.useContext(ToastContext)
   const allCommands = `npx @z_ai/coding-helper init
 coding-helper auth
 coding-helper lang set ru
@@ -715,8 +740,7 @@ npx skills add @anthropic-ai/magic-mcp --global`
 
   const handleCopy = () => {
     navigator.clipboard.writeText(allCommands)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    addToast('Все команды скопированы!', 'success')
   }
 
   return (
@@ -724,8 +748,8 @@ npx skills add @anthropic-ai/magic-mcp --global`
       onClick={handleCopy}
       className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--nyc-taxi)]/10 border border-[var(--nyc-taxi)]/20 text-[var(--nyc-taxi)] text-xs font-mono hover:bg-[var(--nyc-taxi)]/20 transition-all duration-200 mb-6"
     >
-      {copied ? <Check className="w-3.5 h-3.5" /> : <ClipboardList className="w-3.5 h-3.5" />}
-      {copied ? 'Скопировано!' : 'Скопировать все команды'}
+      <ClipboardList className="w-3.5 h-3.5" />
+      Скопировать все команды
     </button>
   )
 }
@@ -862,7 +886,7 @@ function highlightLine(line: string, lang: string): React.ReactNode[] {
 function CodeBlock({ code, lang = 'bash' }: { code: string; lang?: string }) {
   const lines = code.split('\n')
   return (
-    <div className="relative group rounded-lg overflow-hidden border border-white/[0.08] shadow-lg shadow-black/20">
+    <div className="relative group rounded-lg overflow-hidden border border-white/[0.08] shadow-lg shadow-black/20 code-block-hover-glow">
       {/* Terminal title bar */}
       <div className="flex items-center gap-2 px-4 py-2 bg-[oklch(0.14_0_0)] border-b border-white/[0.06]">
         <div className="flex items-center gap-1.5">
@@ -958,17 +982,28 @@ function AnimatedCounter({ value, suffix = '' }: { value: string; suffix?: strin
 
 function SectionHeader({ number, title, subtitle }: { number: string; title: string; subtitle?: string }) {
   const [shareCopied, setShareCopied] = useState(false)
+  const { addToast } = React.useContext(ToastContext)
+  const { bookmarks, toggleBookmark } = React.useContext(BookmarkContext)
+
+  const sectionMap: Record<string, string> = {
+    '00': 'hero', '01': 'matrix', '02': 'platforms', '03': 'helper',
+    '04': 'stagewise', '05': 'install', '06': 'mcp', '07': 'prompts',
+    '08': 'cost', '08.5': 'wizard', '09': 'troubleshoot', '09.5': 'faq', '10': 'architecture', '11': 'checklist',
+  }
+  const sectionId = sectionMap[number.trim()] || 'hero'
+  const isBookmarked = bookmarks.has(sectionId)
+
   const handleShare = () => {
-    const sectionMap: Record<string, string> = {
-      '00': 'hero', '01': 'matrix', '02': 'platforms', '03': 'helper',
-      '04': 'stagewise', '05': 'install', '06': 'mcp', '07': 'prompts',
-      '08': 'cost', '08.5': 'wizard', '09': 'troubleshoot', '09.5': 'faq', '10': 'architecture', '11': 'checklist',
-    }
-    const sectionId = sectionMap[number.trim()] || 'hero'
     const shareUrl = `${window.location.origin}${window.location.pathname}#${sectionId}`
     navigator.clipboard.writeText(shareUrl)
     setShareCopied(true)
+    addToast('Ссылка скопирована!', 'success')
     setTimeout(() => setShareCopied(false), 2000)
+  }
+
+  const handleBookmark = () => {
+    toggleBookmark(sectionId)
+    addToast(isBookmarked ? 'Закладка удалена' : 'Закладка добавлена', isBookmarked ? 'info' : 'success')
   }
 
   return (
@@ -982,9 +1017,16 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
       <div className="flex items-center gap-4 mb-3">
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 bg-[var(--nyc-taxi)] rotate-45" />
-          <span className="section-number font-mono">{number}</span>
+          <span className="section-number font-mono text-sm">{number}</span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-r from-[var(--nyc-taxi)]/30 to-transparent" />
+        <button
+          onClick={handleBookmark}
+          className={`p-1 rounded transition-all ${isBookmarked ? 'text-[var(--nyc-taxi)]' : 'text-white/15 hover:text-[var(--nyc-taxi)] hover:bg-white/5'}`}
+          title={isBookmarked ? 'Удалить закладку' : 'Добавить закладку'}
+        >
+          {isBookmarked ? <Star className="w-3 h-3 fill-[var(--nyc-taxi)]" /> : <Star className="w-3 h-3" />}
+        </button>
         <div className="relative">
           <button
             onClick={handleShare}
@@ -993,19 +1035,6 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
           >
             {shareCopied ? <Check className="w-3 h-3 text-green-400" /> : <Hash className="w-3 h-3" />}
           </button>
-          <AnimatePresence>
-            {shareCopied && (
-              <motion.div
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                className="absolute top-full left-1/2 -translate-x-1/2 mt-1 whitespace-nowrap bg-[oklch(0.14_0_0)] border border-[var(--nyc-taxi)]/20 rounded-lg px-3 py-1.5 text-xs text-green-400 flex items-center gap-1.5 z-10"
-              >
-                <Check className="w-3 h-3" />
-                Ссылка скопирована!
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </div>
       <h2 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">{title}</h2>
@@ -1161,6 +1190,181 @@ function CopySummaryButton() {
   )
 }
 
+/* ───────────────────── TOAST CONTAINER ───────────────────── */
+
+function ToastContainer({ toasts }: { toasts: Array<{ id: string; message: string; type: 'success' | 'info' }> }) {
+  return (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] flex flex-col-reverse items-center gap-2 pointer-events-none">
+      <AnimatePresence>
+        {toasts.slice(-3).map(toast => (
+          <motion.div
+            key={toast.id}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.25 }}
+            className={`pointer-events-auto px-4 py-2.5 rounded-lg shadow-lg shadow-black/30 backdrop-blur-sm text-sm font-mono flex items-center gap-2 border-l-2 ${
+              toast.type === 'success'
+                ? 'bg-[oklch(0.14_0_0)] border-l-[var(--nyc-taxi)] text-[oklch(0.85_0_0)]'
+                : 'bg-[oklch(0.14_0_0)] border-l-[var(--nyc-steel)] text-[oklch(0.75_0_0)]'
+            }`}
+          >
+            {toast.type === 'success' ? <Check className="w-3.5 h-3.5 text-[var(--nyc-taxi)] shrink-0" /> : <Hash className="w-3.5 h-3.5 text-[var(--nyc-steel)] shrink-0" />}
+            {toast.message}
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/* ───────────────────── INSTALL SCRIPT GENERATOR ───────────────────── */
+
+function InstallScriptGenerator({ installSelections, setInstallSelections }: {
+  installSelections: Record<string, boolean>;
+  setInstallSelections: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+}) {
+  const { addToast } = React.useContext(ToastContext)
+
+  const allSelected = INSTALL_TOOLS.every(t => installSelections[t.name])
+  const noneSelected = INSTALL_TOOLS.every(t => !installSelections[t.name])
+  const selectedCount = INSTALL_TOOLS.filter(t => installSelections[t.name]).length
+
+  const toggleTool = (name: string) => {
+    setInstallSelections(prev => ({ ...prev, [name]: !prev[name] }))
+  }
+
+  const selectAll = () => {
+    setInstallSelections(prev => {
+      const next = { ...prev }
+      INSTALL_TOOLS.forEach(t => { next[t.name] = true })
+      return next
+    })
+  }
+
+  const deselectAll = () => {
+    setInstallSelections(prev => {
+      const next = { ...prev }
+      INSTALL_TOOLS.forEach(t => { next[t.name] = false })
+      return next
+    })
+  }
+
+  const generatedScript = useMemo(() => {
+    if (noneSelected) return ''
+    const selected = INSTALL_TOOLS.filter(t => installSelections[t.name])
+    const date = new Date().toLocaleDateString('ru-RU')
+    const lines = [
+      '#!/bin/bash',
+      '# UI Generation Stack — Auto-generated Install Script',
+      `# Generated: ${date}`,
+      '',
+      'echo "🚀 Starting UI Generation Stack installation..."',
+      '',
+    ]
+    for (const tool of selected) {
+      lines.push(`# ${tool.name}`)
+      lines.push(`echo "\\n📦 Installing ${tool.name}..."`)
+      for (const cmdLine of tool.command.split('\n')) {
+        lines.push(cmdLine)
+      }
+      lines.push('')
+    }
+    lines.push('echo "\\n✅ Installation complete!"')
+    lines.push('echo "Run \'coding-helper doctor\' to verify your setup."')
+    return lines.join('\n')
+  }, [installSelections, noneSelected])
+
+  const handleCopyScript = () => {
+    if (!generatedScript) return
+    navigator.clipboard.writeText(generatedScript)
+    addToast('Скрипт скопирован!', 'success')
+  }
+
+  return (
+    <div className="nyc-card-enhanced p-6 mt-8">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-7 h-7 rounded-lg bg-[var(--nyc-taxi)]/15 flex items-center justify-center">
+          <Terminal className="w-3.5 h-3.5 text-[var(--nyc-taxi)]" />
+        </div>
+        <div>
+          <h3 className="text-base font-semibold tracking-tight">Генератор скрипта установки</h3>
+          <p className="text-xs text-[oklch(0.6_0_0)]">Выберите инструменты и скопируйте готовый bash-скрипт</p>
+        </div>
+      </div>
+
+      {/* Select All / Deselect All */}
+      <div className="flex items-center gap-2 mb-4">
+        <button
+          onClick={selectAll}
+          className="text-[10px] font-mono text-[var(--nyc-taxi)] hover:text-[var(--nyc-amber)] px-2 py-1 rounded bg-[var(--nyc-taxi)]/5 hover:bg-[var(--nyc-taxi)]/10 transition-colors"
+        >
+          Выбрать все
+        </button>
+        <button
+          onClick={deselectAll}
+          className="text-[10px] font-mono text-[var(--nyc-steel)] hover:text-white/60 px-2 py-1 rounded bg-white/[0.02] hover:bg-white/5 transition-colors"
+        >
+          Снять все
+        </button>
+        {selectedCount > 0 && (
+          <span className="text-[10px] font-mono text-[var(--nyc-taxi)] ml-auto">
+            {selectedCount}/{INSTALL_TOOLS.length}
+          </span>
+        )}
+      </div>
+
+      {/* Tool checkboxes */}
+      <div className="grid sm:grid-cols-2 gap-2 mb-5">
+        {INSTALL_TOOLS.map(tool => (
+          <label
+            key={tool.name}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all border ${
+              installSelections[tool.name]
+                ? 'bg-[var(--nyc-taxi)]/8 border-[var(--nyc-taxi)]/20'
+                : 'bg-white/[0.02] border-white/[0.06] hover:border-white/10'
+            }`}
+          >
+            <div className={`w-4 h-4 rounded flex items-center justify-center border transition-all shrink-0 ${
+              installSelections[tool.name]
+                ? 'bg-[var(--nyc-taxi)] border-[var(--nyc-taxi)]'
+                : 'border-white/20'
+            }`}>
+              {installSelections[tool.name] && <Check className="w-2.5 h-2.5 text-black" />}
+            </div>
+            <input
+              type="checkbox"
+              checked={!!installSelections[tool.name]}
+              onChange={() => toggleTool(tool.name)}
+              className="sr-only"
+            />
+            <span className={`text-xs font-mono ${installSelections[tool.name] ? 'text-[var(--nyc-taxi)]' : 'text-[oklch(0.7_0_0)]'}`}>
+              {tool.name}
+            </span>
+          </label>
+        ))}
+      </div>
+
+      {/* Generated script */}
+      {generatedScript && (
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-mono text-[var(--nyc-steel)] uppercase tracking-wider">Сгенерированный скрипт</span>
+            <button
+              onClick={handleCopyScript}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[var(--nyc-taxi)]/10 border border-[var(--nyc-taxi)]/20 text-[var(--nyc-taxi)] text-[11px] font-mono hover:bg-[var(--nyc-taxi)]/20 transition-all"
+            >
+              <Copy className="w-3 h-3" />
+              Copy Script
+            </button>
+          </div>
+          <CodeBlock code={generatedScript} lang="bash" />
+        </div>
+      )}
+    </div>
+  )
+}
+
 /* ───────────────────── MAIN PAGE ───────────────────── */
 
 export default function Home() {
@@ -1191,6 +1395,7 @@ export default function Home() {
     return (localStorage.getItem('nyc-theme') as 'dark' | 'light') || 'dark'
   })
   const [helperFilter, setHelperFilter] = useState('')
+  const [runningCmd, setRunningCmd] = useState('')
   const [errorExpanded, setErrorExpanded] = useState<string[]>([])
   const [faqExpanded, setFaqExpanded] = useState<string[]>([])
   const [readingProgress, setReadingProgress] = useState(0)
@@ -1203,7 +1408,39 @@ export default function Home() {
       return saved ? new Set(JSON.parse(saved)) : new Set()
     } catch { return new Set() }
   })
+  const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: 'success' | 'info' }>>([])
+  const [bookmarks, setBookmarks] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set()
+    try {
+      const saved = localStorage.getItem('nyc-bookmarks')
+      return saved ? new Set(JSON.parse(saved)) : new Set()
+    } catch { return new Set() }
+  })
+  const [installSelections, setInstallSelections] = useState<Record<string, boolean>>(() => {
+    if (typeof window === 'undefined') return {}
+    try {
+      const saved = localStorage.getItem('nyc-install-selections')
+      return saved ? JSON.parse(saved) : {}
+    } catch { return {} }
+  })
   const quickJumpRef = useRef<HTMLDivElement>(null)
+
+  const addToast = useCallback((message: string, type: 'success' | 'info') => {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+    setToasts(prev => [...prev, { id, message, type }])
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id))
+    }, 3000)
+  }, [])
+
+  const toggleBookmark = useCallback((sectionId: string) => {
+    setBookmarks(prev => {
+      const next = new Set(prev)
+      if (next.has(sectionId)) next.delete(sectionId)
+      else next.add(sectionId)
+      return next
+    })
+  }, [])
 
   // Close quick jump on click outside
   useEffect(() => {
@@ -1304,12 +1541,23 @@ export default function Home() {
   }, [visitedSections])
 
   useEffect(() => {
+    localStorage.setItem('nyc-bookmarks', JSON.stringify([...bookmarks]))
+  }, [bookmarks])
+
+  useEffect(() => {
+    localStorage.setItem('nyc-install-selections', JSON.stringify(installSelections))
+  }, [installSelections])
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't capture if user is typing in an input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
 
       const currentIndex = TOC_ITEMS.findIndex(item => item.id === activeSection)
 
+      if (e.key === 't' && !e.metaKey && !e.ctrlKey) {
+        toggleTheme()
+      }
       if (e.key === 'j' && !e.metaKey && !e.ctrlKey) {
         const next = TOC_ITEMS[Math.min(currentIndex + 1, TOC_ITEMS.length - 1)]
         document.getElementById(next.id)?.scrollIntoView({ behavior: 'smooth' })
@@ -1336,6 +1584,8 @@ export default function Home() {
   const checkedCount = Object.values(checkedItems).filter(Boolean).length
 
   return (
+    <ToastContext.Provider value={{ addToast }}>
+    <BookmarkContext.Provider value={{ bookmarks, toggleBookmark }}>
     <TooltipProvider>
       <div className={`min-h-screen flex flex-col bg-background ${theme === 'light' ? 'nyc-light-mode' : ''}`} style={{ backgroundColor: theme === 'dark' ? 'oklch(0.1 0 0)' : 'oklch(0.97 0 0)' }}>
         <ReadingProgress />
@@ -1372,14 +1622,18 @@ export default function Home() {
                   }`}
                 >
                   {item.label}
-                  {visitedSections.has(item.id) && activeSection !== item.id && (
+                  {bookmarks.has(item.id) && (
+                    <span className="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-[var(--nyc-taxi)]" />
+                  )}
+                  {visitedSections.has(item.id) && activeSection !== item.id && !bookmarks.has(item.id) && (
                     <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[var(--nyc-taxi)]/40" />
                   )}
                 </a>
               </TooltipTrigger>
               <TooltipContent side="right" className="font-mono text-xs bg-[oklch(0.17_0_0)] border-white/10">
                 {item.title}
-                {visitedSections.has(item.id) && <span className="ml-1.5 text-green-400/50">✓</span>}
+                {bookmarks.has(item.id) && <Star className="w-2.5 h-2.5 ml-1.5 text-[var(--nyc-taxi)] inline fill-[var(--nyc-taxi)]" />}
+                {!bookmarks.has(item.id) && visitedSections.has(item.id) && <span className="ml-1.5 text-green-400/50">✓</span>}
               </TooltipContent>
             </Tooltip>
           ))}
@@ -1465,6 +1719,28 @@ export default function Home() {
                   </button>
                 </div>
                 <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
+                  {/* Bookmarks section */}
+                  {bookmarks.size > 0 && (
+                    <div className="mb-3">
+                      <div className="flex items-center gap-2 px-3 py-1.5">
+                        <Star className="w-3 h-3 text-[var(--nyc-taxi)] fill-[var(--nyc-taxi)]" />
+                        <span className="text-[10px] font-mono text-[var(--nyc-taxi)] uppercase tracking-wider font-bold">Закладки</span>
+                      </div>
+                      {TOC_ITEMS.filter(item => bookmarks.has(item.id)).map(item => (
+                        <a
+                          key={`bm-${item.id}`}
+                          href={`#${item.id}`}
+                          onClick={() => setTocPanelOpen(false)}
+                          className="flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-[var(--nyc-taxi)]/80 hover:text-[var(--nyc-taxi)] hover:bg-[var(--nyc-taxi)]/5 transition-colors"
+                        >
+                          <Star className="w-3 h-3 fill-[var(--nyc-taxi)] shrink-0" />
+                          <span className="font-mono text-xs w-6 shrink-0">{item.label}</span>
+                          <span className="truncate flex-1 text-xs">{item.title}</span>
+                        </a>
+                      ))}
+                      <div className="h-px bg-white/5 my-2 mx-3" />
+                    </div>
+                  )}
                   {TOC_ITEMS.map(item => (
                     <a
                       key={item.id}
@@ -1481,7 +1757,10 @@ export default function Home() {
                       <item.icon className="w-4 h-4 shrink-0" />
                       <span className="font-mono text-xs w-6 shrink-0">{item.label}</span>
                       <span className="truncate flex-1">{item.title}</span>
-                      {visitedSections.has(item.id) && (
+                      {bookmarks.has(item.id) && (
+                        <Star className="w-2.5 h-2.5 text-[var(--nyc-taxi)] fill-[var(--nyc-taxi)] shrink-0" />
+                      )}
+                      {!bookmarks.has(item.id) && visitedSections.has(item.id) && (
                         <span className="w-1.5 h-1.5 rounded-full bg-green-400/40 shrink-0" />
                       )}
                     </a>
@@ -1640,7 +1919,7 @@ export default function Home() {
         </AnimatePresence>
 
         {/* ── MAIN CONTENT ── */}
-        <main className="flex-1 lg:ml-14 pt-16 lg:pt-10 relative z-10">
+        <main className="flex-1 nyc-ambient-bg lg:ml-14 pt-16 lg:pt-10 relative z-10">
           {/* Sticky Section Indicator */}
           <AnimatePresence>
             {activeSection !== 'hero' && (
@@ -1650,7 +1929,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="hidden lg:flex fixed top-1 left-14 right-0 z-40 h-10 items-center px-6 nyc-section-indicator bg-[oklch(0.1_0_0)]/80 border-b border-white/[0.06]"
+                className="hidden lg:flex fixed top-1 left-14 right-0 z-40 h-10 items-center px-6 nyc-section-indicator bg-[oklch(0.1_0_0)]/90 border-b border-white/[0.06]"
               >
                 <div className="max-w-7xl mx-auto w-full flex items-center gap-3">
                   <div className="w-1.5 h-1.5 bg-[var(--nyc-taxi)] rotate-45" />
@@ -1691,7 +1970,7 @@ export default function Home() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--nyc-taxi)]/10 border border-[var(--nyc-taxi)]/20 mb-6"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--nyc-taxi)]/10 border border-[var(--nyc-taxi)]/30 mb-6"
                 >
                   <div className="w-1.5 h-1.5 rounded-full bg-[var(--nyc-taxi)] animate-pulse" />
                   <span className="font-mono text-[10px] text-[var(--nyc-taxi)] tracking-widest uppercase">
@@ -1716,8 +1995,8 @@ export default function Home() {
                         transition={{ duration: 0.2 }}
                         className="flex items-center gap-2"
                       >
-                        <BookOpen className="w-3 h-3 text-[var(--nyc-steel)]" />
-                        <span className="font-mono text-[10px] text-[var(--nyc-steel)] tracking-widest">
+                        <BookOpen className="w-3 h-3 text-[oklch(0.65_0_0)]" />
+                        <span className="font-mono text-[10px] text-[oklch(0.65_0_0)] tracking-widest">
                           ~14 мин чтения
                         </span>
                       </motion.span>
@@ -1776,7 +2055,7 @@ export default function Home() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 + i * 0.1 }}
-                      className="bg-[oklch(0.14_0_0)] border border-white/[0.10] rounded-lg p-3.5 hover:border-[var(--nyc-taxi)]/25 transition-all duration-300 shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 hover:-translate-y-0.5"
+                      className="nyc-card-inner-light nyc-hero-card nyc-hero-card-glow bg-[oklch(0.14_0_0)] border border-white/[0.10] rounded-lg p-3.5 hover:border-[var(--nyc-taxi)]/25 transition-all duration-300 shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-black/40 hover:-translate-y-0.5"
                     >
                       <div className="flex items-center gap-2 mb-1.5">
                         <fact.icon className="w-3.5 h-3.5 text-[var(--nyc-taxi)]" />
@@ -1809,7 +2088,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {/* ═══════════════ 01 — TOOL MATRIX ═══════════════ */}
-            <section id="matrix" className="py-12 lg:py-20">
+            <section id="matrix" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="01" title="Матрица инструментов" subtitle="tools_matrix" />
               <div className="grid gap-4">
                 {TOOLS.map((tool, i) => (
@@ -1820,7 +2099,7 @@ export default function Home() {
                     viewport={{ once: true, margin: '-50px' }}
                     transition={{ delay: i * 0.04, duration: 0.3 }}
                   >
-                    <Card className="nyc-card-enhanced nyc-card-tilt rounded-xl group">
+                    <Card className="nyc-card-enhanced nyc-card-tilt nyc-card-glow-hover rounded-xl group" style={{ borderLeftColor: tool.color, borderLeftWidth: '2px' }}>
                       <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center gap-3">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           <div
@@ -1887,7 +2166,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 02 — PLATFORMS ═══════════════ */}
-            <section id="platforms" className="py-12 lg:py-20">
+            <section id="platforms" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="02" title="Платформы и совместимость" subtitle="compatibility_matrix" />
 
               {/* Compatibility Matrix */}
@@ -1936,7 +2215,7 @@ export default function Home() {
                     viewport={{ once: true, margin: '-50px' }}
                     transition={{ delay: i * 0.05 }}
                   >
-                    <Card className="nyc-card-enhanced rounded-xl h-full">
+                    <Card className="nyc-card-enhanced nyc-card-glow-hover rounded-xl h-full">
                       <CardHeader className="p-5 pb-2">
                         <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2">
                           <p.icon className="w-4 h-4 text-[var(--nyc-taxi)]" />
@@ -1963,7 +2242,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 03 — CODING TOOL HELPER ═══════════════ */}
-            <section id="helper" className="py-12 lg:py-20">
+            <section id="helper" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="03" title="Coding Tool Helper" subtitle="@z_ai/coding-helper — центральный узел интеграции" />
 
               {/* Setup Wizard */}
@@ -2028,12 +2307,23 @@ export default function Home() {
                       transition={{ delay: i * 0.04 }}
                       className="group relative"
                     >
-                      <div className="flex items-center gap-3 text-xs rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] px-4 py-2.5 pr-12 hover:border-[var(--nyc-taxi)]/15 transition-colors">
+                      <div className={`flex items-center gap-3 text-xs rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] px-4 py-2.5 pr-12 transition-all duration-300 ${
+                        runningCmd === cmd.cmd ? 'border-[var(--nyc-taxi)]/30 shadow-md shadow-[var(--nyc-taxi)]/5' : 'hover:border-[var(--nyc-taxi)]/15'
+                      }`}>
                         <span className="text-[var(--nyc-taxi)] font-mono shrink-0">❯</span>
                         <span className="text-[var(--nyc-concrete)] font-mono">{cmd.cmd}</span>
                         <span className="text-white/30 hidden sm:inline">— {cmd.desc}</span>
+                        {runningCmd === cmd.cmd && (
+                          <span className="ml-auto flex items-center gap-1 text-[10px] text-green-400/80 font-mono">
+                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                            copied
+                          </span>
+                        )}
                       </div>
-                      <CopyButton text={cmd.cmd} className="absolute top-1.5 right-1.5" />
+                      <CopyButton text={cmd.cmd} className="absolute top-1.5 right-1.5" onCopied={() => {
+                        setRunningCmd(cmd.cmd)
+                        setTimeout(() => setRunningCmd(''), 1500)
+                      }} />
                     </motion.div>
                   ))}
                 </div>
@@ -2126,7 +2416,7 @@ export default function Home() {
                         <span className="text-[var(--nyc-taxi)] font-mono text-xs font-bold">{plan.price}</span>
                       </div>
                     </div>
-                    <Progress value={plan.pct} className="h-1 mb-3 [&>div]:bg-[var(--nyc-taxi)]" />
+                    <Progress value={plan.pct} className={`h-1 mb-3 [&>div]:${i === 0 ? 'bg-green-500' : i === 1 ? 'bg-blue-400' : 'bg-[var(--nyc-taxi)]'}`} />
                     <div className="flex justify-between text-xs text-[oklch(0.6_0_0)]">
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> 5ч: {plan.fiveHour}</span>
                       <span>Неделя: {plan.weekly}</span>
@@ -2140,7 +2430,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 04 — STAGEWISE ═══════════════ */}
-            <section id="stagewise" className="py-12 lg:py-20">
+            <section id="stagewise" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="04" title="Stagewise" subtitle="AI Browser для веб-разработчиков" />
 
               <div className="grid sm:grid-cols-3 gap-4 mb-6">
@@ -2283,7 +2573,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 05 — INSTALLATION ═══════════════ */}
-            <section id="install" className="py-12 lg:py-20">
+            <section id="install" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="05" title="Установка и настройка" subtitle="step_by_step_guide" />
 
               {/* API Keys */}
@@ -2414,13 +2704,16 @@ export default function Home() {
                   </TabsContent>
                 </Tabs>
               </div>
+
+              {/* Install Script Generator */}
+              <InstallScriptGenerator installSelections={installSelections} setInstallSelections={setInstallSelections} />
             </section>
 
             <SectionNav currentId="install" />
             <TaxiDivider />
 
             {/* ═══════════════ 06 — MCP SERVERS ═══════════════ */}
-            <section id="mcp" className="py-12 lg:py-20">
+            <section id="mcp" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="06" title="MCP-серверы" subtitle="model_context_protocol_servers" />
 
               <div className="grid sm:grid-cols-2 gap-4 mb-6">
@@ -2476,7 +2769,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 07 — PROMPT TEMPLATES ═══════════════ */}
-            <section id="prompts" className="py-12 lg:py-20">
+            <section id="prompts" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="07" title="Промпт-шаблоны" subtitle="ready_to_use_prompt_templates" />
 
               <div className="space-y-4 mb-8">
@@ -2533,7 +2826,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 08 — COST SCENARIOS ═══════════════ */}
-            <section id="cost" className="py-12 lg:py-20">
+            <section id="cost" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="08" title="Сценарии стоимости" subtitle="cost_scenarios" />
 
               <div className="grid sm:grid-cols-2 gap-5">
@@ -2556,7 +2849,7 @@ export default function Home() {
                         </div>
                       </CardHeader>
                       <CardContent className="p-5 space-y-3">
-                        <Progress value={scenario.pct} className="h-1.5 [&>div]:bg-[var(--nyc-taxi)]" />
+                        <Progress value={scenario.pct} className={`h-1.5 [&>div]:${i === 0 ? 'bg-green-500' : i === 1 ? 'bg-blue-400' : i === 2 ? 'bg-[var(--nyc-taxi)]' : 'bg-[var(--nyc-subway)]'}`} />
                         <div className="space-y-2 text-xs">
                           <div>
                             <span className="text-[var(--nyc-steel)] font-mono text-[10px] uppercase tracking-wider">Инструменты</span>
@@ -2582,7 +2875,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 08.5 — PLAN WIZARD ═══════════════ */}
-            <section id="wizard" className="py-12 lg:py-20">
+            <section id="wizard" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="08.5" title="Мастер выбора плана" subtitle="plan_comparison_wizard" />
 
               <Card className="nyc-card-enhanced p-6">
@@ -2690,7 +2983,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 09 — TROUBLESHOOTING ═══════════════ */}
-            <section id="troubleshoot" className="py-12 lg:py-20">
+            <section id="troubleshoot" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="09" title="Диагностика и решение проблем" subtitle="troubleshooting_guide" />
 
               {/* Diagnostic Commands */}
@@ -2769,7 +3062,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 09.5 — FAQ ═══════════════ */}
-            <section id="faq" className="py-12 lg:py-20">
+            <section id="faq" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="09.5" title="Часто задаваемые вопросы" subtitle="faq" />
 
               <div className="flex items-center justify-between mb-3">
@@ -2815,7 +3108,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 10 — ARCHITECTURE ═══════════════ */}
-            <section id="architecture" className="py-12 lg:py-20">
+            <section id="architecture" className="py-16 lg:py-24 nyc-section-hover-border">
               <SectionHeader number="10" title="Архитектура системы" subtitle="system_architecture_diagram" />
 
               <Card className="nyc-card-enhanced rounded-xl overflow-hidden">
@@ -2886,7 +3179,17 @@ export default function Home() {
               <Card className="nyc-card-enhanced">
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-semibold tracking-tight">Прогресс настройки</span>
+                    <div className="flex items-center">
+                      <span className="text-sm font-semibold tracking-tight">Прогресс настройки</span>
+                      {checkedCount > 0 && (
+                        <button
+                          onClick={() => setCheckedItems({})}
+                          className="ml-auto text-[10px] font-mono text-white/20 hover:text-red-400 transition-colors px-2 py-0.5 rounded hover:bg-red-400/5"
+                        >
+                          Сбросить
+                        </button>
+                      )}
+                    </div>
                     <span className="text-[var(--nyc-taxi)] font-mono font-bold text-xs">{checkedCount}/{CHECKLIST_ITEMS.length}</span>
                   </div>
                   <Progress
@@ -3034,7 +3337,7 @@ export default function Home() {
         {/* ── FOOTER ── */}
         <footer className="mt-auto relative z-10">
           <div className="nyc-caution-stripe" />
-          <div className="bg-[oklch(0.08_0_0)] border-t border-white/5">
+          <div className="nyc-footer-glow-line bg-gradient-to-b from-[oklch(0.08_0_0)] to-[oklch(0.06_0_0)] border-t border-white/5">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:ml-14">
               <div className="grid sm:grid-cols-3 gap-6 items-start">
                 {/* Left: Brand */}
@@ -3075,7 +3378,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-1.5 text-[10px] font-mono">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                    <span className="text-green-400/70">PRODUCTION READY</span>
+                    <span className="text-green-400/70 text-[11px]">PRODUCTION READY</span>
                   </div>
                   <button
                     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -3098,6 +3401,29 @@ export default function Home() {
           </div>
         </footer>
       </div>
+
+      {/* Section completion toast */}
+      <AnimatePresence>
+        {visitedSections.size === TOC_ITEMS.length && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3 rounded-xl bg-green-500/10 border border-green-500/20 shadow-lg shadow-green-500/5 backdrop-blur-sm"
+          >
+            <CheckCircle2 className="w-5 h-5 text-green-400" />
+            <div>
+              <div className="text-sm font-bold text-green-400">Все разделы прочитаны!</div>
+              <div className="text-xs text-green-400/60">Вы ознакомились со всеми разделами руководства</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Toast notifications */}
+      <ToastContainer toasts={toasts} />
     </TooltipProvider>
+    </BookmarkContext.Provider>
+    </ToastContext.Provider>
   )
 }
