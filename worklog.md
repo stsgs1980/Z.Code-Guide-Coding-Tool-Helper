@@ -428,3 +428,134 @@ Stage Summary:
 - Syntax highlighting added to CodeBlock with regex-based tokenizer for bash/json/yaml
 - All lint checks pass cleanly
 - No compilation errors
+
+---
+Task ID: 9-b
+Agent: Full-Stack Feature Developer
+Task: Add FAQ section, Copy All Commands, enhanced section indicator, scroll progress mini-map, enhanced sources
+
+Work Log:
+- Added `ClipboardList` to lucide-react imports
+- Added `FAQ_ITEMS` constant with 6 FAQ entries (Russian)
+- Added FAQ entry to TOC_ITEMS (id: 'faq', label: '09.5', title: 'FAQ', icon: MessageSquare)
+- Created `CopyAllButton` component — copies all install commands at once, shows "Скопировано!" feedback for 2s with Check icon
+- Added CopyAllButton to Install section (flex row with heading)
+- Added FAQ section (id: 'faq') between troubleshoot and architecture sections with SectionHeader number "09.5", title "Часто задаваемые вопросы", subtitle "faq"
+- Enhanced section indicator (floating pill at bottom) — added section icon before the § label text
+- Added scroll progress mini-map to sidebar — thin vertical bar on right side of sidebar that fills with taxi yellow as user scrolls (uses scrollYProgress from framer-motion)
+- Enhanced sources section — added nyc-link-hover class, text color transitions to taxi yellow on hover, external link icon transitions to taxi accent
+
+Stage Summary:
+- 5 features implemented (FAQ accordion, Copy All Commands, enhanced section indicator, scroll progress mini-map, enhanced sources)
+- All lint checks pass cleanly (0 errors)
+- Dev server compiling successfully
+- No compilation errors
+
+---
+Task ID: 9-a
+Agent: Frontend Styling Expert
+Task: Improve styling with more details — text contrast, card depth, hero polish, section spacing, sidebar enhancement
+
+Work Log:
+
+1. **Text Contrast & Readability (HIGH PRIORITY)**
+   - Changed hero description `<p>` from `text-[var(--nyc-steel)]` to `text-[oklch(0.75_0_0)]` with `nyc-text-readable` class for better readability on dark background
+   - Changed paragraph/description text from `text-[var(--nyc-steel)]` to `text-[var(--nyc-concrete)]` in 7 locations:
+     - Tool Matrix card descriptions (tool.desc)
+     - Platform card descriptions (p.desc)
+     - GLM model descriptions (model.use)
+     - Stagewise feature descriptions (feat.desc)
+     - MCP Server descriptions (server.desc)
+     - Plan Wizard intro text
+   - Left `text-[var(--nyc-steel)]` unchanged for labels, table headers, and small mono text where lighter color is appropriate
+
+2. **Card Visual Depth Enhancement**
+   - Upgraded Tool Matrix cards from `bg-white/[0.02] border-white/[0.06]` to `nyc-card-enhanced group`
+   - Upgraded Compatibility Matrix table card from basic styling to `nyc-card-enhanced`
+   - Upgraded Platform cards (section 02) from basic styling to `nyc-card-enhanced h-full`
+   - Upgraded MCP Server cards from basic styling to `nyc-card-enhanced h-full`
+   - Upgraded Cost Scenario cards to use `nyc-card-enhanced` for standard tiers and `nyc-card-highlight-enhanced` for Team/Enterprise, with `nyc-card-inner-light` added to all
+
+3. **Hero Section Polish**
+   - Changed overlay gradient from `from-background via-background/70 to-background` to `from-background/80 via-background/50 to-background` (makes hero background image more visible)
+   - Added `nyc-text-shadow-strong` class to hero h1 for subtle text shadow
+   - Changed "Начать установку" button from `shadow-lg shadow-[var(--nyc-taxi)]/20` to `shadow-xl shadow-[var(--nyc-taxi)]/30 nyc-cta-glow` for more prominent CTA
+
+4. **Section Spacing & Flow**
+   - Changed all section padding from `py-16` to `py-16 lg:py-20` (13 sections)
+   - Added `nyc-pipe-divider` decorative elements between 3 section pairs (after sections 01, 03, 05) alongside existing TaxiDivider
+
+5. **Sidebar Enhancement**
+   - Added `nyc-hover-glow` class to active sidebar nav item for prominent glow on hover
+   - Added `nyc-sidebar-active` class to active sidebar nav item for left border indicator (2px taxi yellow bar with glow)
+
+6. **Global CSS Additions** (added to globals.css)
+   - `.nyc-text-readable` — Readable body text on dark bg (oklch(0.78 0 0) color, 1.7 line-height)
+   - `.nyc-sidebar-active` + `::before` — Active sidebar indicator (2px taxi yellow left border with glow shadow)
+   - `.nyc-cta-glow` + `:hover` — Subtle glow for primary CTA buttons (2-layer box-shadow with taxi accent, enhanced on hover)
+   - `.nyc-card-inner-light` + `::after` — Card subtle inner light (1px gradient line at top, transparent→white/8%→transparent)
+
+Build Status: ✅ Compiled successfully
+Lint: ✅ Clean, no errors
+QA: All changes are CSS/className only, no functional logic modified
+
+---
+Task ID: 9
+Agent: Main Agent (Cron Review Round 4)
+Task: QA testing, fix lint error, improve styling, add features
+
+Work Log:
+- Read worklog.md for full project context (Tasks 1-8-a completed)
+- Performed QA via agent-browser: no page errors, dev server compiling
+- Found lint error: react-hooks/set-state-in-effect in localStorage hydration useEffect
+- Fixed by converting useState initializers to lazy functions (reads localStorage directly)
+- Removed the hydration useEffect entirely
+- Dispatched sub-agents 9-a (styling) and 9-b (features) in parallel
+
+VLM QA Scores (before improvements):
+- Hero: 6/10 (bg too dark, text hard to read, sidebar disconnected)
+- Mid-section: 3/10 (extremely dark, low contrast, cards lack depth)
+
+VLM QA Scores (after improvements):
+- Hero: 8/10 (better contrast, polished)
+- Typography: 9/10
+- Color: 8/10
+- Cards: 7/10
+- Overall: 8/10 (significant improvement from 6/10)
+
+Bug Fixes:
+- Fixed lint error: moved localStorage reads from useEffect to lazy useState initializers
+
+Styling Improvements (by sub-agent 9-a):
+- Text contrast: hero desc changed to oklch(0.75), 7 paragraph texts changed to nyc-concrete
+- Cards: upgraded to nyc-card-enhanced / nyc-card-highlight-enhanced
+- Hero: brighter bg overlay, text-shadow, CTA glow
+- Sections: py-16 changed to py-16 lg:py-20, pipe dividers added
+- Sidebar: active indicator with nyc-sidebar-active + nyc-hover-glow
+- CSS: 4 new utility classes (nyc-text-readable, nyc-sidebar-active, nyc-cta-glow, nyc-card-inner-light)
+
+New Features (by sub-agent 9-b):
+- FAQ section with 6 accordion items (between troubleshoot and architecture)
+- Copy All Commands button in Install section
+- Enhanced section indicator with icon
+- Scroll progress mini-map in sidebar
+- Enhanced sources section with nyc-link-hover
+
+Stage Summary:
+- Lint error fixed (set-state-in-effect)
+- Visual quality improved from 6/10 to 8/10 per VLM
+- 5 new features added, 6 styling improvements
+- All QA checks pass
+
+Current Project Status:
+- Full guide page with 13+ sections (including new FAQ), NYC industrial theme
+- Interactive features: search, keyboard shortcuts, guide tour, checklist, accordion, tabs, Plan Wizard, theme toggle, breadcrumb trail, FAQ, Copy All, scroll progress mini-map
+- Code blocks styled as CLI terminals with syntax highlighting
+- Light/dark theme support
+- VLM scores: 8/10 overall
+
+Unresolved Issues / Next Steps:
+- Light mode card/text color overrides could be more refined
+- Mobile responsiveness could be enhanced further
+- Consider adding a print-friendly stylesheet
+- FAQ could be expanded with more items based on user feedback

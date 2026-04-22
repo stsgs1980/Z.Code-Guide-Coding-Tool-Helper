@@ -1412,3 +1412,57 @@ pre::-webkit-scrollbar-thumb:hover {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   NYC INDUSTRIAL THEME — STYLING IMPROVEMENTS (Task 9-a)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Better readable body text on dark bg */
+.nyc-text-readable {
+  color: oklch(0.78 0 0);
+  line-height: 1.7;
+}
+
+/* Active sidebar indicator */
+.nyc-sidebar-active {
+  position: relative;
+}
+.nyc-sidebar-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  bottom: 25%;
+  width: 2px;
+  background: var(--nyc-taxi);
+  border-radius: 1px;
+  box-shadow: 0 0 8px oklch(0.78 0.16 85 / 40%);
+}
+
+/* Subtle glow for primary CTA */
+.nyc-cta-glow {
+  box-shadow:
+    0 4px 12px oklch(0.78 0.16 85 / 25%),
+    0 8px 24px oklch(0.78 0.16 85 / 15%);
+  transition: box-shadow 0.3s ease;
+}
+.nyc-cta-glow:hover {
+  box-shadow:
+    0 4px 12px oklch(0.78 0.16 85 / 35%),
+    0 8px 32px oklch(0.78 0.16 85 / 25%);
+}
+
+/* Card subtle inner light */
+.nyc-card-inner-light {
+  position: relative;
+}
+.nyc-card-inner-light::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, oklch(1 0 0 / 8%), transparent);
+  pointer-events: none;
+}

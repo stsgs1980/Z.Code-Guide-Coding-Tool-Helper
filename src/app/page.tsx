@@ -46,6 +46,7 @@ import {
   ChevronLeft,
   Sun,
   Moon,
+  ClipboardList,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -78,6 +79,7 @@ const TOC_ITEMS = [
   { id: 'prompts', label: '07', title: 'Промпт-шаблоны', icon: Sparkles },
   { id: 'cost', label: '08', title: 'Стоимость', icon: DollarSign },
   { id: 'troubleshoot', label: '09', title: 'Диагностика', icon: AlertTriangle },
+  { id: 'faq', label: '09.5', title: 'FAQ', icon: MessageSquare },
   { id: 'architecture', label: '10', title: 'Архитектура', icon: Cpu },
   { id: 'checklist', label: '11', title: 'Чек-лист', icon: CheckCircle2 },
 ]
@@ -180,6 +182,15 @@ const CHECKLIST_ITEMS = [
   { id: 'helper', label: 'Coding Tool Helper запущен', icon: Settings },
   { id: 'plan', label: 'GLM Coding Plan выбран', icon: Shield },
   { id: 'shadcn', label: 'shadcn/ui добавлены', icon: Layers },
+]
+
+const FAQ_ITEMS = [
+  { q: 'Нужен ли платный аккаунт для начала работы?', a: 'Нет. Вы можете использовать бесплатный стек: OpenCode + Ollama (локальный LLM) + Stitch (free tier) + v0.dev free. Платные планы нужны только для продакшн-использования.' },
+  { q: 'Чем отличается Coding Tool Helper от OpenCode?', a: 'Coding Tool Helper — это мастер настройки (CLI), который автоматизирует конфигурацию инструментов. OpenCode — терминальный AI-агент для написания кода. Они работают вместе: Helper настраивает, OpenCode выполняет.' },
+  { q: 'Что такое MCP и зачем он нужен?', a: 'Model Context Protocol (MCP) — стандарт подключения внешних инструментов к AI-агентам. MCP-серверы расширяют возможности: поиск в интернете, анализ изображений, чтение веб-страниц.' },
+  { q: 'Можно ли использовать локальные модели?', a: 'Да! Через Ollama можно запускать модели локально (Llama 3, Mistral, Qwen). Это бесплатно, но требует 8+ GB RAM. Coding Tool Helper поддерживает настройку локальных моделей.' },
+  { q: 'Как сбросить конфигурацию при ошибках?', a: 'Запустите: coding-helper auth revoke для удаления API-ключей, затем coding-helper init для повторной настройки. Также проверьте coding-helper doctor для диагностики.' },
+  { q: 'Совместим ли Stagewise с VS Code?', a: 'Stagewise — отдельный Electron-браузер, но интегрируется с VS Code через MCP. Вы можете использовать Stagewise для визуального контекста параллельно с разработкой в VS Code + Cline.' },
 ]
 
 const SOURCES = [
@@ -674,6 +685,41 @@ function CopyButton({ text, className = '' }: { text: string; className?: string
   )
 }
 
+/* ───────────────────── COPY ALL BUTTON ───────────────────── */
+
+function CopyAllButton() {
+  const [copied, setCopied] = useState(false)
+  const allCommands = `npx @z_ai/coding-helper init
+coding-helper auth
+coding-helper lang set ru
+coding-helper doctor
+
+# OpenCode config
+npx @anthropic-ai/opencode@latest
+
+# Stitch MCP
+npx @_davideast/stitch-mcp init
+
+# Magic MCP (optional)
+npx skills add @anthropic-ai/magic-mcp --global`
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(allCommands)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--nyc-taxi)]/10 border border-[var(--nyc-taxi)]/20 text-[var(--nyc-taxi)] text-xs font-mono hover:bg-[var(--nyc-taxi)]/20 transition-all duration-200 mb-6"
+    >
+      {copied ? <Check className="w-3.5 h-3.5" /> : <ClipboardList className="w-3.5 h-3.5" />}
+      {copied ? 'Скопировано!' : 'Скопировать все команды'}
+    </button>
+  )
+}
+
 /* ───────────────────── SYNTAX HIGHLIGHTING ───────────────────── */
 
 function highlightLine(line: string, lang: string): React.ReactNode[] {
@@ -925,7 +971,13 @@ function StatusDot({ status }: { status: boolean | string }) {
 /* ───────────────────── MAIN PAGE ───────────────────── */
 
 export default function Home() {
-  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() => {
+    if (typeof window === 'undefined') return {}
+    try {
+      const saved = localStorage.getItem('nyc-checklist')
+      return saved ? JSON.parse(saved) : {}
+    } catch { return {} }
+  })
   const [activeSection, setActiveSection] = useState('hero')
   const [mobileNav, setMobileNav] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -933,11 +985,24 @@ export default function Home() {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [tourOpen, setTourOpen] = useState(false)
   const [tourStep, setTourStep] = useState(0)
-  const [tourCompleted, setTourCompleted] = useState(false)
+  const [tourCompleted, setTourCompleted] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('nyc-tour-completed') === 'true'
+  })
   const [wizardUsage, setWizardUsage] = useState('')
   const [wizardBudget, setWizardBudget] = useState('')
   const [wizardTools, setWizardTools] = useState<string[]>([])
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window === 'undefined') return 'dark'
+    return (localStorage.getItem('nyc-theme') as 'dark' | 'light') || 'dark'
+  })
+
+  const { scrollYProgress } = useScroll()
+  const [scrollProgress, setScrollProgress] = useState(0)
+
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    setScrollProgress(latest)
+  })
 
   const toggleWizardTool = (tool: string) => {
     setWizardTools(prev =>
@@ -998,17 +1063,7 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  // Hydrate from localStorage on mount (avoids SSR mismatch)
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('nyc-theme') as 'dark' | 'light' | null
-    if (savedTheme) setTheme(savedTheme)
-    const savedChecklist = localStorage.getItem('nyc-checklist')
-    if (savedChecklist) {
-      try { setCheckedItems(JSON.parse(savedChecklist)) } catch { /* ignore */ }
-    }
-    const savedTour = localStorage.getItem('nyc-tour-completed')
-    if (savedTour === 'true') setTourCompleted(true)
-  }, [])
+  // localStorage hydration is done via lazy useState initializers above
 
   useEffect(() => {
     localStorage.setItem('nyc-theme', theme)
@@ -1081,7 +1136,7 @@ export default function Home() {
                   href={`#${item.id}`}
                   className={`w-10 h-10 flex items-center justify-center rounded text-xs font-mono transition-all duration-300 ${
                     activeSection === item.id
-                      ? 'bg-[var(--nyc-taxi)] text-black font-bold nyc-glow-subtle'
+                      ? 'bg-[var(--nyc-taxi)] text-black font-bold nyc-glow-subtle nyc-hover-glow nyc-sidebar-active'
                       : 'text-white/30 hover:text-white/70 hover:bg-white/5'
                   }`}
                 >
@@ -1123,9 +1178,15 @@ export default function Home() {
             {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
 
-          <div className="mt-auto flex flex-col items-center gap-3">
+          <div className="mt-auto flex flex-col items-center gap-3 relative">
             <div className="w-2 h-2 rounded-full bg-[var(--nyc-taxi)] animate-pulse" />
             <span className="text-[8px] text-white/20 font-mono writing-mode-vertical hidden xl:block" style={{ writingMode: 'vertical-rl' }}>Z.AI</span>
+            <div className="absolute right-0 top-[-4px] bottom-[-4px] w-0.5 bg-white/5">
+              <motion.div
+                className="w-full bg-[var(--nyc-taxi)]/50"
+                style={{ height: `${scrollProgress * 100}%` }}
+              />
+            </div>
           </div>
         </nav>
 
@@ -1202,7 +1263,7 @@ export default function Home() {
                 alt="New York City industrial skyline"
                 className="w-full h-full object-cover opacity-25"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-background via-background/70 to-background" />
+              <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background" />
               <div className="absolute inset-0 bg-gradient-to-r from-background/50 via-transparent to-background/50" />
             </div>
 
@@ -1238,12 +1299,12 @@ export default function Home() {
                   </span>
                 </motion.div>
 
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-[0.9] mb-5">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-[0.9] mb-5 nyc-text-shadow-strong">
                   ЕДИНОЕ
                   <br />
                   <span className="nyc-gradient-text inline-block">РУКОВОДСТВО</span>
                 </h1>
-                <p className="text-base sm:text-lg text-[var(--nyc-steel)] max-w-2xl mb-8 leading-relaxed">
+                <p className="text-base sm:text-lg text-[oklch(0.75_0_0)] max-w-2xl mb-8 leading-relaxed nyc-text-readable">
                   Подробный гайд по установке и настройке AI-инструментов
                   разработки. <span className="text-[var(--nyc-concrete)]">Coding Tool Helper</span>, <span className="text-[var(--nyc-concrete)]">OpenCode</span>, <span className="text-[var(--nyc-concrete)]">Stagewise</span> и <span className="text-[var(--nyc-concrete)]">MCP-серверы</span>.
                 </p>
@@ -1274,7 +1335,7 @@ export default function Home() {
 
                 <div className="flex flex-wrap gap-3">
                   <a href="#install">
-                    <Button className="bg-[var(--nyc-taxi)] text-black hover:bg-[var(--nyc-amber)] font-bold gap-2 shadow-lg shadow-[var(--nyc-taxi)]/20">
+                    <Button className="bg-[var(--nyc-taxi)] text-black hover:bg-[var(--nyc-amber)] font-bold gap-2 shadow-xl shadow-[var(--nyc-taxi)]/30 nyc-cta-glow">
                       <Terminal className="w-4 h-4" />
                       Начать установку
                     </Button>
@@ -1317,7 +1378,7 @@ export default function Home() {
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {/* ═══════════════ 01 — TOOL MATRIX ═══════════════ */}
-            <section id="matrix" className="py-16">
+            <section id="matrix" className="py-16 lg:py-20">
               <SectionHeader number="01" title="Матрица инструментов" subtitle="tools_matrix" />
               <div className="grid gap-2">
                 {TOOLS.map((tool, i) => (
@@ -1328,7 +1389,7 @@ export default function Home() {
                     viewport={{ once: true, margin: '-50px' }}
                     transition={{ delay: i * 0.04, duration: 0.3 }}
                   >
-                    <Card className="bg-white/[0.02] border-white/[0.06] hover:border-[var(--nyc-taxi)]/20 hover:bg-white/[0.04] transition-all duration-300 group">
+                    <Card className="nyc-card-enhanced group">
                       <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-3">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           <div
@@ -1344,7 +1405,7 @@ export default function Home() {
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-xs text-[var(--nyc-steel)]">{tool.desc}</p>
+                            <p className="text-xs text-[var(--nyc-concrete)]">{tool.desc}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-4 text-xs shrink-0 sm:pl-4 sm:border-l border-white/5">
@@ -1392,13 +1453,14 @@ export default function Home() {
             </section>
 
             <TaxiDivider />
+            <div className="nyc-pipe-divider my-4" />
 
             {/* ═══════════════ 02 — PLATFORMS ═══════════════ */}
-            <section id="platforms" className="py-16">
+            <section id="platforms" className="py-16 lg:py-20">
               <SectionHeader number="02" title="Платформы и совместимость" subtitle="compatibility_matrix" />
 
               {/* Compatibility Matrix */}
-              <Card className="bg-white/[0.02] border-white/[0.06] mb-8 overflow-hidden">
+              <Card className="nyc-card-enhanced mb-8 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
@@ -1443,7 +1505,7 @@ export default function Home() {
                     viewport={{ once: true, margin: '-50px' }}
                     transition={{ delay: i * 0.05 }}
                   >
-                    <Card className="bg-white/[0.02] border-white/[0.06] h-full hover:border-[var(--nyc-taxi)]/15 hover:bg-white/[0.04] transition-all duration-300">
+                    <Card className="nyc-card-enhanced h-full">
                       <CardHeader className="p-4 pb-2">
                         <CardTitle className="text-sm font-bold flex items-center gap-2">
                           <p.icon className="w-4 h-4 text-[var(--nyc-taxi)]" />
@@ -1451,7 +1513,7 @@ export default function Home() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="p-4 pt-0">
-                        <p className="text-xs text-[var(--nyc-steel)] mb-3">{p.desc}</p>
+                        <p className="text-xs text-[var(--nyc-concrete)] mb-3">{p.desc}</p>
                         <div className="flex flex-wrap gap-1">
                           {p.features.map(f => (
                             <Badge key={f} variant="secondary" className="text-[10px] bg-white/5 text-white/50 border-0">
@@ -1469,7 +1531,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 03 — CODING TOOL HELPER ═══════════════ */}
-            <section id="helper" className="py-16">
+            <section id="helper" className="py-16 lg:py-20">
               <SectionHeader number="03" title="Coding Tool Helper" subtitle="@z_ai/coding-helper — центральный узел интеграции" />
 
               {/* Setup Wizard */}
@@ -1575,7 +1637,7 @@ export default function Home() {
                           {model.name}
                         </Badge>
                       </div>
-                      <p className="text-xs text-[var(--nyc-steel)] mb-3">{model.use}</p>
+                      <p className="text-xs text-[var(--nyc-concrete)] mb-3">{model.use}</p>
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] text-white/20 font-mono">Скорость</span>
                         <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
@@ -1634,9 +1696,10 @@ export default function Home() {
             </section>
 
             <TaxiDivider />
+            <div className="nyc-pipe-divider my-4" />
 
             {/* ═══════════════ 04 — STAGEWISE ═══════════════ */}
-            <section id="stagewise" className="py-16">
+            <section id="stagewise" className="py-16 lg:py-20">
               <SectionHeader number="04" title="Stagewise" subtitle="AI Browser для веб-разработчиков" />
 
               <div className="grid sm:grid-cols-3 gap-3 mb-6">
@@ -1681,7 +1744,7 @@ export default function Home() {
                     </div>
                     <div>
                       <div className="text-sm font-bold mb-0.5">{feat.title}</div>
-                      <div className="text-xs text-[var(--nyc-steel)]">{feat.desc}</div>
+                      <div className="text-xs text-[var(--nyc-concrete)]">{feat.desc}</div>
                     </div>
                   </motion.div>
                 ))}
@@ -1778,7 +1841,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 05 — INSTALLATION ═══════════════ */}
-            <section id="install" className="py-16">
+            <section id="install" className="py-16 lg:py-20">
               <SectionHeader number="05" title="Установка и настройка" subtitle="step_by_step_guide" />
 
               {/* API Keys */}
@@ -1809,10 +1872,13 @@ export default function Home() {
 
               {/* Install Commands */}
               <div className="space-y-6 mb-8">
-                <h3 className="text-sm font-bold flex items-center gap-2">
-                  <Terminal className="w-4 h-4 text-[var(--nyc-taxi)]" />
-                  Команды установки
-                </h3>
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <h3 className="text-sm font-bold flex items-center gap-2">
+                    <Terminal className="w-4 h-4 text-[var(--nyc-taxi)]" />
+                    Команды установки
+                  </h3>
+                  <CopyAllButton />
+                </div>
 
                 {[
                   { num: '01', title: 'OpenCode', code: 'curl -fsSL https://opencode.ai/install | bash\nopencode --version' },
@@ -1909,9 +1975,10 @@ export default function Home() {
             </section>
 
             <TaxiDivider />
+            <div className="nyc-pipe-divider my-4" />
 
             {/* ═══════════════ 06 — MCP SERVERS ═══════════════ */}
-            <section id="mcp" className="py-16">
+            <section id="mcp" className="py-16 lg:py-20">
               <SectionHeader number="06" title="MCP-серверы" subtitle="model_context_protocol_servers" />
 
               <div className="grid sm:grid-cols-2 gap-3 mb-6">
@@ -1923,7 +1990,7 @@ export default function Home() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
                   >
-                    <Card className="bg-white/[0.02] border-white/[0.06] hover:border-[var(--nyc-taxi)]/15 transition-colors h-full">
+                    <Card className="nyc-card-enhanced h-full">
                       <CardContent className="p-4">
                         <div className="flex items-center gap-3 mb-2">
                           <div className="w-8 h-8 rounded bg-[var(--nyc-taxi)]/10 flex items-center justify-center">
@@ -1931,7 +1998,7 @@ export default function Home() {
                           </div>
                           <span className="font-bold text-sm">{server.name}</span>
                         </div>
-                        <p className="text-xs text-[var(--nyc-steel)] mb-2">{server.desc}</p>
+                        <p className="text-xs text-[var(--nyc-concrete)] mb-2">{server.desc}</p>
                         <Badge className="text-[10px] bg-white/5 text-[var(--nyc-concrete)] font-mono border-0">
                           {server.tool}
                         </Badge>
@@ -1966,7 +2033,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 07 — PROMPT TEMPLATES ═══════════════ */}
-            <section id="prompts" className="py-16">
+            <section id="prompts" className="py-16 lg:py-20">
               <SectionHeader number="07" title="Промпт-шаблоны" subtitle="ready_to_use_prompt_templates" />
 
               <div className="space-y-4 mb-8">
@@ -2022,7 +2089,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 08 — COST SCENARIOS ═══════════════ */}
-            <section id="cost" className="py-16">
+            <section id="cost" className="py-16 lg:py-20">
               <SectionHeader number="08" title="Сценарии стоимости" subtitle="cost_scenarios" />
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -2034,9 +2101,7 @@ export default function Home() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
                   >
-                    <Card className={`bg-white/[0.02] border-white/[0.06] h-full hover:border-[var(--nyc-taxi)]/15 transition-all duration-300 ${
-                      i === 3 ? 'nyc-card-highlight-enhanced' : ''
-                    }`}>
+                    <Card className={`${i === 3 ? 'nyc-card-highlight-enhanced' : 'nyc-card-enhanced'} h-full nyc-card-inner-light`}>
                       <CardHeader className="p-4 pb-2">
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-sm flex items-center gap-2">
@@ -2072,12 +2137,12 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 08.5 — PLAN WIZARD ═══════════════ */}
-            <section id="wizard" className="py-16">
+            <section id="wizard" className="py-16 lg:py-20">
               <SectionHeader number="08.5" title="Мастер выбора плана" subtitle="plan_comparison_wizard" />
 
               <Card className="nyc-card-enhanced p-6">
                 <CardContent className="p-0">
-                  <p className="text-sm text-[var(--nyc-steel)] mb-6">Ответьте на несколько вопросов, чтобы подобрать оптимальный план:</p>
+                  <p className="text-sm text-[var(--nyc-concrete)] mb-6 nyc-text-readable">Ответьте на несколько вопросов, чтобы подобрать оптимальный план:</p>
 
                   <div className="space-y-4">
                     <div>
@@ -2179,7 +2244,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 09 — TROUBLESHOOTING ═══════════════ */}
-            <section id="troubleshoot" className="py-16">
+            <section id="troubleshoot" className="py-16 lg:py-20">
               <SectionHeader number="09" title="Диагностика и решение проблем" subtitle="troubleshooting_guide" />
 
               {/* Diagnostic Commands */}
@@ -2238,8 +2303,35 @@ export default function Home() {
 
             <TaxiDivider />
 
+            {/* ═══════════════ 09.5 — FAQ ═══════════════ */}
+            <section id="faq" className="py-16 lg:py-20">
+              <SectionHeader number="09.5" title="Часто задаваемые вопросы" subtitle="faq" />
+
+              <Accordion type="multiple" className="space-y-1.5">
+                {FAQ_ITEMS.map((faq, i) => (
+                  <AccordionItem
+                    key={i}
+                    value={`faq-${i}`}
+                    className="border border-white/[0.06] rounded-lg bg-white/[0.02] px-4 data-[state=open]:border-[var(--nyc-taxi)]/20 data-[state=open]:bg-[var(--nyc-taxi)]/[0.02]"
+                  >
+                    <AccordionTrigger className="text-xs hover:no-underline py-3 gap-2">
+                      <div className="flex items-center gap-2 text-left">
+                        <MessageSquare className="w-3.5 h-3.5 text-[var(--nyc-taxi)]/60 shrink-0" />
+                        <span className="font-bold text-[var(--nyc-concrete)]">{faq.q}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="text-xs pb-3">
+                      <span className="text-[var(--nyc-steel)] leading-relaxed">{faq.a}</span>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </section>
+
+            <TaxiDivider />
+
             {/* ═══════════════ 10 — ARCHITECTURE ═══════════════ */}
-            <section id="architecture" className="py-16">
+            <section id="architecture" className="py-16 lg:py-20">
               <SectionHeader number="10" title="Архитектура системы" subtitle="system_architecture_diagram" />
 
               <Card className="nyc-card-enhanced overflow-hidden">
@@ -2376,11 +2468,11 @@ export default function Home() {
                       href={s.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 p-2 rounded bg-white/[0.02] hover:bg-white/[0.05] transition-colors group"
+                      className="nyc-link-hover flex items-center gap-2 p-2 rounded bg-white/[0.02] hover:bg-white/[0.05] transition-colors group"
                     >
                       <span className="text-[var(--nyc-taxi)] font-mono text-[10px]">{s.id}</span>
-                      <span className="text-[var(--nyc-concrete)] group-hover:text-white transition-colors">{s.desc}</span>
-                      <ExternalLink className="w-2.5 h-2.5 text-white/20 ml-auto" />
+                      <span className="text-[var(--nyc-concrete)] group-hover:text-[var(--nyc-taxi)] transition-colors">{s.desc}</span>
+                      <ExternalLink className="w-2.5 h-2.5 text-[var(--nyc-taxi)]/30 group-hover:text-[var(--nyc-taxi)] ml-auto transition-colors" />
                     </a>
                   ))}
                 </div>
@@ -2397,6 +2489,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center gap-2 px-4 py-2 rounded-full bg-background/80 backdrop-blur-md border border-white/10 shadow-lg"
           >
+            {(() => { const item = TOC_ITEMS.find(i => i.id === activeSection); return item ? <item.icon className="w-3.5 h-3.5 text-[var(--nyc-taxi)]/60" /> : null })()}
             <span className="text-[var(--nyc-taxi)] font-mono text-xs font-bold">§ {TOC_ITEMS.find(i => i.id === activeSection)?.label}</span>
             <span className="text-white/15">·</span>
             <span className="text-white/50 text-xs">{TOC_ITEMS.find(i => i.id === activeSection)?.title}</span>
