@@ -356,3 +356,75 @@ Stage Summary:
 - 5 new visual features added (section indicator, reading time, enhanced cards, animated dividers, caution stripe)
 - 1 lint error fixed (theme toggle setTheme in effect)
 - All lint checks pass cleanly
+
+---
+Task ID: 8-b
+Agent: Sub-Agent (Persistence & Navigation Enhancer)
+Task: Add localStorage persistence, keyboard navigation, URL hash sharing
+
+Work Log:
+- Added localStorage persistence for checklist state (checkedItems):
+  - Changed useState initialization to read from 'nyc-checklist' localStorage key
+  - Added useEffect to persist checkedItems to localStorage on every change
+- Added localStorage persistence for tour completion state:
+  - Added tourCompleted state initialized from 'nyc-tour-completed' localStorage key
+  - Added useEffect to persist tourCompleted to localStorage
+  - Updated GuideTour onClose callback to set tourCompleted=true when closing on last step
+  - Updated sidebar compass button: shows ✓ (green Check icon) when tour completed, Compass icon otherwise
+  - Clicking the button always resets tourCompleted=false and restarts the tour
+- Added keyboard section navigation:
+  - J key scrolls to next section
+  - K key scrolls to previous section
+  - Skips when user is typing in input/textarea fields
+  - Skips when meta/ctrl keys are held
+- Added section URL hash sharing feature:
+  - Updates browser URL hash to #section-id when activeSection changes
+  - Uses history.replaceState to avoid triggering scroll
+  - Allows users to copy and share URLs to specific sections
+- Updated KeyboardShortcutsDialog with new shortcuts:
+  - Added "J — Следующий раздел"
+  - Added "K — Предыдущий раздел"
+
+Stage Summary:
+- 5 features implemented (checklist persistence, tour persistence, keyboard navigation, URL hash sharing, shortcuts dialog update)
+- All lint checks pass cleanly
+- No compilation errors
+
+---
+Task ID: 8-a
+Agent: Frontend Engineer
+Task: Fix Guide Tour overlay and add syntax highlighting to CodeBlock
+
+Work Log:
+
+1. **Fixed Guide Tour Overlay** (Task 1)
+   - Removed the unsupported `path()` CSS background property from the overlay motion.div
+   - Removed the fallback overlay div (was a second dark overlay behind the path() one)
+   - Replaced both with a single simple overlay:
+     - `background: rgba(0,0,0,0.75)` with `backdropFilter: blur(4px)` for subtle blur effect
+     - z-index z-[199] to sit below the highlight border
+   - Changed highlight border z-index from z-[201] to z-[200] so it sits above the overlay (z-[199]) but below the tooltip (z-[202])
+   - Z-index layering: overlay (199) < highlight border (200) < tooltip card (202)
+
+2. **Added Syntax Highlighting to CodeBlock** (Task 2)
+   - Created `highlightLine(line, lang)` function with regex-based token classification
+   - Supports three language modes:
+     - **bash**: comments (#), quoted strings, command keywords (npx, npm, curl, export, echo, cd, sudo, git, etc.), flags (--global, -g, etc.)
+     - **json**: property keys (string before colon), string values, numbers, booleans/null, punctuation
+     - **yaml**: property keys (word before colon), strings, numbers, booleans/null, comments (#)
+   - Uses the existing CSS token classes from globals.css (.token-keyword, .token-string, .token-comment, .token-variable, .token-property, .token-number, .token-boolean, .token-punctuation)
+   - Updated CodeBlock rendering: replaced `{line || ' '}` with `{highlightLine(line, lang)}`
+   - Removed the isComment-based className logic on `<pre>` (comments now handled via .token-comment class)
+   - Added `import React` for React.ReactNode type annotation
+   - Empty lines return a space character to preserve layout
+
+QA Results:
+- `bun run lint` — clean, no errors
+- Dev server compiles successfully
+- All existing CodeBlock features preserved (prompt symbols, line numbers, cursor, hover highlight)
+
+Stage Summary:
+- Guide Tour overlay fixed: replaced unsupported path() CSS with simple solid overlay + backdrop blur
+- Syntax highlighting added to CodeBlock with regex-based tokenizer for bash/json/yaml
+- All lint checks pass cleanly
+- No compilation errors

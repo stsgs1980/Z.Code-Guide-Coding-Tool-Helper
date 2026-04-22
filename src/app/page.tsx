@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
 import {
   Terminal,
@@ -212,6 +212,12 @@ const SOURCES = [
 /* ───────────────────── FLOATING PARTICLES ───────────────────── */
 
 function FloatingParticles() {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const particles = useMemo(() =>
     Array.from({ length: 20 }, (_, i) => ({
       id: i,
@@ -220,8 +226,10 @@ function FloatingParticles() {
       size: Math.random() * 3 + 1,
       duration: Math.random() * 20 + 10,
       delay: Math.random() * 5,
-    })), []
+    })), [mounted]
   )
+
+  if (!mounted) return null
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -365,6 +373,8 @@ function KeyboardShortcutsDialog({ open, onClose }: { open: boolean; onClose: ()
     { keys: ['Ctrl', 'K'], action: 'Поиск по разделам' },
     { keys: ['Esc'], action: 'Закрыть диалог' },
     { keys: ['↑', '↓'], action: 'Навигация по результатам' },
+    { keys: ['J'], action: 'Следующий раздел' },
+    { keys: ['K'], action: 'Предыдущий раздел' },
   ]
 
   useEffect(() => {
@@ -511,28 +521,21 @@ function GuideTour({ open, onClose, currentStep, onNext, onPrev }: {
     <AnimatePresence>
       {open && (
         <>
-          {/* Dark overlay with cutout */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] pointer-events-auto"
-            style={{
-              background: `path('M 0 0 L ${window.innerWidth} 0 L ${window.innerWidth} ${window.innerHeight} L 0 ${window.innerHeight} Z M ${highlightRect.left - padding} ${highlightRect.top - padding} L ${highlightRect.right + padding} ${highlightRect.top - padding} L ${highlightRect.right + padding} ${highlightRect.bottom + padding} L ${highlightRect.left - padding} ${highlightRect.bottom + padding} Z')`,
-              fill: 'rgba(0,0,0,0.75)',
-              fillRule: 'evenodd',
-            }}
+            className="fixed inset-0 z-[199] pointer-events-auto"
+            style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}
             onClick={onClose}
           />
-          {/* Fallback overlay */}
-          <div className="fixed inset-0 z-[199]" style={{ background: 'rgba(0,0,0,0.7)', pointerEvents: 'auto' }} onClick={onClose} />
 
           {/* Highlight border */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed z-[201] rounded-lg pointer-events-none"
+            className="fixed z-[200] rounded-lg pointer-events-none"
             style={{
               top: highlightRect.top - padding,
               left: highlightRect.left - padding,
@@ -671,6 +674,135 @@ function CopyButton({ text, className = '' }: { text: string; className?: string
   )
 }
 
+/* ───────────────────── SYNTAX HIGHLIGHTING ───────────────────── */
+
+function highlightLine(line: string, lang: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = []
+  let key = 0
+  const trimmed = line.trimStart()
+
+  // Comment handling
+  if (lang === 'bash' && trimmed.startsWith('#')) {
+    parts.push(<span key={key} className="token-comment">{line}</span>)
+    return parts
+  }
+  if (lang === 'yaml' && trimmed.startsWith('#')) {
+    parts.push(<span key={key} className="token-comment">{line}</span>)
+    return parts
+  }
+  if ((lang === 'typescript' || lang === 'javascript' || lang === 'ts' || lang === 'js') && trimmed.startsWith('//')) {
+    parts.push(<span key={key} className="token-comment">{line}</span>)
+    return parts
+  }
+
+  // Empty line
+  if (line.length === 0) {
+    parts.push(' ')
+    return parts
+  }
+
+  if (lang === 'bash') {
+    let remaining = line
+    const patterns: { regex: RegExp; cls: string }[] = [
+      { regex: /^"(?:[^"\\]|\\.)*"|^'(?:[^'\\]|\\.)*'/, cls: 'token-string' },
+      { regex: /^(npx|npm|curl|export|echo|cd|sudo|git|docker|yarn|pnpm|bun|pip|python|node|rm|mkdir|chmod|cat|ls|grep|sed|awk|find|source|sh|bash)\b/, cls: 'token-keyword' },
+      { regex: /^--[a-zA-Z][\w-]*/, cls: 'token-variable' },
+      { regex: /^-[a-zA-Z]\b/, cls: 'token-variable' },
+      { regex: /^\s+/, cls: '' },
+      { regex: /^./, cls: '' },
+    ]
+    while (remaining.length > 0) {
+      let matched = false
+      for (const { regex, cls } of patterns) {
+        const match = remaining.match(regex)
+        if (match) {
+          const text = match[0]
+          if (cls) {
+            parts.push(<span key={key++} className={cls}>{text}</span>)
+          } else {
+            parts.push(text)
+          }
+          remaining = remaining.slice(text.length)
+          matched = true
+          break
+        }
+      }
+      if (!matched) {
+        parts.push(remaining[0])
+        remaining = remaining.slice(1)
+      }
+    }
+  } else if (lang === 'json') {
+    let remaining = line
+    const patterns: { regex: RegExp; cls: string }[] = [
+      { regex: /^\s+/, cls: '' },
+      { regex: /^"(?:[^"\\]|\\.)*"\s*:/, cls: 'token-property' },
+      { regex: /^"(?:[^"\\]|\\.)*"/, cls: 'token-string' },
+      { regex: /^-?\d+(\.\d+)?([eE][+-]?\d+)?/, cls: 'token-number' },
+      { regex: /^(true|false|null)\b/, cls: 'token-boolean' },
+      { regex: /^[}{\[\]:,]/, cls: 'token-punctuation' },
+      { regex: /^./, cls: '' },
+    ]
+    while (remaining.length > 0) {
+      let matched = false
+      for (const { regex, cls } of patterns) {
+        const match = remaining.match(regex)
+        if (match) {
+          const text = match[0]
+          if (cls) {
+            parts.push(<span key={key++} className={cls}>{text}</span>)
+          } else {
+            parts.push(text)
+          }
+          remaining = remaining.slice(text.length)
+          matched = true
+          break
+        }
+      }
+      if (!matched) {
+        parts.push(remaining[0])
+        remaining = remaining.slice(1)
+      }
+    }
+  } else if (lang === 'yaml') {
+    let remaining = line
+    const patterns: { regex: RegExp; cls: string }[] = [
+      { regex: /^\s+/, cls: '' },
+      { regex: /^[\w][\w.-]*\s*:/, cls: 'token-property' },
+      { regex: /^"(?:[^"\\]|\\.)*"|^'(?:[^'\\]|\\.)*'/, cls: 'token-string' },
+      { regex: /^-?\d+(\.\d+)?/, cls: 'token-number' },
+      { regex: /^(true|false|null)\b/, cls: 'token-boolean' },
+      { regex: /^#.*$/, cls: 'token-comment' },
+      { regex: /^./, cls: '' },
+    ]
+    while (remaining.length > 0) {
+      let matched = false
+      for (const { regex, cls } of patterns) {
+        const match = remaining.match(regex)
+        if (match) {
+          const text = match[0]
+          if (cls) {
+            parts.push(<span key={key++} className={cls}>{text}</span>)
+          } else {
+            parts.push(text)
+          }
+          remaining = remaining.slice(text.length)
+          matched = true
+          break
+        }
+      }
+      if (!matched) {
+        parts.push(remaining[0])
+        remaining = remaining.slice(1)
+      }
+    }
+  } else {
+    parts.push(line)
+  }
+
+  return parts
+}
+
 function CodeBlock({ code, lang = 'bash' }: { code: string; lang?: string }) {
   const lines = code.split('\n')
   return (
@@ -706,14 +838,8 @@ function CodeBlock({ code, lang = 'bash' }: { code: string; lang?: string }) {
                 {(isCommand || (lang === 'bash' && line.trim().length > 0 && !isComment)) && (
                   <span className="text-[var(--nyc-taxi)] font-mono text-sm leading-[1.8] shrink-0 select-none">❯</span>
                 )}
-                <pre className={`font-mono text-[13px] leading-[1.8] whitespace-pre ${
-                  isComment
-                    ? 'text-white/25 italic'
-                    : isCommand
-                      ? 'text-[var(--nyc-concrete)]'
-                      : 'text-[var(--nyc-concrete)]'
-                }`}>
-                  {line || ' '}
+                <pre className="font-mono text-[13px] leading-[1.8] whitespace-pre text-[var(--nyc-concrete)]">
+                  {highlightLine(line, lang)}
                 </pre>
               </div>
             </div>
@@ -807,16 +933,11 @@ export default function Home() {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [tourOpen, setTourOpen] = useState(false)
   const [tourStep, setTourStep] = useState(0)
+  const [tourCompleted, setTourCompleted] = useState(false)
   const [wizardUsage, setWizardUsage] = useState('')
   const [wizardBudget, setWizardBudget] = useState('')
   const [wizardTools, setWizardTools] = useState<string[]>([])
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('nyc-theme') as 'dark' | 'light' | null
-      if (saved) return saved
-    }
-    return 'dark'
-  })
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
 
   const toggleWizardTool = (tool: string) => {
     setWizardTools(prev =>
@@ -877,9 +998,55 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  // Hydrate from localStorage on mount (avoids SSR mismatch)
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('nyc-theme') as 'dark' | 'light' | null
+    if (savedTheme) setTheme(savedTheme)
+    const savedChecklist = localStorage.getItem('nyc-checklist')
+    if (savedChecklist) {
+      try { setCheckedItems(JSON.parse(savedChecklist)) } catch { /* ignore */ }
+    }
+    const savedTour = localStorage.getItem('nyc-tour-completed')
+    if (savedTour === 'true') setTourCompleted(true)
+  }, [])
+
   useEffect(() => {
     localStorage.setItem('nyc-theme', theme)
   }, [theme])
+
+  useEffect(() => {
+    localStorage.setItem('nyc-checklist', JSON.stringify(checkedItems))
+  }, [checkedItems])
+
+  useEffect(() => {
+    localStorage.setItem('nyc-tour-completed', String(tourCompleted))
+  }, [tourCompleted])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't capture if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+
+      const currentIndex = TOC_ITEMS.findIndex(item => item.id === activeSection)
+
+      if (e.key === 'j' && !e.metaKey && !e.ctrlKey) {
+        const next = TOC_ITEMS[Math.min(currentIndex + 1, TOC_ITEMS.length - 1)]
+        document.getElementById(next.id)?.scrollIntoView({ behavior: 'smooth' })
+      }
+      if (e.key === 'k' && !e.metaKey && !e.ctrlKey) {
+        const prev = TOC_ITEMS[Math.max(currentIndex - 1, 0)]
+        document.getElementById(prev.id)?.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeSection])
+
+  useEffect(() => {
+    if (activeSection && window.location.hash !== `#${activeSection}`) {
+      history.replaceState(null, '', `#${activeSection}`)
+    }
+  }, [activeSection])
 
   const checkedCount = Object.values(checkedItems).filter(Boolean).length
 
@@ -893,7 +1060,12 @@ export default function Home() {
         <KeyboardShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
         <GuideTour
           open={tourOpen}
-          onClose={() => setTourOpen(false)}
+          onClose={() => {
+            if (tourStep === TOUR_STEPS.length - 1) {
+              setTourCompleted(true)
+            }
+            setTourOpen(false)
+          }}
           currentStep={tourStep}
           onNext={() => setTourStep(prev => Math.min(prev + 1, TOUR_STEPS.length - 1))}
           onPrev={() => setTourStep(prev => Math.max(prev - 1, 0))}
@@ -937,11 +1109,11 @@ export default function Home() {
             <Keyboard className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => { setTourStep(0); setTourOpen(true) }}
+            onClick={() => { setTourCompleted(false); setTourStep(0); setTourOpen(true) }}
             className="w-10 h-10 flex items-center justify-center rounded text-xs text-white/30 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
-            title="Guide Tour"
+            title={tourCompleted ? '✓ Tour completed — Click to restart' : 'Guide Tour'}
           >
-            <Compass className="w-3.5 h-3.5" />
+            {tourCompleted ? <Check className="w-3.5 h-3.5 text-green-400/60" /> : <Compass className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={toggleTheme}
