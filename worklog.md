@@ -727,3 +727,76 @@ Unresolved Issues / Next Steps:
 - Mobile responsiveness could be enhanced further
 - Consider adding a print-friendly stylesheet
 - Could add keyboard shortcut for section share
+
+---
+Task ID: 11
+Agent: Main Agent (Cron Review Round 6)
+Task: Use full W1280 width, establish typography standards, remove visual overload
+
+Work Log:
+- Read worklog.md (Tasks 1-10 completed, VLM Hero 8.5/10, Mid 7/10)
+- Performed QA via agent-browser: no page errors, dev server compiling
+- Lint clean
+- VLM analysis: Card Design 5/10, Typography 6/10, overall too narrow (max-w-5xl=1024px)
+- User request: use full W1280 width, don't overload, typography standards
+
+Major Changes:
+
+1. **Full Width (W1280)**
+   - Changed all max-w-5xl to max-w-7xl (3 occurrences: hero, main content, footer)
+   - Sidebar narrowed from w-16 to w-14 with smaller buttons (w-10 to w-9)
+   - Main content margin adjusted from lg:ml-16 to lg:ml-14
+
+2. **Removed Visual Overload**
+   - Removed FloatingParticles component entirely (barely visible, performance overhead)
+   - Removed all nyc-pipe-divider elements (3 occurrences, redundant with TaxiDivider)
+   - Simplified hero buttons: removed Ctrl+K, Shortcuts, Tour (kept only Start + Checklist)
+   - Removed floating section indicator pill at bottom
+   - Removed nyc-section-alt class from all 6 sections (inconsistent at full width)
+   - Simplified sidebar bottom area (removed Z.AI vertical text, reduced pulse dot)
+   - Removed scroll progress mini-map from sidebar
+   - Cleaned up unused state (scrollProgress, Command import)
+
+3. **Typography Standards**
+   - Section titles (h2): text-2xl sm:text-3xl to text-2xl sm:text-4xl leading-tight
+   - Section subtitles: mt-1 to mt-2, tracking-wider to tracking-widest uppercase
+   - Subsection titles (h3): text-sm font-bold to text-base font-semibold (12 instances)
+   - Body descriptions: text-xs text-concrete to text-sm text-oklch(0.7) (5 instances)
+   - Hero description: text-base sm:text-lg to text-lg sm:text-xl
+   - Card titles: text-sm font-bold to text-sm font-semibold tracking-tight
+
+4. **Sidebar Refinement**
+   - Sidebar: w-16 to w-14, py-6 to py-5, gap-1 to gap-0.5
+   - Nav items: w-10 h-10 to w-9 h-9, rounded to rounded-md
+   - Active state: removed nyc-hover-glow, kept nyc-sidebar-active
+   - Utility buttons: matched to w-9 h-9 rounded-md pattern
+
+VLM QA Scores (after this round):
+- Visual Design: 8/10
+- Typography: 7/10
+- Spacing and Width: 9/10
+- Cleanliness: 8/10
+- Overall: 8/10
+
+Stage Summary:
+- Full 1280px width achieved with max-w-7xl
+- Visual overload significantly reduced (7 elements/features removed)
+- Consistent typography standards established across all levels
+- VLM Spacing score improved to 9/10
+- All lint checks pass, no runtime errors
+
+Current Project Status:
+- Full guide page with 13+ sections, NYC industrial theme
+- Uses full W1280 width with clean, uncluttered layout
+- Typography: consistent h2/h3/body/label hierarchy
+- Interactive features: search, keyboard shortcuts, guide tour, checklist, accordion, tabs, Plan Wizard, theme toggle, FAQ, Copy All, animated counters, section share, command filter
+- Code blocks styled as CLI terminals with syntax highlighting
+- Light/dark theme support
+- VLM scores: Spacing 9/10, Visual 8/10, Cleanliness 8/10
+
+Unresolved Issues / Next Steps:
+- Typography still 7/10 — could refine line-heights and font pairings
+- Light mode card/text color overrides could be more refined
+- Mobile responsiveness could be enhanced further
+- Card design could benefit from more visual differentiation at wider widths
+- Consider removing unused CSS (nyc-pipe-divider styles in globals.css)

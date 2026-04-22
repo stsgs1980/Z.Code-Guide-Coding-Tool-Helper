@@ -36,7 +36,6 @@ import {
   Menu,
   X,
   ArrowUp,
-  Command,
   Hash,
   Rocket,
   Building2,
@@ -219,57 +218,6 @@ const SOURCES = [
   { id: 'S23', url: 'https://github.com/stagewise-io/stagewise', desc: 'Stagewise GitHub' },
   { id: 'S24', url: 'https://www.npmjs.com/package/@stagewise/agent-interface', desc: 'Stagewise Agent Interface' },
 ]
-
-/* ───────────────────── FLOATING PARTICLES ───────────────────── */
-
-function FloatingParticles() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const particles = useMemo(() =>
-    Array.from({ length: 20 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 3 + 1,
-      duration: Math.random() * 20 + 10,
-      delay: Math.random() * 5,
-    })), [mounted]
-  )
-
-  if (!mounted) return null
-
-  return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {particles.map(p => (
-        <motion.div
-          key={p.id}
-          className="absolute rounded-full bg-[var(--nyc-taxi)]"
-          style={{
-            width: p.size,
-            height: p.size,
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            opacity: 0.1,
-          }}
-          animate={{
-            y: [0, -30, 0],
-            opacity: [0.05, 0.15, 0.05],
-          }}
-          transition={{
-            duration: p.duration,
-            repeat: Infinity,
-            delay: p.delay,
-            ease: 'easeInOut',
-          }}
-        />
-      ))}
-    </div>
-  )
-}
 
 /* ───────────────────── READING PROGRESS ───────────────────── */
 
@@ -577,7 +525,7 @@ function GuideTour({ open, onClose, currentStep, onNext, onPrev }: {
                   <Compass className="w-4 h-4 text-[var(--nyc-taxi)]" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold truncate">{step.title}</h3>
+                  <h3 className="text-base font-semibold truncate">{step.title}</h3>
                   <span className="text-[10px] text-[var(--nyc-steel)] font-mono">
                     Шаг {currentStep + 1} из {TOUR_STEPS.length}
                   </span>
@@ -983,9 +931,9 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
           {shareCopied ? <Check className="w-3 h-3 text-green-400" /> : <Hash className="w-3 h-3" />}
         </button>
       </div>
-      <h2 className="text-2xl sm:text-3xl font-black tracking-tight">{title}</h2>
+      <h2 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">{title}</h2>
       {subtitle && (
-        <p className="text-[var(--nyc-steel)] mt-1 text-xs font-mono tracking-wider">
+        <p className="text-[var(--nyc-steel)] mt-2 text-xs font-mono tracking-widest uppercase">
           {'<'}{subtitle}{' />'}
         </p>
       )}
@@ -1066,13 +1014,6 @@ export default function Home() {
     return (localStorage.getItem('nyc-theme') as 'dark' | 'light') || 'dark'
   })
   const [helperFilter, setHelperFilter] = useState('')
-
-  const { scrollYProgress } = useScroll()
-  const [scrollProgress, setScrollProgress] = useState(0)
-
-  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    setScrollProgress(latest)
-  })
 
   const toggleWizardTool = (tool: string) => {
     setWizardTools(prev =>
@@ -1178,7 +1119,6 @@ export default function Home() {
   return (
     <TooltipProvider>
       <div className={`min-h-screen flex flex-col bg-background ${theme === 'light' ? 'nyc-light-mode' : ''}`} style={{ backgroundColor: theme === 'dark' ? 'oklch(0.1 0 0)' : 'oklch(0.97 0 0)' }}>
-        <FloatingParticles />
         <ReadingProgress />
         <div className="nyc-caution-stripe fixed top-0 left-0 right-0 z-[61]" />
         <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
@@ -1197,17 +1137,17 @@ export default function Home() {
         />
 
         {/* ── SIDE NAV (Desktop) ── */}
-        <nav className="hidden lg:flex fixed left-0 top-0 h-full w-16 flex-col items-center py-6 gap-1 z-50 bg-background/80 backdrop-blur-md border-r border-white/5">
-          <div className="w-3 h-3 bg-[var(--nyc-taxi)] rotate-45 mb-6 nyc-glow-subtle" />
+        <nav className="hidden lg:flex fixed left-0 top-0 h-full w-14 flex-col items-center py-5 gap-0.5 z-50 bg-background/80 backdrop-blur-md border-r border-white/5">
+          <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45 mb-4 nyc-glow-subtle" />
           {TOC_ITEMS.map(item => (
             <Tooltip key={item.id}>
               <TooltipTrigger asChild>
                 <a
                   href={`#${item.id}`}
-                  className={`w-10 h-10 flex items-center justify-center rounded text-xs font-mono transition-all duration-300 ${
+                  className={`w-9 h-9 flex items-center justify-center rounded-md text-[11px] font-mono transition-all duration-300 ${
                     activeSection === item.id
-                      ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] font-bold nyc-sidebar-active nyc-hover-glow'
-                      : 'text-white/30 hover:text-white/70 hover:bg-white/5'
+                      ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] font-bold nyc-sidebar-active'
+                      : 'text-white/25 hover:text-white/60 hover:bg-white/5'
                   }`}
                 >
                   {item.label}
@@ -1222,41 +1162,34 @@ export default function Home() {
           {/* Search button */}
           <button
             onClick={() => setSearchOpen(true)}
-            className="w-10 h-10 flex items-center justify-center rounded text-xs text-white/30 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors mt-2"
+            className="w-9 h-9 flex items-center justify-center rounded-md text-white/25 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors mt-2"
           >
             <Search className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setShortcutsOpen(true)}
-            className="w-10 h-10 flex items-center justify-center rounded text-xs text-white/30 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-md text-white/25 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
             title="Keyboard Shortcuts"
           >
             <Keyboard className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => { setTourCompleted(false); setTourStep(0); setTourOpen(true) }}
-            className="w-10 h-10 flex items-center justify-center rounded text-xs text-white/30 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
-            title={tourCompleted ? '✓ Tour completed — Click to restart' : 'Guide Tour'}
+            className="w-9 h-9 flex items-center justify-center rounded-md text-white/25 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            title={tourCompleted ? '✓ Tour completed' : 'Guide Tour'}
           >
             {tourCompleted ? <Check className="w-3.5 h-3.5 text-green-400/60" /> : <Compass className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={toggleTheme}
-            className="w-10 h-10 flex items-center justify-center rounded text-xs text-white/30 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-md text-white/25 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
             title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
           >
             {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
 
-          <div className="mt-auto flex flex-col items-center gap-3 relative">
-            <div className="w-2 h-2 rounded-full bg-[var(--nyc-taxi)] animate-pulse" />
-            <span className="text-[8px] text-white/20 font-mono writing-mode-vertical hidden xl:block" style={{ writingMode: 'vertical-rl' }}>Z.AI</span>
-            <div className="absolute right-0 top-[-4px] bottom-[-4px] w-0.5 bg-white/5">
-              <motion.div
-                className="w-full bg-[var(--nyc-taxi)]/50"
-                style={{ height: `${scrollProgress * 100}%` }}
-              />
-            </div>
+          <div className="mt-auto flex flex-col items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-[var(--nyc-taxi)] animate-pulse" />
           </div>
         </nav>
 
@@ -1324,7 +1257,7 @@ export default function Home() {
         </div>
 
         {/* ── MAIN CONTENT ── */}
-        <main className="flex-1 lg:ml-16 pt-16 lg:pt-0 relative z-10">
+        <main className="flex-1 lg:ml-14 pt-16 lg:pt-0 relative z-10">
           {/* ═══════════════ HERO ═══════════════ */}
           <section id="hero" className="relative overflow-hidden">
             <div className="absolute inset-0 z-0">
@@ -1337,7 +1270,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-r from-background/50 via-transparent to-background/50" />
             </div>
 
-            <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-20">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-20">
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1374,7 +1307,7 @@ export default function Home() {
                   <br />
                   <span className="nyc-gradient-text inline-block">РУКОВОДСТВО</span>
                 </h1>
-                <p className="text-base sm:text-lg text-[oklch(0.75_0_0)] max-w-2xl mb-8 leading-relaxed nyc-text-readable">
+                <p className="text-lg sm:text-xl text-[oklch(0.75_0_0)] max-w-2xl mb-8 leading-relaxed nyc-text-readable">
                   Подробный гайд по установке и настройке AI-инструментов
                   разработки. <span className="text-[var(--nyc-concrete)]">Coding Tool Helper</span>, <span className="text-[var(--nyc-concrete)]">OpenCode</span>, <span className="text-[var(--nyc-concrete)]">Stagewise</span> и <span className="text-[var(--nyc-concrete)]">MCP-серверы</span>.
                 </p>
@@ -1416,36 +1349,12 @@ export default function Home() {
                       Чек-лист
                     </Button>
                   </a>
-                  <Button
-                    variant="ghost"
-                    className="text-white/40 hover:text-[var(--nyc-taxi)] gap-2"
-                    onClick={() => setSearchOpen(true)}
-                  >
-                    <Command className="w-3.5 h-3.5" />
-                    <span className="text-xs">Ctrl+K</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="text-white/40 hover:text-[var(--nyc-taxi)] gap-2"
-                    onClick={() => setShortcutsOpen(true)}
-                  >
-                    <Keyboard className="w-3.5 h-3.5" />
-                    <span className="text-xs">Сочетания</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="text-white/40 hover:text-[var(--nyc-taxi)] gap-2"
-                    onClick={() => { setTourStep(0); setTourOpen(true) }}
-                  >
-                    <Compass className="w-3.5 h-3.5" />
-                    <span className="text-xs">Тур</span>
-                  </Button>
                 </div>
               </motion.div>
             </div>
           </section>
 
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {/* ═══════════════ 01 — TOOL MATRIX ═══════════════ */}
             <section id="matrix" className="py-16 lg:py-20">
@@ -1475,7 +1384,7 @@ export default function Home() {
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-xs text-[var(--nyc-concrete)]">{tool.desc}</p>
+                            <p className="text-sm text-[oklch(0.7_0_0)]">{tool.desc}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-4 text-xs shrink-0 sm:pl-4 sm:border-l border-white/5">
@@ -1523,10 +1432,9 @@ export default function Home() {
             </section>
 
             <TaxiDivider />
-            <div className="nyc-pipe-divider my-4" />
 
             {/* ═══════════════ 02 — PLATFORMS ═══════════════ */}
-            <section id="platforms" className="py-16 lg:py-20 nyc-section-alt">
+            <section id="platforms" className="py-16 lg:py-20">
               <SectionHeader number="02" title="Платформы и совместимость" subtitle="compatibility_matrix" />
 
               {/* Compatibility Matrix */}
@@ -1577,13 +1485,13 @@ export default function Home() {
                   >
                     <Card className="nyc-card-enhanced h-full">
                       <CardHeader className="p-4 pb-2">
-                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                        <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2">
                           <p.icon className="w-4 h-4 text-[var(--nyc-taxi)]" />
                           {p.name}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="p-4 pt-0">
-                        <p className="text-xs text-[var(--nyc-concrete)] mb-3">{p.desc}</p>
+                        <p className="text-sm text-[oklch(0.7_0_0)] mb-3">{p.desc}</p>
                         <div className="flex flex-wrap gap-1">
                           {p.features.map(f => (
                             <Badge key={f} variant="secondary" className="text-[10px] bg-white/5 text-white/50 border-0">
@@ -1643,7 +1551,7 @@ export default function Home() {
 
               {/* Commands */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
                   <Terminal className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Система команд
                 </h3>
@@ -1696,7 +1604,7 @@ export default function Home() {
 
               {/* GLM Models */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
                   <Cpu className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Доступные модели GLM
                 </h3>
@@ -1716,7 +1624,7 @@ export default function Home() {
                           {model.name}
                         </Badge>
                       </div>
-                      <p className="text-xs text-[var(--nyc-concrete)] mb-3">{model.use}</p>
+                      <p className="text-sm text-[oklch(0.7_0_0)] mb-3">{model.use}</p>
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] text-white/20 font-mono">Скорость</span>
                         <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
@@ -1736,7 +1644,7 @@ export default function Home() {
 
               {/* Model Mapping */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold mb-3">Маппинг моделей для Claude Code</h3>
+                <h3 className="text-base font-semibold mb-3">Маппинг моделей для Claude Code</h3>
                 <CodeBlock
                   code={`{\n  "env": {\n    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",\n    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",\n    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.7"\n  }\n}`}
                   lang="json"
@@ -1745,7 +1653,7 @@ export default function Home() {
 
               {/* Plan Limits */}
               <div className="space-y-3">
-                <h3 className="text-sm font-bold flex items-center gap-2">
+                <h3 className="text-base font-semibold flex items-center gap-2">
                   <Clock className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Лимиты планов
                 </h3>
@@ -1775,10 +1683,9 @@ export default function Home() {
             </section>
 
             <TaxiDivider />
-            <div className="nyc-pipe-divider my-4" />
 
             {/* ═══════════════ 04 — STAGEWISE ═══════════════ */}
-            <section id="stagewise" className="py-16 lg:py-20 nyc-section-alt">
+            <section id="stagewise" className="py-16 lg:py-20">
               <SectionHeader number="04" title="Stagewise" subtitle="AI Browser для веб-разработчиков" />
 
               <div className="grid sm:grid-cols-3 gap-3 mb-6">
@@ -1823,7 +1730,7 @@ export default function Home() {
                     </div>
                     <div>
                       <div className="text-sm font-bold mb-0.5">{feat.title}</div>
-                      <div className="text-xs text-[var(--nyc-concrete)]">{feat.desc}</div>
+                      <div className="text-sm text-[oklch(0.7_0_0)]">{feat.desc}</div>
                     </div>
                   </motion.div>
                 ))}
@@ -1848,7 +1755,7 @@ export default function Home() {
 
               {/* Workflow */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold mb-4">Workflow</h3>
+                <h3 className="text-base font-semibold mb-4">Workflow</h3>
                 <div className="relative">
                   <div className="absolute left-[11px] top-0 bottom-0 w-px bg-[var(--nyc-taxi)]/15" />
                   <div className="space-y-3">
@@ -1925,7 +1832,7 @@ export default function Home() {
 
               {/* API Keys */}
               <div className="mb-8">
-                <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
                   <Key className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   API ключи
                 </h3>
@@ -1952,7 +1859,7 @@ export default function Home() {
               {/* Install Commands */}
               <div className="space-y-6 mb-8">
                 <div className="flex items-center justify-between flex-wrap gap-3">
-                  <h3 className="text-sm font-bold flex items-center gap-2">
+                  <h3 className="text-base font-semibold flex items-center gap-2">
                     <Terminal className="w-4 h-4 text-[var(--nyc-taxi)]" />
                     Команды установки
                   </h3>
@@ -1990,7 +1897,7 @@ export default function Home() {
 
               {/* Config Templates */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
                   <Wrench className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Шаблоны конфигурации
                 </h3>
@@ -2054,10 +1961,9 @@ export default function Home() {
             </section>
 
             <TaxiDivider />
-            <div className="nyc-pipe-divider my-4" />
 
             {/* ═══════════════ 06 — MCP SERVERS ═══════════════ */}
-            <section id="mcp" className="py-16 lg:py-20 nyc-section-alt">
+            <section id="mcp" className="py-16 lg:py-20">
               <SectionHeader number="06" title="MCP-серверы" subtitle="model_context_protocol_servers" />
 
               <div className="grid sm:grid-cols-2 gap-3 mb-6">
@@ -2077,7 +1983,7 @@ export default function Home() {
                           </div>
                           <span className="font-bold text-sm">{server.name}</span>
                         </div>
-                        <p className="text-xs text-[var(--nyc-concrete)] mb-2">{server.desc}</p>
+                        <p className="text-sm text-[oklch(0.7_0_0)] mb-2">{server.desc}</p>
                         <Badge className="text-[10px] bg-white/5 text-[var(--nyc-concrete)] font-mono border-0">
                           {server.tool}
                         </Badge>
@@ -2089,7 +1995,7 @@ export default function Home() {
 
               {/* Transport Protocols */}
               <div className="p-4 border border-white/[0.06] rounded-lg bg-white/[0.02]">
-                <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
                   <Globe className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Транспортные протоколы
                 </h3>
@@ -2151,7 +2057,7 @@ export default function Home() {
 
               {/* Ready Prompts */}
               <div className="p-5 border border-white/[0.06] rounded-lg bg-white/[0.02]">
-                <h3 className="text-sm font-bold mb-3">Готовые промпты</h3>
+                <h3 className="text-base font-semibold mb-3">Готовые промпты</h3>
                 <div className="space-y-2.5">
                   {READY_PROMPTS.map(p => (
                     <div key={p.cat} className="flex items-start gap-3 text-xs">
@@ -2168,7 +2074,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 08 — COST SCENARIOS ═══════════════ */}
-            <section id="cost" className="py-16 lg:py-20 nyc-section-alt">
+            <section id="cost" className="py-16 lg:py-20">
               <SectionHeader number="08" title="Сценарии стоимости" subtitle="cost_scenarios" />
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -2383,7 +2289,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 09.5 — FAQ ═══════════════ */}
-            <section id="faq" className="py-16 lg:py-20 nyc-section-alt">
+            <section id="faq" className="py-16 lg:py-20">
               <SectionHeader number="09.5" title="Часто задаваемые вопросы" subtitle="faq" />
 
               <Accordion type="multiple" className="space-y-1.5">
@@ -2410,7 +2316,7 @@ export default function Home() {
             <TaxiDivider />
 
             {/* ═══════════════ 10 — ARCHITECTURE ═══════════════ */}
-            <section id="architecture" className="py-16 lg:py-20 nyc-section-alt">
+            <section id="architecture" className="py-16 lg:py-20">
               <SectionHeader number="10" title="Архитектура системы" subtitle="system_architecture_diagram" />
 
               <Card className="nyc-card-enhanced overflow-hidden">
@@ -2536,7 +2442,7 @@ export default function Home() {
 
               {/* Sources */}
               <div className="mt-8 p-4 border border-white/[0.06] rounded-lg bg-white/[0.02]">
-                <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Источники
                 </h3>
@@ -2560,21 +2466,6 @@ export default function Home() {
           </div>
         </main>
 
-        {/* Section Indicator */}
-        <div className="hidden lg:block fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
-          <motion.div
-            key={activeSection}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-background/80 backdrop-blur-md border border-white/10 shadow-lg"
-          >
-            {(() => { const item = TOC_ITEMS.find(i => i.id === activeSection); return item ? <item.icon className="w-3.5 h-3.5 text-[var(--nyc-taxi)]/60" /> : null })()}
-            <span className="text-[var(--nyc-taxi)] font-mono text-xs font-bold">§ {TOC_ITEMS.find(i => i.id === activeSection)?.label}</span>
-            <span className="text-white/15">·</span>
-            <span className="text-white/50 text-xs">{TOC_ITEMS.find(i => i.id === activeSection)?.title}</span>
-          </motion.div>
-        </div>
-
         {/* ── SCROLL TO TOP ── */}
         <AnimatePresence>
           {showScrollTop && (
@@ -2594,7 +2485,7 @@ export default function Home() {
 
         {/* ── FOOTER ── */}
         <footer className="mt-auto border-t border-white/5 bg-background/80 backdrop-blur-sm relative z-10">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:ml-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:ml-16">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45" />
