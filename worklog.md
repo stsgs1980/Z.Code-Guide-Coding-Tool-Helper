@@ -260,3 +260,99 @@ Unresolved Issues / Next Steps:
 - Dark/light theme toggle could be added
 - Syntax highlighting with actual token coloring could be added to CLI code blocks
 - Guide Tour could persist completion state in localStorage
+
+---
+Task ID: 7
+Agent: Main Agent (Cron Review Round 3)
+Task: QA testing, interactive Plan Wizard, theme toggle, breadcrumb trail, styling improvements
+
+Work Log:
+- Performed QA testing with agent-browser: no errors, page renders correctly
+- Lint check passed, dev server compiling successfully
+
+New Features Implemented:
+
+1. **Interactive Plan Wizard** (section 08.5)
+   - Added `wizardUsage`, `wizardBudget`, `wizardTools` state variables
+   - Usage type options: clickable with selected state (taxi yellow highlight)
+   - Budget options: clickable with same selection pattern
+   - Tool badges: toggleable with `toggleWizardTool()` function
+   - Dynamic recommendation via `wizardRecommendation` useMemo:
+     - learn+free → Free Stack, learn+mid → Budget, freelance+free → Budget
+     - freelance+mid → Professional, freelance+pro → Professional
+     - team+mid → Professional, team+pro → Team/Enterprise
+   - Shows prompt when no selections made: "Выберите тип использования и бюджет"
+   - Animated recommendation card with framer-motion
+
+2. **Dark/Light Theme Toggle**
+   - Added `theme` state with lazy useState initializer (reads from localStorage)
+   - `toggleTheme` callback switches between 'dark' and 'light'
+   - Persisted to localStorage via useEffect
+   - Toggle button in sidebar (Sun/Moon icons) and mobile nav
+   - Root div switches between oklch(0.1 0 0) and oklch(0.97 0 0) backgrounds
+   - Added `.nyc-light-mode` CSS class with comprehensive overrides:
+     - Headings: dark text, paragraphs: oklch(0.3 0 0)
+     - Nav/sidebar: light backgrounds, light borders
+     - Cards: light gradient backgrounds with subtle shadows
+     - Code blocks: stay DARK even in light mode (nice contrast)
+     - Gradient text: adjusted to subway/orange tones for light bg
+
+3. **Breadcrumb Trail / Section Indicator** (by sub-agent 7-b)
+   - Floating pill at bottom-center (desktop only, hidden on mobile)
+   - Shows "§ 03 · Coding Tool Helper" format
+   - Uses key={activeSection} with framer-motion for smooth transitions
+   - Semi-transparent bg with backdrop blur, z-40
+
+4. **Reading Time Estimator** (by sub-agent 7-b)
+   - "~14 мин чтения" badge in hero section
+   - BookOpen icon, steel color accent
+
+5. **Styling Improvements** (by sub-agent 7-b)
+   - Upgraded Plan Wizard card to nyc-card-enhanced
+   - Upgraded Architecture card to nyc-card-enhanced
+   - Upgraded Team/Enterprise cost card to nyc-card-highlight-enhanced
+   - Animated TaxiDivider with scaleX animation and fade-in diamond
+   - NYC caution stripe at top of page (4px diagonal yellow/black)
+   - Theme initialization fixed (lazy useState instead of useEffect)
+
+QA Results:
+- No page errors
+- No console errors
+- Lint clean
+- Dev server compiling successfully
+- Screenshots verified visually
+
+Current Project Status:
+- Full guide page with 12+ sections, NYC industrial theme
+- Interactive features: search, keyboard shortcuts, guide tour, checklist, accordion, tabs, Plan Wizard, theme toggle, breadcrumb trail
+- Code blocks styled as CLI terminals
+- Light/dark theme support
+- No grid background, clean aesthetic
+- All QA checks pass
+
+Unresolved Issues / Next Steps:
+- Syntax highlighting with actual token coloring for CLI code blocks
+- Guide Tour could persist completion state in localStorage
+- Mobile responsiveness could be enhanced further
+- Consider adding "Back to top" text label alongside arrow icon
+- Light mode could use more refined card/text color overrides
+
+---
+Task ID: 7-b
+Agent: Styling Enhancer
+Task: Add section indicator, reading time badge, enhanced card depth, animated dividers, caution stripe
+
+Work Log:
+- Added floating section indicator (bottom-center, desktop only) showing current section via activeSection + TOC_ITEMS
+- Added reading time badge (~14 мин чтения) in hero section next to version badge with steel accent
+- Upgraded Plan Wizard card from nyc-card to nyc-card-enhanced
+- Upgraded Architecture card from basic to nyc-card-enhanced
+- Upgraded Team/Enterprise cost card from nyc-glow to nyc-card-highlight-enhanced
+- Replaced static TaxiDivider with animated version (scaleX lines + fade/scale ornament)
+- Added nyc-caution-stripe fixed at top of page (z-61, above reading progress bar)
+- Fixed theme toggle lint error (react-hooks/set-state-in-effect) by using lazy useState initializer
+
+Stage Summary:
+- 5 new visual features added (section indicator, reading time, enhanced cards, animated dividers, caution stripe)
+- 1 lint error fixed (theme toggle setTheme in effect)
+- All lint checks pass cleanly

@@ -44,6 +44,8 @@ import {
   Keyboard,
   Compass,
   ChevronLeft,
+  Sun,
+  Moon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -758,14 +760,32 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
 
 function TaxiDivider() {
   return (
-    <div className="flex items-center gap-3 my-16">
-      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-3 my-16 relative">
+      <motion.div
+        className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      />
+      <motion.div
+        className="flex items-center gap-1.5"
+        initial={{ opacity: 0, scale: 0 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3, duration: 0.4 }}
+      >
         <div className="w-1 h-1 bg-[var(--nyc-taxi)]/40" />
         <div className="w-2 h-2 bg-[var(--nyc-taxi)] rotate-45" />
         <div className="w-1 h-1 bg-[var(--nyc-taxi)]/40" />
-      </div>
-      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      </motion.div>
+      <motion.div
+        className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      />
     </div>
   )
 }
@@ -787,6 +807,41 @@ export default function Home() {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [tourOpen, setTourOpen] = useState(false)
   const [tourStep, setTourStep] = useState(0)
+  const [wizardUsage, setWizardUsage] = useState('')
+  const [wizardBudget, setWizardBudget] = useState('')
+  const [wizardTools, setWizardTools] = useState<string[]>([])
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('nyc-theme') as 'dark' | 'light' | null
+      if (saved) return saved
+    }
+    return 'dark'
+  })
+
+  const toggleWizardTool = (tool: string) => {
+    setWizardTools(prev =>
+      prev.includes(tool) ? prev.filter(t => t !== tool) : [...prev, tool]
+    )
+  }
+
+  const wizardRecommendation = useMemo(() => {
+    if (!wizardUsage || !wizardBudget) return null
+    const key = `${wizardUsage}-${wizardBudget}`
+    const recs: Record<string, { name: string; price: string; plan: string }> = {
+      'learn-free': { name: 'Free Stack', price: '$0/мес', plan: 'None' },
+      'learn-mid': { name: 'Budget', price: '$18-20/мес', plan: 'GLM Coding Plan Lite' },
+      'freelance-free': { name: 'Budget', price: '$18-20/мес', plan: 'GLM Coding Plan Lite' },
+      'freelance-mid': { name: 'Professional', price: '$38-60/мес', plan: 'GLM Coding Plan Pro' },
+      'freelance-pro': { name: 'Professional', price: '$38-60/мес', plan: 'GLM Coding Plan Pro' },
+      'team-mid': { name: 'Professional', price: '$38-60/мес', plan: 'GLM Coding Plan Pro' },
+      'team-pro': { name: 'Team/Enterprise', price: '$100+/мес', plan: 'GLM Coding Plan Max' },
+    }
+    return recs[key] || { name: 'Professional', price: '$38-60/мес', plan: 'GLM Coding Plan Pro' }
+  }, [wizardUsage, wizardBudget])
+
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+  }, [])
 
   const toggleCheck = (id: string) => {
     setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }))
@@ -822,13 +877,18 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  useEffect(() => {
+    localStorage.setItem('nyc-theme', theme)
+  }, [theme])
+
   const checkedCount = Object.values(checkedItems).filter(Boolean).length
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen flex flex-col bg-background" style={{ backgroundColor: 'oklch(0.1 0 0)' }}>
+      <div className={`min-h-screen flex flex-col bg-background ${theme === 'light' ? 'nyc-light-mode' : ''}`} style={{ backgroundColor: theme === 'dark' ? 'oklch(0.1 0 0)' : 'oklch(0.97 0 0)' }}>
         <FloatingParticles />
         <ReadingProgress />
+        <div className="nyc-caution-stripe fixed top-0 left-0 right-0 z-[61]" />
         <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
         <KeyboardShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
         <GuideTour
@@ -883,6 +943,13 @@ export default function Home() {
           >
             <Compass className="w-3.5 h-3.5" />
           </button>
+          <button
+            onClick={toggleTheme}
+            className="w-10 h-10 flex items-center justify-center rounded text-xs text-white/30 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          >
+            {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+          </button>
 
           <div className="mt-auto flex flex-col items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-[var(--nyc-taxi)] animate-pulse" />
@@ -904,6 +971,12 @@ export default function Home() {
                   className="p-2 text-white/40 hover:text-[var(--nyc-taxi)] transition-colors"
                 >
                   <Search className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 text-white/40 hover:text-[var(--nyc-taxi)] transition-colors"
+                >
+                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </button>
                 <Button
                   variant="ghost"
@@ -977,6 +1050,19 @@ export default function Home() {
                   <div className="w-1.5 h-1.5 rounded-full bg-[var(--nyc-taxi)] animate-pulse" />
                   <span className="font-mono text-[10px] text-[var(--nyc-taxi)] tracking-widest uppercase">
                     v1.0 · Production Ready · 22.04.2026
+                  </span>
+                </motion.div>
+
+                {/* Reading time badge */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--nyc-steel)]/10 border border-[var(--nyc-steel)]/20 mb-6 ml-2"
+                >
+                  <BookOpen className="w-3 h-3 text-[var(--nyc-steel)]" />
+                  <span className="font-mono text-[10px] text-[var(--nyc-steel)] tracking-widest">
+                    ~14 мин чтения
                   </span>
                 </motion.div>
 
@@ -1777,7 +1863,7 @@ export default function Home() {
                     transition={{ delay: i * 0.08 }}
                   >
                     <Card className={`bg-white/[0.02] border-white/[0.06] h-full hover:border-[var(--nyc-taxi)]/15 transition-all duration-300 ${
-                      i === 3 ? 'nyc-glow border-[var(--nyc-taxi)]/20' : ''
+                      i === 3 ? 'nyc-card-highlight-enhanced' : ''
                     }`}>
                       <CardHeader className="p-4 pb-2">
                         <div className="flex items-center justify-between">
@@ -1817,7 +1903,7 @@ export default function Home() {
             <section id="wizard" className="py-16">
               <SectionHeader number="08.5" title="Мастер выбора плана" subtitle="plan_comparison_wizard" />
 
-              <Card className="nyc-card p-6">
+              <Card className="nyc-card-enhanced p-6">
                 <CardContent className="p-0">
                   <p className="text-sm text-[var(--nyc-steel)] mb-6">Ответьте на несколько вопросов, чтобы подобрать оптимальный план:</p>
 
@@ -1830,9 +1916,18 @@ export default function Home() {
                           { label: 'Фриланс', value: 'freelance' },
                           { label: 'Команда', value: 'team' },
                         ].map(opt => (
-                          <div key={opt.value} className="p-3 rounded-lg border border-white/[0.06] bg-white/[0.02] text-center text-xs hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03] cursor-pointer transition-all nyc-hover-lift">
-                            <span className="text-[var(--nyc-concrete)]">{opt.label}</span>
-                          </div>
+                          <motion.div
+                            key={opt.value}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => setWizardUsage(opt.value)}
+                            className={`p-3 rounded-lg border text-center text-xs cursor-pointer transition-all nyc-hover-lift ${
+                              wizardUsage === opt.value
+                                ? 'border-[var(--nyc-taxi)]/30 bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)]'
+                                : 'border-white/[0.06] bg-white/[0.02] hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03]'
+                            }`}
+                          >
+                            <span className={wizardUsage === opt.value ? 'text-[var(--nyc-taxi)] font-bold' : 'text-[var(--nyc-concrete)]'}>{opt.label}</span>
+                          </motion.div>
                         ))}
                       </div>
                     </div>
@@ -1845,9 +1940,18 @@ export default function Home() {
                           { label: '$20-60', value: 'mid' },
                           { label: '$100+', value: 'pro' },
                         ].map(opt => (
-                          <div key={opt.value} className="p-3 rounded-lg border border-white/[0.06] bg-white/[0.02] text-center text-xs hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03] cursor-pointer transition-all nyc-hover-lift">
-                            <span className="text-[var(--nyc-concrete)]">{opt.label}</span>
-                          </div>
+                          <motion.div
+                            key={opt.value}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => setWizardBudget(opt.value)}
+                            className={`p-3 rounded-lg border text-center text-xs cursor-pointer transition-all nyc-hover-lift ${
+                              wizardBudget === opt.value
+                                ? 'border-[var(--nyc-taxi)]/30 bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)]'
+                                : 'border-white/[0.06] bg-white/[0.02] hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03]'
+                            }`}
+                          >
+                            <span className={wizardBudget === opt.value ? 'text-[var(--nyc-taxi)] font-bold' : 'text-[var(--nyc-concrete)]'}>{opt.label}</span>
+                          </motion.div>
                         ))}
                       </div>
                     </div>
@@ -1856,7 +1960,15 @@ export default function Home() {
                       <h4 className="text-xs font-mono text-[var(--nyc-taxi)] uppercase tracking-wider mb-2">Ключевые инструменты</h4>
                       <div className="flex flex-wrap gap-2">
                         {['Magic MCP', 'Stitch MCP', 'UI UX Pro Max', 'OpenCode', 'Stagewise', 'GLM Coding Plan'].map(tool => (
-                          <Badge key={tool} className="text-[10px] bg-white/[0.03] text-[var(--nyc-concrete)] border-white/[0.06] hover:bg-[var(--nyc-taxi)]/10 hover:text-[var(--nyc-taxi)] hover:border-[var(--nyc-taxi)]/20 cursor-pointer transition-all">
+                          <Badge
+                            key={tool}
+                            onClick={() => toggleWizardTool(tool)}
+                            className={`text-[10px] cursor-pointer transition-all ${
+                              wizardTools.includes(tool)
+                                ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] border-[var(--nyc-taxi)]/20'
+                                : 'bg-white/[0.03] text-[var(--nyc-concrete)] border-white/[0.06] hover:bg-[var(--nyc-taxi)]/10 hover:text-[var(--nyc-taxi)] hover:border-[var(--nyc-taxi)]/20'
+                            }`}
+                          >
                             {tool}
                           </Badge>
                         ))}
@@ -1864,14 +1976,28 @@ export default function Home() {
                     </div>
 
                     <div className="pt-4 border-t border-white/[0.06]">
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-[var(--nyc-taxi)]/[0.05] border border-[var(--nyc-taxi)]/10">
-                        <Zap className="w-4 h-4 text-[var(--nyc-taxi)] shrink-0" />
-                        <div className="text-xs">
-                          <span className="text-[var(--nyc-concrete)]">Рекомендация: </span>
-                          <span className="text-[var(--nyc-taxi)] font-bold">GLM Coding Plan Pro ($38/мес)</span>
-                          <span className="text-[var(--nyc-steel)]"> — оптимальный баланс цены и возможностей для регулярной разработки</span>
+                      {wizardRecommendation ? (
+                        <motion.div
+                          key={`${wizardUsage}-${wizardBudget}`}
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-center gap-3 p-3 rounded-lg bg-[var(--nyc-taxi)]/[0.05] border border-[var(--nyc-taxi)]/10"
+                        >
+                          <Zap className="w-4 h-4 text-[var(--nyc-taxi)] shrink-0" />
+                          <div className="text-xs">
+                            <span className="text-[var(--nyc-concrete)]">Рекомендация: </span>
+                            <span className="text-[var(--nyc-taxi)] font-bold">{wizardRecommendation.plan}</span>
+                            <span className="text-[var(--nyc-steel)]"> — {wizardRecommendation.name} ({wizardRecommendation.price})</span>
+                          </div>
+                        </motion.div>
+                      ) : (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.02] border border-white/[0.06]">
+                          <Hash className="w-4 h-4 text-[var(--nyc-steel)] shrink-0" />
+                          <div className="text-xs text-[var(--nyc-steel)]">
+                            Выберите тип использования и бюджет для получения рекомендации
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -1944,7 +2070,7 @@ export default function Home() {
             <section id="architecture" className="py-16">
               <SectionHeader number="10" title="Архитектура системы" subtitle="system_architecture_diagram" />
 
-              <Card className="bg-white/[0.02] border-white/[0.06] overflow-hidden">
+              <Card className="nyc-card-enhanced overflow-hidden">
                 <CardContent className="p-4 sm:p-6">
                   <div className="rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] p-4 text-xs sm:text-sm overflow-x-auto">
                     <pre className="text-[var(--nyc-concrete)] font-mono leading-relaxed whitespace-pre">{`┌──────────────────────────────────────────────────┐
@@ -2090,6 +2216,20 @@ export default function Home() {
             </section>
           </div>
         </main>
+
+        {/* Section Indicator */}
+        <div className="hidden lg:block fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
+          <motion.div
+            key={activeSection}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-background/80 backdrop-blur-md border border-white/10 shadow-lg"
+          >
+            <span className="text-[var(--nyc-taxi)] font-mono text-xs font-bold">§ {TOC_ITEMS.find(i => i.id === activeSection)?.label}</span>
+            <span className="text-white/15">·</span>
+            <span className="text-white/50 text-xs">{TOC_ITEMS.find(i => i.id === activeSection)?.title}</span>
+          </motion.div>
+        </div>
 
         {/* ── SCROLL TO TOP ── */}
         <AnimatePresence>

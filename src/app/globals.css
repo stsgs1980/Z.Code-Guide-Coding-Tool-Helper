@@ -380,6 +380,114 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ─── Light Mode Override ─── */
+
+.nyc-light-mode {
+  color-scheme: light;
+  --nyc-steel: #5A6A7A;
+  --nyc-concrete: #3A3A3A;
+}
+
+.nyc-light-mode h1,
+.nyc-light-mode h2,
+.nyc-light-mode h3,
+.nyc-light-mode h4 {
+  color: oklch(0.15 0 0) !important;
+}
+
+.nyc-light-mode .section-number {
+  color: var(--nyc-subway);
+}
+
+.nyc-light-mode p,
+.nyc-light-mode span,
+.nyc-light-mode li {
+  color: oklch(0.3 0 0);
+}
+
+.nyc-light-mode .text-white\/30,
+.nyc-light-mode .text-white\/40,
+.nyc-light-mode .text-white\/50,
+.nyc-light-mode .text-white\/60,
+.nyc-light-mode .text-white\/70 {
+  color: oklch(0.35 0 0) !important;
+}
+
+.nyc-light-mode nav,
+.nyc-light-mode .bg-background\/80 {
+  background-color: oklch(0.95 0 0) !important;
+  border-color: oklch(0.85 0 0) !important;
+}
+
+.nyc-light-mode .bg-background\/90 {
+  background-color: oklch(0.95 0 0) !important;
+}
+
+.nyc-light-mode .bg-white\/\[0\.02\],
+.nyc-light-mode .bg-white\/\[0\.03\] {
+  background-color: oklch(0.94 0 0) !important;
+}
+
+.nyc-light-mode .border-white\/\[0\.06\],
+.nyc-light-mode .border-white\/\[0\.08\],
+.nyc-light-mode .border-white\/\[0\.10\] {
+  border-color: oklch(0.82 0 0) !important;
+}
+
+.nyc-light-mode .hover\:bg-white\/\[0\.03\]:hover,
+.nyc-light-mode .hover\:bg-white\/\[0\.04\]:hover,
+.nyc-light-mode .hover\:bg-white\/\[0\.05\]:hover {
+  background-color: oklch(0.92 0 0) !important;
+}
+
+.nyc-light-mode .hover\:border-white\/\[0\.10\]:hover {
+  border-color: oklch(0.7 0 0) !important;
+}
+
+/* Keep code blocks dark even in light mode */
+.nyc-light-mode .code-block,
+.nyc-light-mode [class*="bg-[oklch(0.08"],
+.nyc-light-mode [class*="bg-[oklch(0.09"],
+.nyc-light-mode [class*="bg-[oklch(0.11"],
+.nyc-light-mode [class*="bg-[oklch(0.12"],
+.nyc-light-mode [class*="bg-[oklch(0.14"] {
+  background-color: oklch(0.08 0 0) !important;
+  color: var(--nyc-concrete) !important;
+}
+
+.nyc-light-mode .nyc-gradient-text {
+  background: linear-gradient(135deg, var(--nyc-subway) 0%, #FF8F00 50%, var(--nyc-subway) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nyc-light-mode .nyc-card-enhanced {
+  background: linear-gradient(145deg, oklch(0.97 0 0) 0%, oklch(0.94 0 0) 50%, oklch(0.96 0 0) 100%) !important;
+  border-color: oklch(0.82 0 0) !important;
+  box-shadow:
+    0 1px 2px oklch(0 0 0 / 8%),
+    0 4px 8px oklch(0 0 0 / 4%),
+    inset 0 1px 0 oklch(1 0 0 / 60%) !important;
+}
+
+.nyc-light-mode .nyc-card-highlight-enhanced {
+  background: linear-gradient(145deg, oklch(0.98 0 0) 0%, oklch(0.95 0 0) 50%, oklch(0.97 0 0) 100%) !important;
+  border-color: oklch(0.78 0.16 85 / 25%) !important;
+}
+
+.nyc-light-mode .FloatingParticles {
+  opacity: 0.3;
+}
+
+.nyc-light-mode .nyc-glow-subtle {
+  box-shadow: 0 0 8px oklch(0.78 0.16 85 / 8%);
+}
+
+.nyc-light-mode .bg-black\/60 {
+  background-color: oklch(0 0 0 / 40%) !important;
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    NYC INDUSTRIAL THEME — PREMIUM ENHANCEMENTS (Task 2-a)
    Visual Quality: 6.7/10 → 9/10
