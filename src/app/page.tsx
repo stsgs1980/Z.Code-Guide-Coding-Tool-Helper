@@ -1153,7 +1153,7 @@ function InstallScriptGenerator({ installSelections, setInstallSelections }: {
   const generatedScript = useMemo(() => {
     if (noneSelected) return ''
     const selected = INSTALL_TOOLS.filter(t => installSelections[t.name])
-    const date = new Date().toLocaleDateString('ru-RU')
+    const date = new Date().toISOString().split('T')[0]
     const lines = [
       '#!/bin/bash',
       '# UI Generation Stack — Auto-generated Install Script',
@@ -1268,13 +1268,7 @@ function InstallScriptGenerator({ installSelections, setInstallSelections }: {
 /* ───────────────────── MAIN PAGE ───────────────────── */
 
 export default function Home() {
-  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() => {
-    if (typeof window === 'undefined') return {}
-    try {
-      const saved = localStorage.getItem('nyc-checklist')
-      return saved ? JSON.parse(saved) : {}
-    } catch { return {} }
-  })
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
   const [activeSection, setActiveSection] = useState('hero')
   const [mobileNav, setMobileNav] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -1282,17 +1276,11 @@ export default function Home() {
   const [showQuickStart, setShowQuickStart] = useState(false)
   const [tourOpen, setTourOpen] = useState(false)
   const [tourStep, setTourStep] = useState(0)
-  const [tourCompleted, setTourCompleted] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem('nyc-tour-completed') === 'true'
-  })
+  const [tourCompleted, setTourCompleted] = useState(false)
   const [wizardUsage, setWizardUsage] = useState('')
   const [wizardBudget, setWizardBudget] = useState('')
   const [wizardTools, setWizardTools] = useState<string[]>([])
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    if (typeof window === 'undefined') return 'dark'
-    return (localStorage.getItem('nyc-theme') as 'dark' | 'light') || 'dark'
-  })
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [helperFilter, setHelperFilter] = useState('')
   const [runningCmd, setRunningCmd] = useState('')
   const [errorExpanded, setErrorExpanded] = useState<string[]>([])
@@ -1300,28 +1288,10 @@ export default function Home() {
   const [readingProgress, setReadingProgress] = useState(0)
   const [tocPanelOpen, setTocPanelOpen] = useState(false)
   const [quickJumpOpen, setQuickJumpOpen] = useState(false)
-  const [visitedSections, setVisitedSections] = useState<Set<string>>(() => {
-    if (typeof window === 'undefined') return new Set()
-    try {
-      const saved = localStorage.getItem('nyc-visited')
-      return saved ? new Set(JSON.parse(saved)) : new Set()
-    } catch { return new Set() }
-  })
+  const [visitedSections, setVisitedSections] = useState<Set<string>>(new Set())
   const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: 'success' | 'info' }>>([])
-  const [bookmarks, setBookmarks] = useState<Set<string>>(() => {
-    if (typeof window === 'undefined') return new Set()
-    try {
-      const saved = localStorage.getItem('nyc-bookmarks')
-      return saved ? new Set(JSON.parse(saved)) : new Set()
-    } catch { return new Set() }
-  })
-  const [installSelections, setInstallSelections] = useState<Record<string, boolean>>(() => {
-    if (typeof window === 'undefined') return {}
-    try {
-      const saved = localStorage.getItem('nyc-install-selections')
-      return saved ? JSON.parse(saved) : {}
-    } catch { return {} }
-  })
+  const [bookmarks, setBookmarks] = useState<Set<string>>(new Set())
+  const [installSelections, setInstallSelections] = useState<Record<string, boolean>>({})
   const quickJumpRef = useRef<HTMLDivElement>(null)
 
   const addToast = useCallback((message: string, type: 'success' | 'info') => {
@@ -1421,7 +1391,26 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  // localStorage hydration is done via lazy useState initializers above
+  // Hydrate from localStorage after mount (prevents SSR mismatch)
+  // Loading persisted state on mount is a legitimate use case
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    try {
+      const st = localStorage.getItem('nyc-theme') as 'dark' | 'light' | null
+      if (st) setTheme(st)
+      const sc = localStorage.getItem('nyc-checklist')
+      if (sc) setCheckedItems(JSON.parse(sc))
+      const stour = localStorage.getItem('nyc-tour-completed')
+      if (stour === 'true') setTourCompleted(true)
+      const sv = localStorage.getItem('nyc-visited')
+      if (sv) setVisitedSections(new Set(JSON.parse(sv)))
+      const sb = localStorage.getItem('nyc-bookmarks')
+      if (sb) setBookmarks(new Set(JSON.parse(sb)))
+      const si = localStorage.getItem('nyc-install-selections')
+      if (si) setInstallSelections(JSON.parse(si))
+    } catch { /* ignore parse errors */ }
+  }, [])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     localStorage.setItem('nyc-theme', theme)
