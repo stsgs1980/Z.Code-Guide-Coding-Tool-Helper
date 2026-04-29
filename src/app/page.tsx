@@ -868,7 +868,7 @@ function highlightLine(line: string, lang: string): React.ReactNode[] {
 function CodeBlock({ code, lang = 'bash' }: { code: string; lang?: string }) {
   const lines = code.split('\n')
   return (
-    <div className="relative group rounded-lg overflow-hidden border border-white/[0.08] shadow-lg shadow-black/20 code-block-hover-glow">
+    <div className="relative group rounded-lg overflow-hidden border border-white/[0.08] shadow-lg shadow-black/20 code-block code-block-hover-glow">
       {/* Terminal title bar */}
       <div className="flex items-center gap-2 px-4 py-2 bg-[oklch(0.14_0_0)] border-b border-white/[0.06]">
         <div className="flex items-center gap-1.5">
@@ -1390,6 +1390,11 @@ export default function Home() {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark')
   }, [])
 
+  // Sync html class with theme state (critical for shadcn/ui CSS variables)
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+  }, [theme])
+
   const toggleCheck = (id: string) => {
     setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }))
   }
@@ -1517,7 +1522,7 @@ export default function Home() {
     <ToastContext.Provider value={{ addToast }}>
     <BookmarkContext.Provider value={{ bookmarks, toggleBookmark }}>
     <TooltipProvider>
-      <div className={`min-h-screen flex flex-col bg-background ${theme === 'light' ? 'nyc-light-mode' : ''}`} style={{ backgroundColor: theme === 'dark' ? 'oklch(0.1 0 0)' : 'oklch(0.97 0 0)' }}>
+      <div className={`min-h-screen flex flex-col bg-background ${theme === 'light' ? 'nyc-light-mode' : ''}`}>
         <ReadingProgress />
 
         <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />

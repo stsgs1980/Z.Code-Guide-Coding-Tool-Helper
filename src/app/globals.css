@@ -310,8 +310,10 @@ html {
   color-scheme: light;
   --nyc-steel: #5A6A7A;
   --nyc-concrete: #3A3A3A;
+  --nyc-charcoal: #1A1A1A;
 }
 
+/* Headings always dark in light mode */
 .nyc-light-mode h1,
 .nyc-light-mode h2,
 .nyc-light-mode h3,
@@ -323,62 +325,125 @@ html {
   color: var(--nyc-subway);
 }
 
+/* Body text dark */
 .nyc-light-mode p,
-.nyc-light-mode span,
 .nyc-light-mode li {
-  color: oklch(0.3 0 0);
+  color: oklch(0.25 0 0);
 }
 
+/* ── White opacity text → dark text ── */
+.nyc-light-mode .text-white\/20,
 .nyc-light-mode .text-white\/30,
 .nyc-light-mode .text-white\/40,
 .nyc-light-mode .text-white\/50,
 .nyc-light-mode .text-white\/60,
-.nyc-light-mode .text-white\/70 {
+.nyc-light-mode .text-white\/70,
+.nyc-light-mode .text-white\/80,
+.nyc-light-mode .text-white\/90 {
   color: oklch(0.35 0 0) !important;
 }
 
-.nyc-light-mode nav,
-.nyc-light-mode .bg-background\/80 {
-  background-color: oklch(0.95 0 0) !important;
-  border-color: oklch(0.85 0 0) !important;
+.nyc-light-mode [class*="text-white/"] {
+  color: oklch(0.35 0 0) !important;
 }
 
-.nyc-light-mode .bg-background\/90 {
-  background-color: oklch(0.95 0 0) !important;
-}
-
+/* ── White opacity backgrounds → light gray ── */
+.nyc-light-mode .bg-white\/5,
+.nyc-light-mode .bg-white\/10,
 .nyc-light-mode .bg-white\/\[0\.02\],
-.nyc-light-mode .bg-white\/\[0\.03\] {
-  background-color: oklch(0.94 0 0) !important;
+.nyc-light-mode .bg-white\/\[0\.03\],
+.nyc-light-mode .bg-white\/\[0\.04\],
+.nyc-light-mode .bg-white\/\[0\.05\] {
+  background-color: oklch(0.93 0 0) !important;
 }
 
+.nyc-light-mode [class*="bg-white/"] {
+  background-color: oklch(0.93 0 0) !important;
+}
+
+/* ── White opacity borders → dark borders ── */
+.nyc-light-mode .border-white\/5,
+.nyc-light-mode .border-white\/10,
 .nyc-light-mode .border-white\/\[0\.06\],
 .nyc-light-mode .border-white\/\[0\.08\],
-.nyc-light-mode .border-white\/\[0\.10\] {
+.nyc-light-mode .border-white\/\[0\.10\],
+.nyc-light-mode .border-white\/\[0\.12\] {
   border-color: oklch(0.82 0 0) !important;
 }
 
+.nyc-light-mode [class*="border-white/"] {
+  border-color: oklch(0.82 0 0) !important;
+}
+
+/* ── Hover states ── */
 .nyc-light-mode .hover\:bg-white\/\[0\.03\]:hover,
 .nyc-light-mode .hover\:bg-white\/\[0\.04\]:hover,
-.nyc-light-mode .hover\:bg-white\/\[0\.05\]:hover {
-  background-color: oklch(0.92 0 0) !important;
+.nyc-light-mode .hover\:bg-white\/\[0\.05\]:hover,
+.nyc-light-mode .hover\:bg-white\/5:hover,
+.nyc-light-mode .hover\:bg-white\/10:hover {
+  background-color: oklch(0.90 0 0) !important;
 }
 
-.nyc-light-mode .hover\:border-white\/\[0\.10\]:hover {
-  border-color: oklch(0.7 0 0) !important;
+.nyc-light-mode .hover\:border-white\/\[0\.10\]:hover,
+.nyc-light-mode .hover\:border-white\/10:hover {
+  border-color: oklch(0.70 0 0) !important;
 }
 
-/* Keep code blocks dark even in light mode */
-.nyc-light-mode .code-block,
+.nyc-light-mode .hover\:text-white\/60:hover,
+.nyc-light-mode .hover\:text-white\/70:hover,
+.nyc-light-mode .hover\:text-white\/80:hover {
+  color: oklch(0.20 0 0) !important;
+}
+
+/* ── Navigation / panels ── */
+.nyc-light-mode nav,
+.nyc-light-mode .bg-background\/80,
+.nyc-light-mode .bg-background\/90 {
+  background-color: oklch(0.96 0 0) !important;
+  border-color: oklch(0.85 0 0) !important;
+}
+
+/* ── Dark oklch backgrounds → light ── */
 .nyc-light-mode [class*="bg-[oklch(0.08"],
 .nyc-light-mode [class*="bg-[oklch(0.09"],
+.nyc-light-mode [class*="bg-[oklch(0.10"],
 .nyc-light-mode [class*="bg-[oklch(0.11"],
 .nyc-light-mode [class*="bg-[oklch(0.12"],
-.nyc-light-mode [class*="bg-[oklch(0.14"] {
-  background-color: oklch(0.08 0 0) !important;
-  color: var(--nyc-concrete) !important;
+.nyc-light-mode [class*="bg-[oklch(0.13"],
+.nyc-light-mode [class*="bg-[oklch(0.14"],
+.nyc-light-mode [class*="bg-[oklch(0.15"],
+.nyc-light-mode [class*="bg-[oklch(0.16"],
+.nyc-light-mode [class*="bg-[oklch(0.17"] {
+  background-color: oklch(0.95 0 0) !important;
+  color: oklch(0.20 0 0) !important;
 }
 
+/* Code blocks stay dark even in light mode */
+.nyc-light-mode .code-block,
+.nyc-light-mode .code-block *,
+.nyc-light-mode pre[class*="bg-[oklch(0.08"],
+.nyc-light-mode pre[class*="bg-[oklch(0.09"],
+.nyc-light-mode pre[class*="bg-[oklch(0.11"] {
+  background-color: oklch(0.08 0 0) !important;
+  color: #c3cee3 !important;
+}
+
+/* ── Black overlays ── */
+.nyc-light-mode .bg-black\/60 {
+  background-color: oklch(0 0 0 / 40%) !important;
+}
+.nyc-light-mode .bg-black\/40,
+.nyc-light-mode .bg-black\/30 {
+  background-color: oklch(0 0 0 / 25%) !important;
+}
+
+/* ── Search dialog ── */
+.nyc-light-mode [class*="bg-[oklch(0.17"] {
+  background-color: oklch(0.98 0 0) !important;
+  color: oklch(0.15 0 0) !important;
+}
+
+/* ── Gradient text ── */
 .nyc-light-mode .nyc-gradient-text {
   background: linear-gradient(135deg, var(--nyc-subway) 0%, #FF8F00 50%, var(--nyc-subway) 100%);
   -webkit-background-clip: text;
@@ -386,9 +451,10 @@ html {
   background-clip: text;
 }
 
+/* ── Enhanced cards ── */
 .nyc-light-mode .nyc-card-enhanced {
-  background: linear-gradient(145deg, oklch(0.97 0 0) 0%, oklch(0.94 0 0) 50%, oklch(0.96 0 0) 100%) !important;
-  border-color: oklch(0.82 0 0) !important;
+  background: linear-gradient(145deg, oklch(0.98 0 0) 0%, oklch(0.95 0 0) 50%, oklch(0.97 0 0) 100%) !important;
+  border-color: oklch(0.85 0 0) !important;
   box-shadow:
     0 1px 2px oklch(0 0 0 / 8%),
     0 4px 8px oklch(0 0 0 / 4%),
@@ -396,10 +462,17 @@ html {
 }
 
 .nyc-light-mode .nyc-card-highlight-enhanced {
-  background: linear-gradient(145deg, oklch(0.98 0 0) 0%, oklch(0.95 0 0) 50%, oklch(0.97 0 0) 100%) !important;
+  background: linear-gradient(145deg, oklch(0.99 0 0) 0%, oklch(0.96 0 0) 50%, oklch(0.98 0 0) 100%) !important;
   border-color: oklch(0.78 0.16 85 / 25%) !important;
 }
 
+.nyc-light-mode .nyc-card,
+.nyc-light-mode .nyc-card-highlight {
+  background: oklch(0.97 0 0) !important;
+  border-color: oklch(0.85 0 0) !important;
+}
+
+/* ── Effects ── */
 .nyc-light-mode .FloatingParticles {
   opacity: 0.3;
 }
@@ -408,8 +481,106 @@ html {
   box-shadow: 0 0 8px oklch(0.78 0.16 85 / 8%);
 }
 
-.nyc-light-mode .bg-black\/60 {
-  background-color: oklch(0 0 0 / 40%) !important;
+.nyc-light-mode .nyc-caution-stripe {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--nyc-taxi),
+    var(--nyc-taxi) 10px,
+    oklch(0.93 0 0) 10px,
+    oklch(0.93 0 0) 20px
+  ) !important;
+}
+
+/* ── Scrollbar light ── */
+.nyc-light-mode ::-webkit-scrollbar-track {
+  background: oklch(0.92 0 0);
+}
+.nyc-light-mode ::-webkit-scrollbar-thumb {
+  background: oklch(0.75 0 0);
+  border-radius: 3px;
+}
+.nyc-light-mode ::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.60 0 0);
+}
+
+/* ── NYC labels & status dots ── */
+.nyc-light-mode .nyc-label {
+  border-color: oklch(0 0 0 / 10%);
+  color: oklch(0.45 0 0);
+}
+
+.nyc-light-mode .nyc-section-divider {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0 0 0 / 8%) 15%,
+    oklch(0.78 0.16 85 / 15%) 50%,
+    oklch(0 0 0 / 8%) 85%,
+    transparent 100%
+  );
+}
+
+.nyc-light-mode .nyc-text-shadow,
+.nyc-light-mode .nyc-text-shadow-strong {
+  text-shadow: none;
+}
+
+/* ── Inline text-[#c3cee3] used in Command Center data ── */
+.nyc-light-mode [style*="color:#c3cee3"],
+.nyc-light-mode [style*="color: #c3cee3"] {
+  color: oklch(0.25 0 0) !important;
+}
+
+/* ── Toast ── */
+.nyc-light-mode [class*="bg-[oklch(0.14"] {
+  background-color: oklch(0.97 0 0) !important;
+  color: oklch(0.15 0 0) !important;
+}
+
+/* ── Focus/outline overrides ── */
+.nyc-light-mode .hover\:bg-white\/5:hover,
+.nyc-light-mode .hover\:bg-\[oklch\(0\.15:hover {
+  background-color: oklch(0.90 0 0) !important;
+}
+
+.nyc-light-mode .focus\:bg-white\/10:focus {
+  background-color: oklch(0.88 0 0) !important;
+}
+
+/* ── Hardcoded oklch TEXT colors → dark text in light mode ── */
+.nyc-light-mode [class*="text-[oklch(0.8"],
+.nyc-light-mode [class*="text-[oklch(0.9"],
+.nyc-light-mode [class*="text-[oklch(1.0"],
+.nyc-light-mode [class*="text-[oklch(1. "] {
+  color: oklch(0.25 0 0) !important;
+}
+
+/* ── Code blocks: keep dark even in light mode ── */
+/* Must have HIGHER specificity than the generic oklch bg override above */
+.nyc-light-mode .code-block,
+.nyc-light-mode .code-block *,
+.nyc-light-mode div.code-block,
+.nyc-light-mode div[class*="bg-[oklch(0.08"] pre,
+.nyc-light-mode div[class*="bg-[oklch(0.09"] pre,
+.nyc-light-mode div[class*="bg-[oklch(0.11"] pre,
+.nyc-light-mode pre[class*="bg-[oklch(0.08"],
+.nyc-light-mode pre[class*="bg-[oklch(0.09"],
+.nyc-light-mode pre[class*="bg-[oklch(0.11"] {
+  background-color: oklch(0.08 0 0) !important;
+  color: #c3cee3 !important;
+}
+
+/* Code block CONTAINERS also stay dark */
+.nyc-light-mode .code-block-hover-glow,
+.nyc-light-mode div.code-block-hover-glow {
+  background-color: oklch(0.08 0 0) !important;
+  color: #c3cee3 !important;
+}
+
+/* Selection: readable on light bg */
+.nyc-light-mode ::selection {
+  background: oklch(0.78 0.16 85 / 30%);
+  color: oklch(0.10 0 0);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
