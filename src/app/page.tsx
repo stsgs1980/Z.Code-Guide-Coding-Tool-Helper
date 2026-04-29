@@ -65,6 +65,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import CommandCenter from '@/components/CommandCenter'
+import type { SectionConfig } from '@/components/command-center-types'
 
 /* ───────────────────── DATA ───────────────────── */
 
@@ -219,6 +221,46 @@ const SOURCES = [
   { id: 'S22', url: 'https://docs.stagewise.io', desc: 'Stagewise Documentation' },
   { id: 'S23', url: 'https://github.com/stagewise-io/stagewise', desc: 'Stagewise GitHub' },
   { id: 'S24', url: 'https://www.npmjs.com/package/@stagewise/agent-interface', desc: 'Stagewise Agent Interface' },
+]
+
+/* ───────────────────── COMMAND CENTER SECTIONS ───────────────────── */
+
+const CC_SECTIONS: SectionConfig[] = [
+  {
+    id: 'tools',
+    label: 'TOOLS',
+    icon: Wrench,
+    accent: '#FFC107',
+    items: [
+      { id: 'cc-opencode', label: 'OpenCode CLI', icon: Terminal, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#FFC107'}}>OpenCode CLI</h3><p className="text-sm text-[#c3cee3] mb-3">Terminal-based AI agent with 95K+ GitHub stars. MCP native, supports 75+ LLM providers.</p><CodeBlock code="curl -fsSL https://opencode.ai/install | bash" /></div>, isFavorite: true, shortcut: '1' },
+      { id: 'cc-helper', label: 'Coding Tool Helper', icon: Settings, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#FFC107'}}>Coding Tool Helper</h3><p className="text-sm text-[#c3cee3] mb-3">Configuration wizard for Z.AI ecosystem. Initializes, authenticates, and diagnoses your setup.</p><CodeBlock code="npx @z_ai/coding-helper init" /></div>, shortcut: '2' },
+      { id: 'cc-stitch', label: 'Stitch MCP', icon: Layers, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#FFC107'}}>Stitch MCP</h3><p className="text-sm text-[#c3cee3] mb-3">Full-page design generation from prompts. Free tier: 350 generations/month.</p><CodeBlock code="npx @_davideast/stitch-mcp init" /></div>, shortcut: '3' },
+      { id: 'cc-magic', label: '21st.dev Magic', icon: Sparkles, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#FFC107'}}>21st.dev Magic</h3><p className="text-sm text-[#c3cee3] mb-3">React component generation through AI. MCP server integration for direct code insertion.</p><CodeBlock code="npx -y 21st-dev/magic-mcp" /></div> },
+      { id: 'cc-stagewise', label: 'Stagewise', icon: Eye, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#FFC107'}}>Stagewise</h3><p className="text-sm text-[#c3cee3] mb-3">AI Browser for web development. Electron + React 19, provides visual context for AI agents.</p><CodeBlock code="npx @stagewise/agent-interface" /></div> },
+    ],
+  },
+  {
+    id: 'mcp',
+    label: 'MCP',
+    icon: Cable,
+    accent: '#4ECDC4',
+    items: [
+      { id: 'cc-search', label: 'Web Search', icon: Search, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#4ECDC4'}}>Web Search MCP</h3><p className="text-sm text-[#c3cee3] mb-3">Search the web for real-time information. Port 3001.</p><CodeBlock code={`{\n  "mcpServers": {\n    "web-search": {\n      "command": "npx",\n      "args": ["-y", "@z-ai/web-search-mcp"]\n    }\n  }\n}`} lang="json" /></div>, badge: 1 },
+      { id: 'cc-vision', label: 'Vision MCP', icon: Eye, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#4ECDC4'}}>Vision MCP</h3><p className="text-sm text-[#c3cee3] mb-3">Analyze images and screenshots with AI. Port 3002.</p><CodeBlock code={`{\n  "mcpServers": {\n    "vision": {\n      "command": "npx",\n      "args": ["-y", "@z-ai/vision-mcp"]\n    }\n  }\n}`} lang="json" /></div> },
+      { id: 'cc-reader', label: 'Web Reader', icon: BookOpen, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#4ECDC4'}}>Web Reader MCP</h3><p className="text-sm text-[#c3cee3] mb-3">Extract content from web pages. Port 3003.</p><CodeBlock code={`{\n  "mcpServers": {\n    "web-reader": {\n      "command": "npx",\n      "args": ["-y", "@z-ai/reader-mcp"]\n    }\n  }\n}`} lang="json" /></div> },
+    ],
+  },
+  {
+    id: 'setup',
+    label: 'SETUP',
+    icon: Rocket,
+    accent: '#c792ea',
+    items: [
+      { id: 'cc-quickstart', label: 'Quick Start', icon: Zap, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#c792ea'}}>Quick Start</h3><p className="text-sm text-[#c3cee3] mb-3">Get up and running in 3 steps:</p><CodeBlock code={`# Step 1: Install Coding Tool Helper\nnpx @z_ai/coding-helper init\n\n# Step 2: Set your API key\ncoding-helper auth\n\n# Step 3: Verify setup\ncoding-helper doctor`} /></div>, isFavorite: true },
+      { id: 'cc-doctor', label: 'Doctor', icon: Shield, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#c792ea'}}>System Diagnostic</h3><p className="text-sm text-[#c3cee3] mb-3">Check your system configuration for common issues.</p><CodeBlock code="coding-helper doctor" /></div>, shortcut: 'D' },
+      { id: 'cc-config', label: 'Config', icon: FileCode, content: <div className="p-5"><h3 className="text-base font-semibold mb-2" style={{color:'#c792ea'}}>Configuration</h3><p className="text-sm text-[#c3cee3] mb-3">Manage your Coding Tool Helper configuration.</p><CodeBlock code={`# View current language\ncoding-helper lang show\n\n# Set language to Russian\ncoding-helper lang set ru\n\n# Revoke API key\ncoding-helper auth revoke`} /></div> },
+    ],
+  },
 ]
 
 /* ───────────────────── CONTEXTS ───────────────────── */
@@ -3179,6 +3221,18 @@ export default function Home() {
 
       {/* Toast notifications */}
       <ToastContainer toasts={toasts} />
+
+      {/* Command Center Panel */}
+      <CommandCenter
+        sections={CC_SECTIONS}
+        theme={{ accent: '#FFC107', bg: '#0c0c14' }}
+        animation="slide-up"
+        trigger={{ position: 'right', size: 44, accent: '#FFC107' }}
+        persistState="guide"
+        searchable={true}
+        showShortcuts={true}
+        maxWidth="960px"
+      />
     </TooltipProvider>
     </BookmarkContext.Provider>
     </ToastContext.Provider>
