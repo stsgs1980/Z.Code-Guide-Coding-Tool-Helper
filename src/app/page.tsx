@@ -307,7 +307,7 @@ function ReadingProgress() {
 
 /* ───────────────────── SEARCH DIALOG ───────────────────── */
 
-function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+function SearchDialog({ open, onClose, theme }: { open: boolean; onClose: () => void; theme: 'dark' | 'light' }) {
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -371,9 +371,9 @@ function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void })
             initial={{ opacity: 0, scale: 0.95, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            className="fixed top-[15%] left-1/2 -translate-x-1/2 w-[90%] max-w-lg z-[101] bg-[oklch(0.17_0_0)] border border-white/10 rounded-lg shadow-2xl overflow-hidden"
+            className={`fixed top-[15%] left-1/2 -translate-x-1/2 w-[90%] max-w-lg z-[101] ${theme === 'light' ? 'bg-[oklch(0.98_0_0)] border-oklch(0.85_0_0)' : 'bg-[oklch(0.17_0_0)] border-white/10'} rounded-lg shadow-2xl overflow-hidden`}
           >
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
+            <div className={`flex items-center gap-3 px-4 py-3 border-b ${theme === 'light' ? 'border-oklch(0.85_0_0)' : 'border-white/10'}`}>
               <Search className="w-4 h-4 text-[var(--nyc-taxi)]" />
               <input
                 ref={inputRef}
@@ -381,12 +381,12 @@ function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void })
                 onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0) }}
                 onKeyDown={handleSearchKeyDown}
                 placeholder="Поиск по разделам..."
-                className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/30"
+                className={`flex-1 bg-transparent text-sm ${theme === 'light' ? 'text-oklch(0.15_0_0) placeholder:text-oklch(0.5_0_0)' : 'text-white placeholder:text-white/30'} outline-none`}
               />
               <div className="flex items-center gap-1">
-                <kbd className="text-[10px] text-white/20 font-mono bg-white/5 px-1 py-0.5 rounded">↑↓</kbd>
-                <kbd className="text-[10px] text-white/20 font-mono bg-white/5 px-1 py-0.5 rounded">↵</kbd>
-                <kbd className="text-[10px] text-white/30 font-mono bg-white/5 px-1.5 py-0.5 rounded">ESC</kbd>
+                <kbd className={`text-[10px] font-mono px-1 py-0.5 rounded ${theme === 'light' ? 'text-oklch(0.45_0_0) bg-oklch(0.92_0_0)' : 'text-white/20 bg-white/5'}`}>↑↓</kbd>
+                <kbd className={`text-[10px] font-mono px-1 py-0.5 rounded ${theme === 'light' ? 'text-oklch(0.45_0_0) bg-oklch(0.92_0_0)' : 'text-white/20 bg-white/5'}`}>↵</kbd>
+                <kbd className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${theme === 'light' ? 'text-oklch(0.45_0_0) bg-oklch(0.92_0_0)' : 'text-white/30 bg-white/5'}`}>ESC</kbd>
               </div>
             </div>
             <div className="max-h-64 overflow-y-auto p-2">
@@ -398,16 +398,16 @@ function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void })
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                     index === selectedIndex
                       ? 'bg-[var(--nyc-taxi)]/10 text-[var(--nyc-taxi)]'
-                      : 'hover:bg-white/5'
+                      : theme === 'light' ? 'hover:bg-oklch(0.93_0_0)' : 'hover:bg-white/5'
                   }`}
                 >
                   <span className="font-mono text-xs w-5 shrink-0">{item.label}</span>
-                  <item.icon className={`w-3.5 h-3.5 shrink-0 ${index === selectedIndex ? 'text-[var(--nyc-taxi)]' : 'text-white/40'}`} />
-                  <span className={index === selectedIndex ? 'text-[var(--nyc-taxi)]' : 'text-white/70'}>{item.title}</span>
+                  <item.icon className={`w-3.5 h-3.5 shrink-0 ${index === selectedIndex ? 'text-[var(--nyc-taxi)]' : theme === 'light' ? 'text-oklch(0.45_0_0)' : 'text-white/40'}`} />
+                  <span className={index === selectedIndex ? 'text-[var(--nyc-taxi)]' : theme === 'light' ? 'text-oklch(0.3_0_0)' : 'text-white/70'}>{item.title}</span>
                 </a>
               ))}
               {results.length === 0 && (
-                <div className="px-3 py-6 text-center text-white/30 text-sm">Ничего не найдено</div>
+                <div className={`px-3 py-6 text-center text-sm ${theme === 'light' ? 'text-oklch(0.5_0_0)' : 'text-white/30'}`}>Ничего не найдено</div>
               )}
             </div>
           </motion.div>
@@ -465,12 +465,13 @@ const TOUR_STEPS = [
   },
 ]
 
-function GuideTour({ open, onClose, currentStep, onNext, onPrev }: {
+function GuideTour({ open, onClose, currentStep, onNext, onPrev, theme }: {
   open: boolean
   onClose: () => void
   currentStep: number
   onNext: () => void
   onPrev: () => void
+  theme: 'dark' | 'light'
 }) {
   const [highlightRect, setHighlightRect] = useState<DOMRect | null>(null)
   const step = TOUR_STEPS[currentStep]
@@ -552,9 +553,9 @@ function GuideTour({ open, onClose, currentStep, onNext, onPrev }: {
               left: tooltipLeft,
             }}
           >
-            <div className="bg-[oklch(0.14_0_0)] border border-[var(--nyc-taxi)]/20 rounded-xl shadow-2xl overflow-hidden">
+            <div className={`${theme === 'light' ? 'bg-[oklch(0.98_0_0)]' : 'bg-[oklch(0.14_0_0)]'} border border-[var(--nyc-taxi)]/20 rounded-xl shadow-2xl overflow-hidden`}>
               {/* Header */}
-              <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.06]">
+              <div className={`flex items-center gap-3 px-5 py-4 border-b ${th('border-white/[0.06]', 'border-oklch(0.85_0_0)')}`}>
                 <div className="w-8 h-8 rounded-lg bg-[var(--nyc-taxi)]/15 flex items-center justify-center">
                   <Compass className="w-4 h-4 text-[var(--nyc-taxi)]" />
                 </div>
@@ -566,7 +567,7 @@ function GuideTour({ open, onClose, currentStep, onNext, onPrev }: {
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded hover:bg-white/5 text-white/30 hover:text-white/60 transition-colors"
+                  className={`p-1.5 rounded ${th('hover:bg-white/5 text-white/30 hover:text-white/60', 'hover:bg-oklch(0.9_0_0) text-oklch(0.4_0_0) hover:text-oklch(0.2_0_0)')} transition-colors`}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -587,20 +588,20 @@ function GuideTour({ open, onClose, currentStep, onNext, onPrev }: {
                         ? 'w-6 h-1.5 bg-[var(--nyc-taxi)]'
                         : i < currentStep
                           ? 'w-1.5 h-1.5 bg-[var(--nyc-taxi)]/40'
-                          : 'w-1.5 h-1.5 bg-white/10'
+                          : `w-1.5 h-1.5 ${th('bg-white/10', 'bg-oklch(0.8_0_0)')}`
                     }`}
                   />
                 ))}
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-between px-5 py-3 border-t border-white/[0.06]">
+              <div className={`flex items-center justify-between px-5 py-3 border-t ${th('border-white/[0.06]', 'border-oklch(0.85_0_0)')}`}>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={onPrev}
                   disabled={isFirst}
-                  className="text-white/40 hover:text-white gap-1 h-7 px-2 text-xs disabled:opacity-20"
+                  className={`${th('text-white/40 hover:text-white', 'text-oklch(0.4_0_0) hover:text-oklch(0.15_0_0)')} gap-1 h-7 px-2 text-xs disabled:opacity-20`}
                 >
                   <ChevronLeft className="w-3 h-3" />
                   Назад
@@ -611,7 +612,7 @@ function GuideTour({ open, onClose, currentStep, onNext, onPrev }: {
                     variant="ghost"
                     size="sm"
                     onClick={onClose}
-                    className="text-white/30 hover:text-white/60 h-7 px-2 text-xs"
+                    className={`${th('text-white/30 hover:text-white/60', 'text-oklch(0.4_0_0) hover:text-oklch(0.2_0_0)')} h-7 px-2 text-xs`}
                   >
                     Пропустить
                   </Button>
@@ -646,7 +647,8 @@ function GuideTour({ open, onClose, currentStep, onNext, onPrev }: {
 
 /* ───────────────────── SECTION NAVIGATION ───────────────────── */
 
-function SectionNav({ currentId }: { currentId: string }) {
+function SectionNav({ currentId, theme }: { currentId: string; theme: string }) {
+  const th = (dark: string, light: string) => theme === 'light' ? light : dark
   const currentIndex = TOC_ITEMS.findIndex(item => item.id === currentId)
   if (currentIndex < 0) return null
   const prev = currentIndex > 0 ? TOC_ITEMS[currentIndex - 1] : null
@@ -657,7 +659,7 @@ function SectionNav({ currentId }: { currentId: string }) {
       {prev ? (
         <a
           href={`#${prev.id}`}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white/40 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-all group/nav"
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs ${th('text-white/40 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.45_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.93_0_0)')} transition-all group/nav`}
         >
           <ChevronLeft className="w-3.5 h-3.5 group-hover/nav:-translate-x-0.5 transition-transform" />
           <span className="font-mono">{prev.label}</span>
@@ -667,7 +669,7 @@ function SectionNav({ currentId }: { currentId: string }) {
       {next ? (
         <a
           href={`#${next.id}`}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white/40 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-all group/nav"
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs ${th('text-white/40 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.45_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.93_0_0)')} transition-all group/nav`}
         >
           <span className="hidden sm:inline">{next.title}</span>
           <span className="font-mono">{next.label}</span>
@@ -680,7 +682,8 @@ function SectionNav({ currentId }: { currentId: string }) {
 
 /* ───────────────────── COMPONENTS ───────────────────── */
 
-function CopyButton({ text, className = '', onCopied }: { text: string; className?: string; onCopied?: () => void }) {
+function CopyButton({ text, className = '', onCopied, theme }: { text: string; className?: string; onCopied?: () => void; theme?: string }) {
+  const th = (dark: string, light: string) => theme === 'light' ? light : dark
   const [copied, setCopied] = useState(false)
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(text)
@@ -691,12 +694,12 @@ function CopyButton({ text, className = '', onCopied }: { text: string; classNam
   return (
     <button
       onClick={handleCopy}
-      className={`p-1 rounded bg-white/5 hover:bg-[var(--nyc-taxi)]/10 transition-all duration-200 group/copy ${className}`}
+      className={`p-1 rounded ${theme ? th('bg-white/5', 'bg-oklch(0.9_0_0)') : 'bg-white/5'} hover:bg-[var(--nyc-taxi)]/10 transition-all duration-200 group/copy ${className}`}
       aria-label="Copy code"
     >
       {copied
         ? <Check className="w-3 h-3 text-green-400" />
-        : <Copy className="w-3 h-3 text-white/30 group-hover/copy:text-[var(--nyc-taxi)]" />
+        : <Copy className={`w-3 h-3 ${theme ? th('text-white/30', 'text-oklch(0.5_0_0)') : 'text-white/30'} group-hover/copy:text-[var(--nyc-taxi)]`} />
       }
     </button>
   )
@@ -922,7 +925,8 @@ function CodeBlock({ code, lang = 'bash' }: { code: string; lang?: string }) {
 
 
 
-function SectionHeader({ number, title, subtitle }: { number: string; title: string; subtitle?: string }) {
+function SectionHeader({ number, title, subtitle, theme }: { number: string; title: string; subtitle?: string; theme: string }) {
+  const th = (dark: string, light: string) => theme === 'light' ? light : dark
   const [shareCopied, setShareCopied] = useState(false)
   const { addToast } = React.useContext(ToastContext)
   const { bookmarks, toggleBookmark } = React.useContext(BookmarkContext)
@@ -964,7 +968,7 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
         <div className="h-px flex-1 bg-gradient-to-r from-[var(--nyc-taxi)]/30 to-transparent" />
         <button
           onClick={handleBookmark}
-          className={`p-1 rounded transition-all ${isBookmarked ? 'text-[var(--nyc-taxi)]' : 'text-white/15 hover:text-[var(--nyc-taxi)] hover:bg-white/5'}`}
+          className={`p-1 rounded transition-all ${isBookmarked ? 'text-[var(--nyc-taxi)]' : th('text-white/15 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.55_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.93_0_0)')}`}
           title={isBookmarked ? 'Удалить закладку' : 'Добавить закладку'}
         >
           {isBookmarked ? <Star className="w-3 h-3 fill-[var(--nyc-taxi)]" /> : <Star className="w-3 h-3" />}
@@ -972,7 +976,7 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
         <div className="relative">
           <button
             onClick={handleShare}
-            className="p-1 rounded text-white/15 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-all"
+            className={`p-1 rounded ${th('text-white/15 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.55_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.93_0_0)')} transition-all`}
             title="Скопировать ссылку на раздел"
           >
             {shareCopied ? <Check className="w-3 h-3 text-green-400" /> : <Hash className="w-3 h-3" />}
@@ -989,11 +993,12 @@ function SectionHeader({ number, title, subtitle }: { number: string; title: str
   )
 }
 
-function TaxiDivider() {
+function TaxiDivider({ theme }: { theme: string }) {
+  const th = (dark: string, light: string) => theme === 'light' ? light : dark
   return (
     <div className="flex items-center gap-3 my-12 relative">
       <motion.div
-        className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+        className={`h-px flex-1 bg-gradient-to-r from-transparent ${th('via-white/15', 'via-oklch(0.75_0_0)')} to-transparent`}
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true }}
@@ -1111,7 +1116,8 @@ function generateSummary(): string {
   return lines.join('\n')
 }
 
-function CopySummaryButton() {
+function CopySummaryButton({ theme }: { theme: string }) {
+  const th = (dark: string, light: string) => theme === 'light' ? light : dark
   const [copied, setCopied] = useState(false)
 
   const handleCopy = useCallback(() => {
@@ -1124,7 +1130,7 @@ function CopySummaryButton() {
     <Button
       variant="outline"
       onClick={handleCopy}
-      className="border-white/20 hover:bg-white/5 hover:border-[var(--nyc-taxi)]/30 gap-2"
+      className={`${th('border-white/20 hover:bg-white/5', 'border-oklch(0.7_0_0) hover:bg-oklch(0.93_0_0)')} hover:border-[var(--nyc-taxi)]/30 gap-2`}
     >
       {copied ? <Check className="w-4 h-4 text-green-400" /> : <ClipboardList className="w-4 h-4" />}
       {copied ? 'Скопировано!' : 'Скопировать сводку'}
@@ -1162,10 +1168,12 @@ function ToastContainer({ toasts }: { toasts: Array<{ id: string; message: strin
 
 /* ───────────────────── INSTALL SCRIPT GENERATOR ───────────────────── */
 
-function InstallScriptGenerator({ installSelections, setInstallSelections }: {
+function InstallScriptGenerator({ installSelections, setInstallSelections, theme }: {
   installSelections: Record<string, boolean>;
   setInstallSelections: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  theme: string;
 }) {
+  const th = (dark: string, light: string) => theme === 'light' ? light : dark
   const { addToast } = React.useContext(ToastContext)
 
   const allSelected = INSTALL_TOOLS.every(t => installSelections[t.name])
@@ -1245,7 +1253,7 @@ function InstallScriptGenerator({ installSelections, setInstallSelections }: {
         </button>
         <button
           onClick={deselectAll}
-          className="text-[10px] font-mono text-[var(--nyc-steel)] hover:text-white/60 px-2 py-1 rounded bg-white/[0.02] hover:bg-white/5 transition-colors"
+          className={`text-[10px] font-mono text-[var(--nyc-steel)] ${th('hover:text-white/60', 'hover:text-oklch(0.2_0_0)')} px-2 py-1 rounded ${th('bg-white/[0.02] hover:bg-white/5', 'bg-oklch(0.95_0_0) hover:bg-oklch(0.9_0_0)')} transition-colors`}
         >
           Снять все
         </button>
@@ -1264,13 +1272,13 @@ function InstallScriptGenerator({ installSelections, setInstallSelections }: {
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all border ${
               installSelections[tool.name]
                 ? 'bg-[var(--nyc-taxi)]/8 border-[var(--nyc-taxi)]/20'
-                : 'bg-white/[0.02] border-white/[0.06] hover:border-white/10'
+                : th('bg-white/[0.02] border-white/[0.06] hover:border-white/10', 'bg-oklch(0.95_0_0) border-oklch(0.82_0_0) hover:border-oklch(0.7_0_0)')
             }`}
           >
             <div className={`w-4 h-4 rounded flex items-center justify-center border transition-all shrink-0 ${
               installSelections[tool.name]
                 ? 'bg-[var(--nyc-taxi)] border-[var(--nyc-taxi)]'
-                : 'border-white/20'
+                : th('border-white/20', 'border-oklch(0.7_0_0)')
             }`}>
               {installSelections[tool.name] && <Check className="w-2.5 h-2.5 text-black" />}
             </div>
@@ -1323,6 +1331,9 @@ export default function Home() {
   const [wizardBudget, setWizardBudget] = useState('')
   const [wizardTools, setWizardTools] = useState<string[]>([])
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+
+  // Theme helper: returns dark value in dark mode, light value in light mode
+  const th = useCallback((dark: string, light: string) => theme === 'light' ? light : dark, [theme])
   const [helperFilter, setHelperFilter] = useState('')
   const [runningCmd, setRunningCmd] = useState('')
   const [errorExpanded, setErrorExpanded] = useState<string[]>([])
@@ -1526,10 +1537,10 @@ export default function Home() {
     <ToastContext.Provider value={{ addToast }}>
     <BookmarkContext.Provider value={{ bookmarks, toggleBookmark }}>
     <TooltipProvider>
-      <div className={`min-h-screen flex flex-col bg-background ${theme === 'light' ? 'nyc-light-mode' : ''}`}>
+      <div className={`min-h-screen flex flex-col ${theme === 'light' ? 'nyc-light-mode bg-[oklch(0.97_0_0)]' : 'bg-background'}`}>
         <ReadingProgress />
 
-        <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
+        <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} theme={theme} />
         <GuideTour
           open={tourOpen}
           onClose={() => {
@@ -1541,10 +1552,11 @@ export default function Home() {
           currentStep={tourStep}
           onNext={() => setTourStep(prev => Math.min(prev + 1, TOUR_STEPS.length - 1))}
           onPrev={() => setTourStep(prev => Math.max(prev - 1, 0))}
+          theme={theme}
         />
 
         {/* ── SIDE NAV (Desktop) ── */}
-        <nav className="hidden lg:flex fixed left-0 top-0 h-full w-14 flex-col items-center py-5 gap-1 z-50 bg-background/80 backdrop-blur-md border-r border-white/5">
+        <nav className={`hidden lg:flex fixed left-0 top-0 h-full w-14 flex-col items-center py-5 gap-1 z-50 ${th('bg-[oklch(0.1_0_0)]/80 border-white/5', 'bg-[oklch(0.97_0_0)]/80 border-oklch(0.88_0_0)')} backdrop-blur-md border-r`}>
           <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45 mb-4" />
           {TOC_ITEMS.map(item => (
             <Tooltip key={item.id}>
@@ -1554,36 +1566,36 @@ export default function Home() {
                   className={`w-9 h-9 flex items-center justify-center rounded-md text-[11px] font-mono transition-all duration-300 ${
                     activeSection === item.id
                       ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] font-bold nyc-sidebar-active'
-                      : 'text-white/35 hover:text-white/60 hover:bg-white/5'
+                      : th('text-white/35 hover:text-white/60 hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-oklch(0.2_0_0) hover:bg-oklch(0.9_0_0)')
                   }`}
                 >
                   {item.label}
                 </a>
               </TooltipTrigger>
-              <TooltipContent side="right" className="font-mono text-xs bg-[oklch(0.17_0_0)] border-white/10">
+              <TooltipContent side="right" className={`font-mono text-xs ${th('bg-[oklch(0.17_0_0)] border-white/10', 'bg-[oklch(0.98_0_0)] border-oklch(0.82_0_0)')}`}>
                 {item.title}
               </TooltipContent>
             </Tooltip>
           ))}
 
           {/* Utility buttons */}
-          <div className="w-8 border-t border-white/[0.06] my-1" />
+          <div className={`w-8 border-t ${th('border-white/[0.06]', 'border-oklch(0.85_0_0)')} my-1`} />
           <button
             onClick={() => setSearchOpen(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            className={`w-9 h-9 flex items-center justify-center rounded-md ${th('text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.9_0_0)')} transition-colors`}
           >
             <Search className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setTocPanelOpen(prev => !prev)}
-            className={`w-9 h-9 flex items-center justify-center rounded-md transition-colors ${tocPanelOpen ? 'text-[var(--nyc-taxi)] bg-[var(--nyc-taxi)]/15' : 'text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5'}`}
+            className={`w-9 h-9 flex items-center justify-center rounded-md transition-colors ${tocPanelOpen ? 'text-[var(--nyc-taxi)] bg-[var(--nyc-taxi)]/15' : th('text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.9_0_0)')}`}
             title="Оглавление"
           >
             <List className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={toggleTheme}
-            className="w-9 h-9 flex items-center justify-center rounded-md text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+            className={`w-9 h-9 flex items-center justify-center rounded-md ${th('text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.9_0_0)')} transition-colors`}
             title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
           >
             {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
@@ -1610,13 +1622,13 @@ export default function Home() {
                 animate={{ x: 0 }}
                 exit={{ x: -240 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="fixed left-14 top-0 bottom-0 w-60 z-[51] bg-[oklch(0.12_0_0)] border-r border-white/10 hidden lg:flex flex-col"
+                className={`fixed left-14 top-0 bottom-0 w-60 z-[51] ${th('bg-[oklch(0.12_0_0)] border-white/10', 'bg-[oklch(0.97_0_0)] border-oklch(0.85_0_0)')} hidden lg:flex flex-col`}
               >
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
+                <div className={`flex items-center justify-between px-4 py-3 border-b ${th('border-white/[0.06]', 'border-oklch(0.85_0_0)')}`}>
                   <span className="font-mono text-xs font-bold tracking-wider text-[var(--nyc-taxi)]">ОГЛАВЛЕНИЕ</span>
                   <button
                     onClick={() => setTocPanelOpen(false)}
-                    className="p-1.5 rounded hover:bg-white/5 text-white/30 hover:text-white/60 transition-colors"
+                    className={`p-1.5 rounded ${th('hover:bg-white/5 text-white/30 hover:text-white/60', 'hover:bg-oklch(0.9_0_0) text-oklch(0.4_0_0) hover:text-oklch(0.2_0_0)')} transition-colors`}
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -1630,7 +1642,7 @@ export default function Home() {
                       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                         activeSection === item.id
                           ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)]'
-                          : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+                          : th('text-white/50 hover:text-white/80 hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-oklch(0.2_0_0) hover:bg-oklch(0.93_0_0)')
                       }`}
                     >
                       <item.icon className="w-4 h-4 shrink-0" />
@@ -1646,7 +1658,7 @@ export default function Home() {
 
         {/* ── MOBILE NAV BAR ── */}
         <div className="lg:hidden fixed top-0.5 left-0 right-0 z-50 mx-2 mt-1">
-          <div className="bg-background/90 backdrop-blur-md border border-white/10 rounded-lg shadow-lg">
+          <div className={`${th('bg-[oklch(0.1_0_0)]/90 border-white/10', 'bg-[oklch(0.97_0_0)]/90 border-oklch(0.85_0_0)')} backdrop-blur-md border rounded-lg shadow-lg`}>
             <div className="flex items-center justify-between px-4 py-2.5">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45" />
@@ -1658,13 +1670,13 @@ export default function Home() {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setSearchOpen(true)}
-                  className="p-2 text-white/40 hover:text-[var(--nyc-taxi)] transition-colors"
+                  className={`p-2 ${th('text-white/40 hover:text-[var(--nyc-taxi)]', 'text-oklch(0.4_0_0) hover:text-[var(--nyc-taxi)]')} transition-colors`}
                 >
                   <Search className="w-4 h-4" />
                 </button>
                 <button
                   onClick={toggleTheme}
-                  className="p-2 text-white/40 hover:text-[var(--nyc-taxi)] transition-colors"
+                  className={`p-2 ${th('text-white/40 hover:text-[var(--nyc-taxi)]', 'text-oklch(0.4_0_0) hover:text-[var(--nyc-taxi)]')} transition-colors`}
                 >
                   {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </button>
@@ -1672,14 +1684,14 @@ export default function Home() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setMobileNav(!mobileNav)}
-                  className="text-white/60 hover:text-white h-8 w-8"
+                  className={`${th('text-white/60 hover:text-white', 'text-oklch(0.3_0_0) hover:text-oklch(0.15_0_0)')} h-8 w-8`}
                 >
                   {mobileNav ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
                 </Button>
               </div>
             </div>
             {/* Mobile reading progress bar */}
-            <div className="h-0.5 bg-white/5">
+            <div className={`h-0.5 ${th('bg-white/5', 'bg-oklch(0.85_0_0)')}`}>
               <motion.div
                 className="h-full bg-[var(--nyc-taxi)]"
                 style={{ width: `${readingProgress}%` }}
@@ -1705,17 +1717,17 @@ export default function Home() {
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="fixed left-0 top-0 bottom-0 w-72 z-[100] bg-[oklch(0.12_0_0)] border-r border-white/10 lg:hidden flex flex-col"
+                className={`fixed left-0 top-0 bottom-0 w-72 z-[100] ${th('bg-[oklch(0.12_0_0)] border-white/10', 'bg-[oklch(0.97_0_0)] border-oklch(0.85_0_0)')} lg:hidden flex flex-col`}
               >
                 {/* Drawer header */}
-                <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
+                <div className={`flex items-center justify-between px-5 py-4 border-b ${th('border-white/[0.06]', 'border-oklch(0.85_0_0)')}`}>
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 bg-[var(--nyc-taxi)] rotate-45" />
                     <span className="font-mono text-xs font-bold tracking-wider">GUIDE</span>
                   </div>
                   <button
                     onClick={() => setMobileNav(false)}
-                    className="p-1.5 rounded hover:bg-white/5 text-white/30 hover:text-white/60 transition-colors"
+                    className={`p-1.5 rounded ${th('hover:bg-white/5 text-white/30 hover:text-white/60', 'hover:bg-oklch(0.9_0_0) text-oklch(0.4_0_0) hover:text-oklch(0.2_0_0)')} transition-colors`}
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -1731,7 +1743,7 @@ export default function Home() {
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                         activeSection === item.id
                           ? 'bg-[var(--nyc-taxi)]/10 text-[var(--nyc-taxi)]'
-                          : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+                          : th('text-white/50 hover:text-white/80 hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-oklch(0.2_0_0) hover:bg-oklch(0.93_0_0)')
                       }`}
                     >
                       <item.icon className="w-4 h-4" />
@@ -1745,12 +1757,12 @@ export default function Home() {
                 </div>
 
                 {/* Drawer footer with progress */}
-                <div className="border-t border-white/[0.06] p-4 space-y-3">
+                <div className={`border-t ${th('border-white/[0.06]', 'border-oklch(0.85_0_0)')} p-4 space-y-3`}>
                   <div className="flex items-center justify-between text-[10px] font-mono">
                     <span className="text-[var(--nyc-steel)] uppercase tracking-wider">Прочитано</span>
                     <span className="text-[var(--nyc-taxi)] font-bold">{visitedSections.size}/{TOC_ITEMS.length}</span>
                   </div>
-                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                  <div className={`h-1 ${th('bg-white/5', 'bg-oklch(0.85_0_0)')} rounded-full overflow-hidden`}>
                     <div
                       className="h-full bg-[var(--nyc-taxi)] rounded-full transition-all duration-300"
                       style={{ width: `${(visitedSections.size / TOC_ITEMS.length) * 100}%` }}
@@ -1758,14 +1770,14 @@ export default function Home() {
                   </div>
                   <button
                     onClick={() => { setMobileNav(false); setTourCompleted(false); setTourStep(0); setTourOpen(true) }}
-                    className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm text-white/50 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+                    className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm ${th('text-white/50 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.93_0_0)')} transition-colors`}
                   >
                     <Compass className="w-4 h-4" />
                     <span>Guide Tour</span>
                   </button>
                   <button
                     onClick={() => { setMobileNav(false); toggleTheme() }}
-                    className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm text-white/50 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+                    className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm ${th('text-white/50 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.93_0_0)')} transition-colors`}
                   >
                     {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                     <span>{theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}</span>
@@ -1787,18 +1799,18 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="hidden lg:flex fixed top-1 left-14 right-0 z-40 h-10 items-center px-6 nyc-section-indicator bg-[oklch(0.1_0_0)]/90 border-b border-white/[0.06]"
+                className={`hidden lg:flex fixed top-1 left-14 right-0 z-40 h-10 items-center px-6 nyc-section-indicator ${th('bg-[oklch(0.1_0_0)]/90 border-white/[0.06]', 'bg-[oklch(0.97_0_0)]/90 border-oklch(0.88_0_0)')}`}
               >
                 <div className="max-w-7xl mx-auto w-full flex items-center gap-3">
                   <div className="w-1.5 h-1.5 bg-[var(--nyc-taxi)] rotate-45" />
                   <span className="font-mono text-[10px] text-[var(--nyc-taxi)] tracking-wider">
                     § {TOC_ITEMS.find(item => item.id === activeSection)?.label || '00'}
                   </span>
-                  <span className="text-sm font-semibold tracking-tight text-white/70">
+                  <span className={`text-sm font-semibold tracking-tight ${th('text-white/70', 'text-oklch(0.25_0_0)')}`}>
                     {TOC_ITEMS.find(item => item.id === activeSection)?.title || ''}
                   </span>
                   <div className="flex-1" />
-                  <span className="text-[10px] font-mono text-white/20">
+                  <span className={`text-[10px] font-mono ${th('text-white/20', 'text-oklch(0.5_0_0)')}`}>
                     {readingProgress}% прочитано
                   </span>
                 </div>
@@ -1834,7 +1846,7 @@ export default function Home() {
                   <span className="font-mono text-[10px] text-[var(--nyc-taxi)] tracking-widest uppercase">
                     v1.0 · Production Ready
                   </span>
-                  <span className="text-white/10">|</span>
+                  <span className={th('text-white/10', 'text-oklch(0.7_0_0)')}>|</span>
                   <BookOpen className="w-3 h-3 text-[var(--nyc-taxi)]/60" />
                   <span className="font-mono text-[10px] text-[var(--nyc-taxi)]/60 tracking-widest">
                     ~14 мин
@@ -1864,13 +1876,13 @@ export default function Home() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 + i * 0.1 }}
-                      className="nyc-card-inner-light nyc-hero-card nyc-hero-card-glow bg-[oklch(0.14_0_0)] border border-white/[0.10] rounded-lg p-3.5 hover:border-[var(--nyc-taxi)]/25 transition-all duration-300 shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-black/40 hover:-translate-y-0.5"
+                      className={`nyc-card-inner-light nyc-hero-card nyc-hero-card-glow ${th('bg-[oklch(0.14_0_0)] border-white/[0.10] shadow-black/30 hover:shadow-black/40', 'bg-[oklch(0.96_0_0)] border-oklch(0.82_0_0) shadow-black/5 hover:shadow-black/10')} rounded-lg p-3.5 hover:border-[var(--nyc-taxi)]/25 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5`}
                     >
                       <div className="flex items-center gap-2 mb-1.5">
                         <fact.icon className="w-3.5 h-3.5 text-[var(--nyc-taxi)]" />
                         <span className="text-[10px] text-[var(--nyc-steel)] font-mono uppercase tracking-wider">{fact.label}</span>
                       </div>
-                      <span className="text-xl font-black text-[oklch(0.95_0_0)]">{fact.value}</span>
+                      <span className={`text-xl font-black ${th('text-[oklch(0.95_0_0)]', 'text-[oklch(0.15_0_0)]')}`}>{fact.value}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -1883,12 +1895,12 @@ export default function Home() {
                     </Button>
                   </a>
                   <a href="#checklist">
-                    <Button variant="outline" className="border-white/20 hover:bg-white/5 hover:border-[var(--nyc-taxi)]/30 gap-2">
+                    <Button variant="outline" className={`${th('border-white/20 hover:bg-white/5', 'border-oklch(0.7_0_0) hover:bg-oklch(0.93_0_0)')} hover:border-[var(--nyc-taxi)]/30 gap-2`}>
                       <CheckCircle2 className="w-4 h-4" />
                       Чек-лист
                     </Button>
                   </a>
-                  <CopySummaryButton />
+                  <CopySummaryButton theme={theme} />
                 </div>
               </motion.div>
             </div>
@@ -1898,7 +1910,7 @@ export default function Home() {
 
             {/* ═══════════════ 01 — TOOL MATRIX ═══════════════ */}
             <section id="matrix" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="01" title="Матрица инструментов" subtitle="tools_matrix" />
+              <SectionHeader number="01" title="Матрица инструментов" subtitle="tools_matrix"  theme={theme} />
               <div className="grid gap-4">
                 {TOOLS.map((tool, i) => (
                   <motion.div
@@ -1927,7 +1939,7 @@ export default function Home() {
                             <p className="text-sm text-[oklch(0.7_0_0)] leading-relaxed">{tool.desc}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4 text-xs shrink-0 sm:pl-4 sm:border-l border-white/5">
+                        <div className={`flex items-center gap-4 text-xs shrink-0 sm:pl-4 sm:border-l ${th('border-white/5', 'border-oklch(0.82_0_0)')}`}>
                           <span className="font-mono text-[var(--nyc-concrete)]">{tool.type}</span>
                           <span className="text-[var(--nyc-taxi)] font-mono font-bold text-xs">{tool.price}</span>
                         </div>
@@ -1955,11 +1967,11 @@ export default function Home() {
                     ['Bolt.diy', '$0 (self-hosted)', 'Полная'],
                     ['Ollama + Local LLM', '$0', 'Полная'],
                   ].map(([name, price, compat]) => (
-                    <div key={name} className="flex items-center justify-between p-2.5 rounded bg-[oklch(0.12_0_0)] border border-white/[0.08] hover:border-[var(--nyc-taxi)]/15 hover:shadow-md hover:shadow-black/10 transition-all duration-200">
+                    <div key={name} className={`flex items-center justify-between p-2.5 rounded ${th('bg-[oklch(0.12_0_0)] border-white/[0.08] hover:shadow-black/10', 'bg-[oklch(0.97_0_0)] border-oklch(0.85_0_0) hover:shadow-black/3')} hover:border-[var(--nyc-taxi)]/15 hover:shadow-md transition-all duration-200`}>
                       <span className="font-mono text-[var(--nyc-concrete)]">{name}</span>
                       <div className="flex items-center gap-3">
                         <span className="text-[var(--nyc-taxi)] font-bold text-xs">{price}</span>
-                        <Badge variant="secondary" className="text-[10px] bg-white/5 text-white/40 border-0">{compat}</Badge>
+                        <Badge variant="secondary" className={`text-[10px] ${th('bg-white/5 text-white/40', 'bg-oklch(0.93_0_0) text-oklch(0.35_0_0)')} border-0`}>{compat}</Badge>
                       </div>
                     </div>
                   ))}
@@ -1971,24 +1983,24 @@ export default function Home() {
               </motion.div>
             </section>
 
-            <SectionNav currentId="matrix" />
-            <TaxiDivider />
+            <SectionNav currentId="matrix" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 02 — PLATFORMS ═══════════════ */}
             <section id="platforms" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="02" title="Платформы и совместимость" subtitle="compatibility_matrix" />
+              <SectionHeader number="02" title="Платформы и совместимость" subtitle="compatibility_matrix"  theme={theme} />
 
               {/* Compatibility Matrix */}
               <Card className="nyc-card-enhanced rounded-xl mb-8 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-[var(--nyc-taxi)]/15 bg-[oklch(0.14_0_0)]">
-                        <th className="text-left py-5 px-5 font-mono text-sm text-[oklch(0.8_0_0)] font-semibold">Функция</th>
+                      <tr className={`border-b border-[var(--nyc-taxi)]/15 ${th('bg-[oklch(0.14_0_0)]', 'bg-[oklch(0.95_0_0)]')}`}>
+                        <th className={`text-left py-5 px-5 font-mono text-sm font-semibold ${th('text-[oklch(0.8_0_0)]', 'text-[oklch(0.3_0_0)]')}`}>Функция</th>
                         <th className="text-center py-5 px-5 font-mono text-sm text-[var(--nyc-taxi)] font-semibold">OpenCode</th>
-                        <th className="text-center py-5 px-5 font-mono text-sm text-[oklch(0.8_0_0)] font-semibold">VS Code+Cline</th>
-                        <th className="text-center py-5 px-5 font-mono text-sm text-[oklch(0.8_0_0)] font-semibold">Z Code</th>
-                        <th className="text-center py-5 px-5 font-mono text-sm text-[oklch(0.8_0_0)] font-semibold">chat.z.ai</th>
+                        <th className={`text-center py-5 px-5 font-mono text-sm font-semibold ${th('text-[oklch(0.8_0_0)]', 'text-[oklch(0.3_0_0)]')}`}>VS Code+Cline</th>
+                        <th className={`text-center py-5 px-5 font-mono text-sm font-semibold ${th('text-[oklch(0.8_0_0)]', 'text-[oklch(0.3_0_0)]')}`}>Z Code</th>
+                        <th className={`text-center py-5 px-5 font-mono text-sm font-semibold ${th('text-[oklch(0.8_0_0)]', 'text-[oklch(0.3_0_0)]')}`}>chat.z.ai</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -2000,8 +2012,8 @@ export default function Home() {
                         ['File system', true, true, true, false],
                         ['Visual preview', false, true, true, false],
                       ].map(([name, ...vals]) => (
-                        <tr key={name as string} className="border-b border-white/[0.1] hover:bg-[var(--nyc-taxi)]/[0.03] transition-colors">
-                          <td className="py-5 px-5 font-mono text-[oklch(0.85_0_0)] font-semibold text-sm">{name as string}</td>
+                        <tr key={name as string} className={`border-b ${th('border-white/[0.1]', 'border-oklch(0.85_0_0)')} hover:bg-[var(--nyc-taxi)]/[0.03] transition-colors`}>
+                          <td className={`py-5 px-5 font-mono font-semibold text-sm ${th('text-[oklch(0.85_0_0)]', 'text-[oklch(0.2_0_0)]')}`}>{name as string}</td>
                           {vals.map((v, i) => (
                             <td key={i} className="text-center py-5 px-5 min-w-[60px]">
                               <StatusDot status={v as boolean | string} />
@@ -2035,7 +2047,7 @@ export default function Home() {
                         <p className="text-sm text-[oklch(0.7_0_0)] leading-relaxed mb-3">{p.desc}</p>
                         <div className="flex flex-wrap gap-1">
                           {p.features.map(f => (
-                            <Badge key={f} variant="secondary" className="text-[10px] bg-white/[0.08] text-white/70 border border-white/[0.06]">
+                            <Badge key={f} variant="secondary" className={`text-[10px] ${th('bg-white/[0.08] text-white/70 border-white/[0.06]', 'bg-oklch(0.93_0_0) text-oklch(0.3_0_0) border-oklch(0.82_0_0)')} border`}>
                               {f}
                             </Badge>
                           ))}
@@ -2047,12 +2059,12 @@ export default function Home() {
               </div>
             </section>
 
-            <SectionNav currentId="platforms" />
-            <TaxiDivider />
+            <SectionNav currentId="platforms" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 03 — CODING TOOL HELPER ═══════════════ */}
             <section id="helper" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="03" title="Coding Tool Helper" subtitle="@z_ai/coding-helper — центральный узел интеграции" />
+              <SectionHeader number="03" title="Coding Tool Helper" subtitle="@z_ai/coding-helper — центральный узел интеграции"  theme={theme} />
 
               {/* Setup Wizard */}
               <Card className="nyc-card-enhanced mb-6">
@@ -2103,7 +2115,7 @@ export default function Home() {
                     value={helperFilter}
                     onChange={(e) => setHelperFilter(e.target.value)}
                     placeholder="Фильтр команд..."
-                    className="w-full bg-[oklch(0.08_0_0)] border border-white/[0.08] rounded-md px-3 py-2 text-xs text-white/80 placeholder:text-white/20 outline-none focus:border-[var(--nyc-taxi)]/30 transition-colors"
+                    className={`w-full ${th('bg-[oklch(0.08_0_0)] border-white/[0.08]', 'bg-[oklch(0.97_0_0)] border-oklch(0.82_0_0)')} rounded-md px-3 py-2 text-xs ${th('text-white/80 placeholder:text-white/20', 'text-oklch(0.15_0_0) placeholder:text-oklch(0.5_0_0)')} outline-none focus:border-[var(--nyc-taxi)]/30 transition-colors`}
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -2116,12 +2128,12 @@ export default function Home() {
                       transition={{ delay: i * 0.04 }}
                       className="group relative"
                     >
-                      <div className={`flex items-center gap-3 text-xs rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] px-4 py-2.5 pr-12 transition-all duration-300 ${
+                      <div className={`flex items-center gap-3 text-xs rounded-md ${th('bg-[oklch(0.08_0_0)] border-white/[0.06]', 'bg-[oklch(0.97_0_0)] border-oklch(0.85_0_0)')} px-4 py-2.5 pr-12 transition-all duration-300 ${
                         runningCmd === cmd.cmd ? 'border-[var(--nyc-taxi)]/30 shadow-md shadow-[var(--nyc-taxi)]/5' : 'hover:border-[var(--nyc-taxi)]/15'
                       }`}>
                         <span className="text-[var(--nyc-taxi)] font-mono shrink-0">❯</span>
                         <span className="text-[var(--nyc-concrete)] font-mono">{cmd.cmd}</span>
-                        <span className="text-white/30 hidden sm:inline">— {cmd.desc}</span>
+                        <span className={`${th('text-white/30', 'text-oklch(0.45_0_0)')} hidden sm:inline`}>— {cmd.desc}</span>
                         {runningCmd === cmd.cmd && (
                           <span className="ml-auto flex items-center gap-1 text-[10px] text-green-400/80 font-mono">
                             <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
@@ -2129,7 +2141,7 @@ export default function Home() {
                           </span>
                         )}
                       </div>
-                      <CopyButton text={cmd.cmd} className="absolute top-1.5 right-1.5" onCopied={() => {
+                      <CopyButton text={cmd.cmd} className="absolute top-1.5 right-1.5" theme={theme} onCopied={() => {
                         setRunningCmd(cmd.cmd)
                         setTimeout(() => setRunningCmd(''), 1500)
                       }} />
@@ -2144,7 +2156,7 @@ export default function Home() {
                   <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2">
                     <FileCode className="w-4 h-4 text-[var(--nyc-taxi)]" />
                     Конфигурационный файл
-                    <Badge className="text-[10px] bg-white/5 text-white/30 border-0 ml-auto font-mono">~/.chelper/config.yaml</Badge>
+                    <Badge className={`text-[10px] ${th('bg-white/5 text-white/30', 'bg-oklch(0.93_0_0) text-oklch(0.4_0_0)')} border-0 ml-auto font-mono`}>~/.chelper/config.yaml</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-4">
@@ -2169,7 +2181,7 @@ export default function Home() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.08 }}
-                      className="p-4 border border-white/[0.06] rounded-lg nyc-card-enhanced hover:border-[var(--nyc-taxi)]/15 transition-colors"
+                      className={`p-4 border ${th('border-white/[0.06]', 'border-oklch(0.82_0_0)')} rounded-lg nyc-card-enhanced hover:border-[var(--nyc-taxi)]/15 transition-colors`}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-mono text-[var(--nyc-taxi)] text-xs font-bold">{model.tier}</span>
@@ -2179,8 +2191,8 @@ export default function Home() {
                       </div>
                       <p className="text-sm text-[oklch(0.7_0_0)] leading-relaxed mb-3">{model.use}</p>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-white/20 font-mono">Скорость</span>
-                        <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                        <span className={`text-[10px] ${th('text-white/20', 'text-oklch(0.5_0_0)')} font-mono`}>Скорость</span>
+                        <div className={`flex-1 h-1 ${th('bg-white/5', 'bg-oklch(0.85_0_0)')} rounded-full overflow-hidden`}>
                           <motion.div
                             className="h-full bg-[var(--nyc-taxi)] rounded-full"
                             initial={{ width: 0 }}
@@ -2217,7 +2229,7 @@ export default function Home() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="p-4 border border-white/[0.06] rounded-lg nyc-card-enhanced"
+                    className={`p-4 border ${th('border-white/[0.06]', 'border-oklch(0.82_0_0)')} rounded-lg nyc-card-enhanced`}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
@@ -2235,12 +2247,12 @@ export default function Home() {
               </div>
             </section>
 
-            <SectionNav currentId="helper" />
-            <TaxiDivider />
+            <SectionNav currentId="helper" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 04 — STAGEWISE ═══════════════ */}
             <section id="stagewise" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="04" title="Stagewise" subtitle="AI Browser для веб-разработчиков" />
+              <SectionHeader number="04" title="Stagewise" subtitle="AI Browser для веб-разработчиков"  theme={theme} />
 
               <div className="grid sm:grid-cols-3 gap-4 mb-6">
                 {[
@@ -2345,12 +2357,12 @@ export default function Home() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="border-b border-[var(--nyc-taxi)]/15 bg-[oklch(0.14_0_0)]">
-                        <th className="text-left py-3 px-4 font-mono text-[oklch(0.75_0_0)]">Функция</th>
+                      <tr className={`border-b border-[var(--nyc-taxi)]/15 ${th('bg-[oklch(0.14_0_0)]', 'bg-[oklch(0.95_0_0)]')}`}>
+                        <th className={`text-left py-3 px-4 font-mono ${th('text-[oklch(0.75_0_0)]', 'text-[oklch(0.3_0_0)]')}`}>Функция</th>
                         <th className="text-center py-3 px-3 font-mono text-[var(--nyc-taxi)]">Stagewise</th>
-                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.75_0_0)]">Cursor AI</th>
-                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.75_0_0)]">Cline</th>
-                        <th className="text-center py-3 px-3 font-mono text-[oklch(0.75_0_0)]">OpenCode</th>
+                        <th className={`text-center py-3 px-3 font-mono ${th('text-[oklch(0.75_0_0)]', 'text-[oklch(0.3_0_0)]')}`}>Cursor AI</th>
+                        <th className={`text-center py-3 px-3 font-mono ${th('text-[oklch(0.75_0_0)]', 'text-[oklch(0.3_0_0)]')}`}>Cline</th>
+                        <th className={`text-center py-3 px-3 font-mono ${th('text-[oklch(0.75_0_0)]', 'text-[oklch(0.3_0_0)]')}`}>OpenCode</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -2363,8 +2375,8 @@ export default function Home() {
                         ['MCP Support', 'plugin', true, true, true],
                         ['Open Source', true, false, true, true],
                       ].map(([name, ...vals]) => (
-                        <tr key={name as string} className="border-b border-white/[0.08] hover:bg-white/[0.04] transition-colors">
-                          <td className="py-4 px-4 font-mono text-[oklch(0.85_0_0)] font-semibold text-sm">{name as string}</td>
+                        <tr key={name as string} className={`border-b ${th('border-white/[0.08] hover:bg-white/[0.04]', 'border-oklch(0.85_0_0) hover:bg-oklch(0.93_0_0)')} transition-colors`}>
+                          <td className={`py-4 px-4 font-mono font-semibold text-sm ${th('text-[oklch(0.85_0_0)]', 'text-[oklch(0.2_0_0)]')}`}>{name as string}</td>
                           {vals.map((v, i) => (
                             <td key={i} className="text-center py-2.5 px-3">
                               <StatusDot status={v as boolean | string} />
@@ -2378,12 +2390,12 @@ export default function Home() {
               </Card>
             </section>
 
-            <SectionNav currentId="stagewise" />
-            <TaxiDivider />
+            <SectionNav currentId="stagewise" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 05 — INSTALLATION ═══════════════ */}
             <section id="install" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="05" title="Установка и настройка" subtitle="step_by_step_guide" />
+              <SectionHeader number="05" title="Установка и настройка" subtitle="step_by_step_guide"  theme={theme} />
 
               {/* API Keys */}
               <div className="mb-8">
@@ -2399,13 +2411,13 @@ export default function Home() {
                     { key: 'Anthropic Key', source: 'console.anthropic.com', purpose: 'Claude модели', store: 'config provider' },
                     { key: 'OpenAI Key', source: 'platform.openai.com', purpose: 'GPT модели', store: 'config provider' },
                   ].map(k => (
-                    <div key={k.key} className="p-3 border border-white/[0.06] rounded-lg bg-[oklch(0.12_0_0)] flex flex-col sm:flex-row sm:items-center gap-2 text-xs hover:border-[var(--nyc-taxi)]/10 transition-colors">
+                    <div key={k.key} className={`p-3 border ${th('border-white/[0.06] bg-[oklch(0.12_0_0)]', 'border-oklch(0.85_0_0) bg-[oklch(0.97_0_0)]')} rounded-lg flex flex-col sm:flex-row sm:items-center gap-2 text-xs hover:border-[var(--nyc-taxi)]/10 transition-colors`}>
                       <span className="font-bold text-[var(--nyc-taxi)] min-w-[130px] flex items-center gap-2">
                         <Key className="w-3 h-3" />
                         {k.key}
                       </span>
                       <span className="text-[var(--nyc-concrete)] flex-1">{k.purpose}</span>
-                      <span className="text-white/25 font-mono text-[10px]">{k.source}</span>
+                      <span className={`${th('text-white/25', 'text-oklch(0.5_0_0)')} font-mono text-[10px]`}>{k.source}</span>
                     </div>
                   ))}
                 </div>
@@ -2441,7 +2453,7 @@ export default function Home() {
                     <span className="text-xs font-mono text-[var(--nyc-taxi)] font-bold">05</span>
                     <span className="text-sm font-semibold tracking-tight">Cline (VS Code)</span>
                   </div>
-                  <div className="p-4 border border-white/[0.06] rounded-lg bg-white/[0.04] text-xs space-y-1.5 text-[var(--nyc-concrete)]">
+                  <div className={`p-4 border ${th('border-white/[0.06] bg-white/[0.04]', 'border-oklch(0.82_0_0) bg-oklch(0.95_0_0)')} rounded-lg text-xs space-y-1.5 text-[var(--nyc-concrete)]`}>
                     <p className="flex items-start gap-2"><span className="text-[var(--nyc-taxi)]">1.</span> Open VS Code</p>
                     <p className="flex items-start gap-2"><span className="text-[var(--nyc-taxi)]">2.</span> Ctrl+Shift+X → Search &quot;Cline&quot; → Install</p>
                     <p className="flex items-start gap-2"><span className="text-[var(--nyc-taxi)]">3.</span> Restart VS Code</p>
@@ -2458,7 +2470,7 @@ export default function Home() {
                 </h3>
 
                 <Tabs defaultValue="opencode" className="w-full">
-                  <TabsList className="bg-white/[0.03] border border-white/[0.06] mb-3 h-9">
+                  <TabsList className={`${th('bg-white/[0.03] border-white/[0.06]', 'bg-oklch(0.95_0_0) border-oklch(0.82_0_0)')} border mb-3 h-9`}>
                     <TabsTrigger value="opencode" className="text-xs data-[state=active]:bg-[var(--nyc-taxi)] data-[state=active]:text-black data-[state=active]:font-bold h-7 px-3">
                       OpenCode
                     </TabsTrigger>
@@ -2515,15 +2527,15 @@ export default function Home() {
               </div>
 
               {/* Install Script Generator */}
-              <InstallScriptGenerator installSelections={installSelections} setInstallSelections={setInstallSelections} />
+              <InstallScriptGenerator installSelections={installSelections} setInstallSelections={setInstallSelections} theme={theme} />
             </section>
 
-            <SectionNav currentId="install" />
-            <TaxiDivider />
+            <SectionNav currentId="install" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 06 — MCP SERVERS ═══════════════ */}
             <section id="mcp" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="06" title="MCP-серверы" subtitle="model_context_protocol_servers" />
+              <SectionHeader number="06" title="MCP-серверы" subtitle="model_context_protocol_servers"  theme={theme} />
 
               <div className="grid sm:grid-cols-2 gap-4 mb-6">
                 {MCP_SERVERS.map((server, i) => (
@@ -2553,7 +2565,7 @@ export default function Home() {
               </div>
 
               {/* Transport Protocols */}
-              <div className="p-4 border border-white/[0.06] rounded-lg nyc-card-enhanced">
+              <div className={`p-4 border ${th('border-white/[0.06]', 'border-oklch(0.82_0_0)')} rounded-lg nyc-card-enhanced`}>
                 <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
                   <Globe className="w-4 h-4 text-[var(--nyc-taxi)]" />
                   Транспортные протоколы
@@ -2565,21 +2577,21 @@ export default function Home() {
                     ['Roo Code, Kilo Code', 'SSE'],
                     ['Crush', 'JSON Schema'],
                   ].map(([client, transport]) => (
-                    <div key={client} className="flex items-center justify-between p-2.5 rounded bg-white/[0.03] border border-white/[0.04]">
+                    <div key={client} className={`flex items-center justify-between p-2.5 rounded ${th('bg-white/[0.03] border-white/[0.04]', 'bg-oklch(0.95_0_0) border-oklch(0.85_0_0)')} border`}>
                       <span className="font-mono text-[oklch(0.72_0_0)]">{client}</span>
-                      <span className="text-white/45 text-[10px]">{transport}</span>
+                      <span className={`${th('text-white/45', 'text-oklch(0.45_0_0)')} text-[10px]`}>{transport}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </section>
 
-            <SectionNav currentId="mcp" />
-            <TaxiDivider />
+            <SectionNav currentId="mcp" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 07 — PROMPT TEMPLATES ═══════════════ */}
             <section id="prompts" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="07" title="Промпт-шаблоны" subtitle="ready_to_use_prompt_templates" />
+              <SectionHeader number="07" title="Промпт-шаблоны" subtitle="ready_to_use_prompt_templates"  theme={theme} />
 
               <div className="space-y-4 mb-8">
                 {PROMPT_TEMPLATES.map((tmpl, i) => (
@@ -2599,7 +2611,7 @@ export default function Home() {
                       </CardHeader>
                       <CardContent className="p-4">
                         <div className="relative">
-                          <div className="relative rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] p-3 pr-12 text-xs">
+                          <div className={`relative rounded-md ${th('bg-[oklch(0.08_0_0)] border-white/[0.06]', 'bg-[oklch(0.97_0_0)] border-oklch(0.85_0_0)')} p-3 pr-12 text-xs`}>
                             <div className="flex items-center gap-2 mb-1">
                               <div className="w-1.5 h-1.5 rounded-full bg-[#FF5F56]/60" />
                               <div className="w-1.5 h-1.5 rounded-full bg-[#FFBD2E]/60" />
@@ -2607,7 +2619,7 @@ export default function Home() {
                             </div>
                             <pre className="text-[var(--nyc-concrete)] font-mono whitespace-pre-wrap">{tmpl.prompt}</pre>
                           </div>
-                          <CopyButton text={tmpl.prompt} className="absolute top-1.5 right-1.5" />
+                          <CopyButton text={tmpl.prompt} className="absolute top-1.5 right-1.5" theme={theme} />
                         </div>
                       </CardContent>
                     </Card>
@@ -2616,7 +2628,7 @@ export default function Home() {
               </div>
 
               {/* Ready Prompts */}
-              <div className="p-5 border border-white/[0.06] rounded-lg nyc-card-enhanced">
+              <div className={`p-5 border ${th('border-white/[0.06]', 'border-oklch(0.82_0_0)')} rounded-lg nyc-card-enhanced`}>
                 <h3 className="text-base font-semibold mb-3">Готовые промпты</h3>
                 <div className="space-y-2.5">
                   {READY_PROMPTS.map(p => (
@@ -2631,12 +2643,12 @@ export default function Home() {
               </div>
             </section>
 
-            <SectionNav currentId="prompts" />
-            <TaxiDivider />
+            <SectionNav currentId="prompts" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 08 — COST SCENARIOS ═══════════════ */}
             <section id="cost" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="08" title="Сценарии стоимости" subtitle="cost_scenarios" />
+              <SectionHeader number="08" title="Сценарии стоимости" subtitle="cost_scenarios"  theme={theme} />
 
               <div className="grid sm:grid-cols-2 gap-5">
                 {COST_SCENARIOS.map((scenario, i) => (
@@ -2680,12 +2692,12 @@ export default function Home() {
               </div>
             </section>
 
-            <SectionNav currentId="cost" />
-            <TaxiDivider />
+            <SectionNav currentId="cost" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 08.5 — PLAN WIZARD ═══════════════ */}
             <section id="wizard" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="08.5" title="Мастер выбора плана" subtitle="plan_comparison_wizard" />
+              <SectionHeader number="08.5" title="Мастер выбора плана" subtitle="plan_comparison_wizard"  theme={theme} />
 
               <Card className="nyc-card-enhanced p-6">
                 <CardContent className="p-0">
@@ -2707,7 +2719,7 @@ export default function Home() {
                             className={`p-3 rounded-lg border text-center text-xs cursor-pointer transition-all nyc-hover-lift ${
                               wizardUsage === opt.value
                                 ? 'border-[var(--nyc-taxi)]/30 bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)]'
-                                : 'border-white/[0.06] bg-white/[0.02] hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03]'
+                                : th('border-white/[0.06] bg-white/[0.02] hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03]', 'border-oklch(0.82_0_0) bg-oklch(0.96_0_0) hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03]')
                             }`}
                           >
                             <span className={wizardUsage === opt.value ? 'text-[var(--nyc-taxi)] font-bold' : 'text-[var(--nyc-concrete)]'}>{opt.label}</span>
@@ -2731,7 +2743,7 @@ export default function Home() {
                             className={`p-3 rounded-lg border text-center text-xs cursor-pointer transition-all nyc-hover-lift ${
                               wizardBudget === opt.value
                                 ? 'border-[var(--nyc-taxi)]/30 bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)]'
-                                : 'border-white/[0.06] bg-white/[0.02] hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03]'
+                                : th('border-white/[0.06] bg-white/[0.02] hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03]', 'border-oklch(0.82_0_0) bg-oklch(0.96_0_0) hover:border-[var(--nyc-taxi)]/20 hover:bg-[var(--nyc-taxi)]/[0.03]')
                             }`}
                           >
                             <span className={wizardBudget === opt.value ? 'text-[var(--nyc-taxi)] font-bold' : 'text-[var(--nyc-concrete)]'}>{opt.label}</span>
@@ -2750,7 +2762,7 @@ export default function Home() {
                             className={`text-[10px] cursor-pointer transition-all ${
                               wizardTools.includes(tool)
                                 ? 'bg-[var(--nyc-taxi)]/15 text-[var(--nyc-taxi)] border-[var(--nyc-taxi)]/20'
-                                : 'bg-white/[0.03] text-[var(--nyc-concrete)] border-white/[0.06] hover:bg-[var(--nyc-taxi)]/10 hover:text-[var(--nyc-taxi)] hover:border-[var(--nyc-taxi)]/20'
+                                : th('bg-white/[0.03] text-[var(--nyc-concrete)] border-white/[0.06] hover:bg-[var(--nyc-taxi)]/10 hover:text-[var(--nyc-taxi)] hover:border-[var(--nyc-taxi)]/20', 'bg-oklch(0.95_0_0) text-oklch(0.35_0_0) border-oklch(0.82_0_0) hover:bg-[var(--nyc-taxi)]/10 hover:text-[var(--nyc-taxi)] hover:border-[var(--nyc-taxi)]/20')
                             }`}
                           >
                             {tool}
@@ -2759,7 +2771,7 @@ export default function Home() {
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-white/[0.06]">
+                    <div className={`pt-4 border-t ${th('border-white/[0.06]', 'border-oklch(0.82_0_0)')}`}>
                       {wizardRecommendation ? (
                         <motion.div
                           key={`${wizardUsage}-${wizardBudget}`}
@@ -2775,7 +2787,7 @@ export default function Home() {
                           </div>
                         </motion.div>
                       ) : (
-                        <div className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.02] border border-white/[0.06]">
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${th('bg-white/[0.02] border-white/[0.06]', 'bg-oklch(0.96_0_0) border-oklch(0.82_0_0)')} border`}>
                           <Hash className="w-4 h-4 text-[var(--nyc-steel)] shrink-0" />
                           <div className="text-xs text-[var(--nyc-steel)]">
                             Выберите тип использования и бюджет для получения рекомендации
@@ -2788,12 +2800,12 @@ export default function Home() {
               </Card>
             </section>
 
-            <SectionNav currentId="wizard" />
-            <TaxiDivider />
+            <SectionNav currentId="wizard" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 09 — TROUBLESHOOTING ═══════════════ */}
             <section id="troubleshoot" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="09" title="Диагностика и решение проблем" subtitle="troubleshooting_guide" />
+              <SectionHeader number="09" title="Диагностика и решение проблем" subtitle="troubleshooting_guide"  theme={theme} />
 
               {/* Diagnostic Commands */}
               <Card className="nyc-card-enhanced mb-6">
@@ -2811,10 +2823,10 @@ export default function Home() {
                     { cmd: 'npx @_davideast/stitch-mcp --help', note: '' },
                     { cmd: 'npx skills list --global', note: '' },
                   ].map(diag => (
-                    <div key={diag.cmd} className="flex items-center gap-2 rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] px-3 py-2 text-xs">
+                    <div key={diag.cmd} className={`flex items-center gap-2 rounded-md ${th('bg-[oklch(0.08_0_0)] border-white/[0.06]', 'bg-[oklch(0.97_0_0)] border-oklch(0.85_0_0)')} px-3 py-2 text-xs`}>
                       <span className="text-[var(--nyc-taxi)]">❯</span>
                       <span className="text-[var(--nyc-concrete)] font-mono">{diag.cmd}</span>
-                      {diag.note && <span className="text-white/15">{diag.note}</span>}
+                      {diag.note && <span className={th('text-white/15', 'text-oklch(0.55_0_0)')}>{diag.note}</span>}
                     </div>
                   ))}
                 </CardContent>
@@ -2826,14 +2838,14 @@ export default function Home() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setErrorExpanded(ERRORS.map((_, i) => `error-${i}`))}
-                    className="text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                    className={`text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded ${th('hover:bg-white/5', 'hover:bg-oklch(0.93_0_0)')} transition-colors`}
                   >
                     Раскрыть все
                   </button>
-                  <span className="text-white/10">|</span>
+                  <span className={th('text-white/10', 'text-oklch(0.7_0_0)')}>|</span>
                   <button
                     onClick={() => setErrorExpanded([])}
-                    className="text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                    className={`text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded ${th('hover:bg-white/5', 'hover:bg-oklch(0.93_0_0)')} transition-colors`}
                   >
                     Свернуть все
                   </button>
@@ -2844,7 +2856,7 @@ export default function Home() {
                   <AccordionItem
                     key={i}
                     value={`error-${i}`}
-                    className="border border-white/[0.08] rounded-lg bg-[oklch(0.11_0_0)] px-4 data-[state=open]:border-[var(--nyc-taxi)]/20 data-[state=open]:bg-[var(--nyc-taxi)]/[0.04]"
+                    className={`border ${th('border-white/[0.08] bg-[oklch(0.11_0_0)]', 'border-oklch(0.85_0_0) bg-[oklch(0.97_0_0)]')} rounded-lg px-4 data-[state=open]:border-[var(--nyc-taxi)]/20 data-[state=open]:bg-[var(--nyc-taxi)]/[0.04]`}
                   >
                     <AccordionTrigger className="text-xs hover:no-underline py-3 gap-2">
                       <div className="flex items-center gap-2 text-left">
@@ -2867,26 +2879,26 @@ export default function Home() {
               </Accordion>
             </section>
 
-            <SectionNav currentId="troubleshoot" />
-            <TaxiDivider />
+            <SectionNav currentId="troubleshoot" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 09.5 — FAQ ═══════════════ */}
             <section id="faq" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="09.5" title="Часто задаваемые вопросы" subtitle="faq" />
+              <SectionHeader number="09.5" title="Часто задаваемые вопросы" subtitle="faq"  theme={theme} />
 
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-base font-semibold">Ответы</h3>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setFaqExpanded(FAQ_ITEMS.map((_, i) => `faq-${i}`))}
-                    className="text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                    className={`text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded ${th('hover:bg-white/5', 'hover:bg-oklch(0.93_0_0)')} transition-colors`}
                   >
                     Раскрыть все
                   </button>
-                  <span className="text-white/10">|</span>
+                  <span className={th('text-white/10', 'text-oklch(0.7_0_0)')}>|</span>
                   <button
                     onClick={() => setFaqExpanded([])}
-                    className="text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                    className={`text-[10px] font-mono text-[var(--nyc-steel)] hover:text-[var(--nyc-taxi)] px-2 py-1 rounded ${th('hover:bg-white/5', 'hover:bg-oklch(0.93_0_0)')} transition-colors`}
                   >
                     Свернуть все
                   </button>
@@ -2897,7 +2909,7 @@ export default function Home() {
                   <AccordionItem
                     key={i}
                     value={`faq-${i}`}
-                    className="border border-white/[0.08] rounded-lg bg-[oklch(0.11_0_0)] px-4 data-[state=open]:border-[var(--nyc-taxi)]/20 data-[state=open]:bg-[var(--nyc-taxi)]/[0.04]"
+                    className={`border ${th('border-white/[0.08] bg-[oklch(0.11_0_0)]', 'border-oklch(0.85_0_0) bg-[oklch(0.97_0_0)]')} rounded-lg px-4 data-[state=open]:border-[var(--nyc-taxi)]/20 data-[state=open]:bg-[var(--nyc-taxi)]/[0.04]`}
                   >
                     <AccordionTrigger className="text-xs hover:no-underline py-3 gap-2">
                       <div className="flex items-center gap-2 text-left">
@@ -2913,16 +2925,16 @@ export default function Home() {
               </Accordion>
             </section>
 
-            <SectionNav currentId="faq" />
-            <TaxiDivider />
+            <SectionNav currentId="faq" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 10 — ARCHITECTURE ═══════════════ */}
             <section id="architecture" className="py-16 lg:py-24 nyc-section-hover-border">
-              <SectionHeader number="10" title="Архитектура системы" subtitle="system_architecture_diagram" />
+              <SectionHeader number="10" title="Архитектура системы" subtitle="system_architecture_diagram"  theme={theme} />
 
               <Card className="nyc-card-enhanced rounded-xl overflow-hidden">
                 <CardContent className="p-4 sm:p-6">
-                  <div className="rounded-md bg-[oklch(0.08_0_0)] border border-white/[0.06] p-4 text-xs sm:text-sm overflow-x-auto">
+                  <div className={`rounded-md ${th('bg-[oklch(0.08_0_0)] border-white/[0.06]', 'bg-[oklch(0.96_0_0)] border-oklch(0.85_0_0)')} p-4 text-xs sm:text-sm overflow-x-auto`}>
                     <pre className="text-[var(--nyc-concrete)] font-mono leading-relaxed whitespace-pre">{`┌──────────────────────────────────────────────────┐
 │                  YOUR WORKSTATION                 │
 ├──────────────────────────────────────────────────┤
@@ -2961,7 +2973,7 @@ export default function Home() {
                   { name: 'Crush', status: 'Поддерживается', desc: 'JSON Schema конфигурация' },
                   { name: 'Factory Droid', status: 'Поддерживается', desc: 'Конфигурационные файлы' },
                 ].map(tool => (
-                  <div key={tool.name} className="p-4 border border-white/[0.08] rounded-lg bg-[oklch(0.12_0_0)] hover:border-[var(--nyc-taxi)]/15 hover:shadow-md hover:shadow-black/10 transition-all duration-200">
+                  <div key={tool.name} className={`p-4 border ${th('border-white/[0.08] bg-[oklch(0.12_0_0)]', 'border-oklch(0.85_0_0) bg-[oklch(0.97_0_0)]')} rounded-lg hover:border-[var(--nyc-taxi)]/15 hover:shadow-md hover:shadow-black/10 transition-all duration-200`}>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-sm font-semibold tracking-tight">{tool.name}</span>
                       <Badge className={`text-[10px] border-0 ${
@@ -2978,12 +2990,12 @@ export default function Home() {
               </div>
             </section>
 
-            <SectionNav currentId="architecture" />
-            <TaxiDivider />
+            <SectionNav currentId="architecture" theme={theme} />
+            <TaxiDivider theme={theme} />
 
             {/* ═══════════════ 11 — CHECKLIST ═══════════════ */}
             <section id="checklist" className="py-12 pb-16 lg:py-20 lg:pb-20">
-              <SectionHeader number="11" title="Чек-лист перед началом работы" subtitle="pre_launch_checklist" />
+              <SectionHeader number="11" title="Чек-лист перед началом работы" subtitle="pre_launch_checklist"  theme={theme} />
 
               <Card className="nyc-card-enhanced">
                 <CardContent className="p-4 sm:p-6">
@@ -2993,7 +3005,7 @@ export default function Home() {
                       {checkedCount > 0 && (
                         <button
                           onClick={() => setCheckedItems({})}
-                          className="ml-auto text-[10px] font-mono text-white/20 hover:text-red-400 transition-colors px-2 py-0.5 rounded hover:bg-red-400/5"
+                          className={`ml-auto text-[10px] font-mono ${th('text-white/20', 'text-oklch(0.5_0_0)')} hover:text-red-400 transition-colors px-2 py-0.5 rounded hover:bg-red-400/5`}
                         >
                           Сбросить
                         </button>
@@ -3023,7 +3035,7 @@ export default function Home() {
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.04 }}
                         onClick={() => toggleCheck(item.id)}
-                        className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-white/[0.03] transition-all duration-200 text-left group"
+                        className={`w-full flex items-center gap-3 p-3 rounded-lg ${th('hover:bg-white/[0.03]', 'hover:bg-oklch(0.93_0_0)')} transition-all duration-200 text-left group`}
                       >
                         {checkedItems[item.id] ? (
                           <motion.div
@@ -3034,9 +3046,9 @@ export default function Home() {
                             <Check className="w-3 h-3 text-black" />
                           </motion.div>
                         ) : (
-                          <div className="w-5 h-5 rounded-md border-2 border-white/10 group-hover:border-[var(--nyc-taxi)]/30 transition-colors" />
+                          <div className={`w-5 h-5 rounded-md border-2 ${th('border-white/10', 'border-oklch(0.75_0_0)')} group-hover:border-[var(--nyc-taxi)]/30 transition-colors`} />
                         )}
-                        <item.icon className={`w-4 h-4 transition-colors ${checkedItems[item.id] ? 'text-[var(--nyc-taxi)]' : 'text-white/20'}`} />
+                        <item.icon className={`w-4 h-4 transition-colors ${checkedItems[item.id] ? 'text-[var(--nyc-taxi)]' : th('text-white/20', 'text-oklch(0.55_0_0)')}`} />
                         <span className={`text-sm transition-colors ${
                           checkedItems[item.id]
                             ? 'text-[var(--nyc-taxi)] line-through opacity-60'
@@ -3064,7 +3076,7 @@ export default function Home() {
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="nyc-link-hover flex items-center gap-2 p-2 rounded bg-white/[0.02] hover:bg-white/[0.05] transition-colors group"
+                        className={`nyc-link-hover flex items-center gap-2 p-2 rounded ${th('bg-white/[0.02] hover:bg-white/[0.05]', 'bg-oklch(0.96_0_0) hover:bg-oklch(0.93_0_0)')} transition-colors group`}
                       >
                         <span className="text-[var(--nyc-taxi)] font-mono text-[10px]">{s.id}</span>
                         <span className="text-[var(--nyc-concrete)] group-hover:text-[var(--nyc-taxi)] transition-colors">{s.desc}</span>
@@ -3089,9 +3101,9 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.15 }}
-                    className="bg-[oklch(0.14_0_0)] border border-white/10 rounded-xl shadow-2xl overflow-hidden w-48"
+                    className={`${th('bg-[oklch(0.14_0_0)] border-white/10', 'bg-[oklch(0.97_0_0)] border-oklch(0.85_0_0)')} rounded-xl shadow-2xl overflow-hidden w-48`}
                   >
-                    <div className="px-3 py-2 border-b border-white/[0.06]">
+                    <div className={`px-3 py-2 border-b ${th('border-white/[0.06]', 'border-oklch(0.85_0_0)')}`}>
                       <span className="font-mono text-[10px] text-[var(--nyc-steel)] tracking-wider uppercase">Быстрый переход</span>
                     </div>
                     {[
@@ -3103,7 +3115,7 @@ export default function Home() {
                         key={item.id}
                         href={`#${item.id}`}
                         onClick={() => setQuickJumpOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-white/60 hover:text-[var(--nyc-taxi)] hover:bg-white/5 transition-colors"
+                        className={`flex items-center gap-2.5 px-3 py-2.5 text-sm ${th('text-white/60 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.35_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.93_0_0)')} transition-colors`}
                       >
                         <item.icon className="w-3.5 h-3.5 shrink-0" />
                         <span>{item.label}</span>
@@ -3134,7 +3146,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full bg-[oklch(0.14_0_0)] border border-white/10 text-white/60 hover:text-[var(--nyc-taxi)] hover:border-[var(--nyc-taxi)]/20 shadow-lg shadow-black/30 backdrop-blur-sm transition-all"
+              className={`fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full ${th('bg-[oklch(0.14_0_0)] border-white/10 text-white/60 shadow-black/30', 'bg-[oklch(0.97_0_0)] border-oklch(0.82_0_0) text-oklch(0.4_0_0) shadow-black/5')} hover:text-[var(--nyc-taxi)] hover:border-[var(--nyc-taxi)]/20 shadow-lg backdrop-blur-sm transition-all`}
               aria-label="Scroll to top"
             >
               <ArrowUp className="w-3.5 h-3.5" />
@@ -3145,7 +3157,7 @@ export default function Home() {
 
         {/* ── FOOTER ── */}
         <footer className="mt-auto relative z-10">
-          <div className="bg-gradient-to-b from-[oklch(0.08_0_0)] to-[oklch(0.06_0_0)] border-t border-white/5">
+          <div className={`${th('bg-gradient-to-b from-[oklch(0.08_0_0)] to-[oklch(0.06_0_0)] border-white/5', 'bg-gradient-to-b from-[oklch(0.95_0_0)] to-[oklch(0.93_0_0)] border-oklch(0.85_0_0)')} border-t`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:ml-14">
               <div className="grid sm:grid-cols-3 gap-6 items-start">
                 {/* Left: Brand */}
@@ -3162,7 +3174,7 @@ export default function Home() {
                 </div>
                 {/* Center: Quick Nav */}
                 <div className="flex flex-col items-center gap-2">
-                  <span className="font-mono text-[10px] text-white/25 uppercase tracking-widest mb-1">Навигация</span>
+                  <span className={`font-mono text-[10px] ${th('text-white/25', 'text-oklch(0.5_0_0)')} uppercase tracking-widest mb-1`}>Навигация</span>
                   <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
                     {[
                       { href: '#matrix', label: 'Матрица' },
@@ -3179,9 +3191,9 @@ export default function Home() {
                 </div>
                 {/* Right: Meta */}
                 <div className="flex flex-col items-start sm:items-end gap-1.5">
-                  <div className="flex items-center gap-2 text-[10px] text-white/25 font-mono">
+                  <div className={`flex items-center gap-2 text-[10px] ${th('text-white/25', 'text-oklch(0.45_0_0)')} font-mono`}>
                     <span>v1.0</span>
-                    <span className="text-white/10">·</span>
+                    <span className={th('text-white/10', 'text-oklch(0.7_0_0)')}>·</span>
                     <span>22.04.2026</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-[10px] font-mono">
@@ -3202,7 +3214,7 @@ export default function Home() {
                   >
                     DOCS.Z.AI <ExternalLink className="w-2.5 h-2.5" />
                   </a>
-                  <span className="text-[9px] text-white/15 font-mono mt-2">© 2026 Z.AI</span>
+                  <span className={`text-[9px] ${th('text-white/15', 'text-oklch(0.6_0_0)')} font-mono mt-2`}>© 2026 Z.AI</span>
                 </div>
               </div>
             </div>

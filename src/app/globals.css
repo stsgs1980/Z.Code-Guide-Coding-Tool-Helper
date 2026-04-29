@@ -419,44 +419,44 @@ html {
   border-color: oklch(0.85 0 0) !important;
 }
 
-/* ── Dark oklch backgrounds → light ── */
-.nyc-light-mode [class*="bg-[oklch(0.08"],
-.nyc-light-mode [class*="bg-[oklch(0.09"],
-.nyc-light-mode [class*="bg-[oklch(0.10"],
-.nyc-light-mode [class*="bg-[oklch(0.11"],
-.nyc-light-mode [class*="bg-[oklch(0.12"],
-.nyc-light-mode [class*="bg-[oklch(0.13"],
-.nyc-light-mode [class*="bg-[oklch(0.14"],
-.nyc-light-mode [class*="bg-[oklch(0.15"],
-.nyc-light-mode [class*="bg-[oklch(0.16"],
-.nyc-light-mode [class*="bg-[oklch(0.17"] {
-  background-color: oklch(0.95 0 0) !important;
-  color: oklch(0.20 0 0) !important;
-}
-
-/* Code blocks stay dark even in light mode */
+/* ── Code blocks: keep dark even in light mode ── */
+/* These have HIGHER specificity and come AFTER the generic oklch overrides */
 .nyc-light-mode .code-block,
 .nyc-light-mode .code-block *,
-.nyc-light-mode pre[class*="bg-[oklch(0.08"],
-.nyc-light-mode pre[class*="bg-[oklch(0.09"],
-.nyc-light-mode pre[class*="bg-[oklch(0.11"] {
+.nyc-light-mode .code-block-hover-glow,
+.nyc-light-mode div.code-block-hover-glow {
   background-color: oklch(0.08 0 0) !important;
   color: #c3cee3 !important;
 }
 
-/* ── Black overlays ── */
+.nyc-light-mode .code-block pre,
+.nyc-light-mode .code-block .token-keyword,
+.nyc-light-mode .code-block .token-string,
+.nyc-light-mode .code-block .token-comment,
+.nyc-light-mode .code-block .token-function,
+.nyc-light-mode .code-block .token-variable,
+.nyc-light-mode .code-block .token-number,
+.nyc-light-mode .code-block .token-operator,
+.nyc-light-mode .code-block .token-property,
+.nyc-light-mode .code-block .token-punctuation,
+.nyc-light-mode .code-block .token-boolean,
+.nyc-light-mode .code-block .token-builtin,
+.nyc-light-mode .code-block .token-tag,
+.nyc-light-mode .code-block .token-attr-name,
+.nyc-light-mode .code-block .token-attr-value,
+.nyc-light-mode .code-block .token-class-name,
+.nyc-light-mode .code-block .token-regex {
+  color: revert !important;
+}
+
+/* ── Black overlays (stay dark) ── */
 .nyc-light-mode .bg-black\/60 {
   background-color: oklch(0 0 0 / 40%) !important;
 }
 .nyc-light-mode .bg-black\/40,
-.nyc-light-mode .bg-black\/30 {
+.nyc-light-mode .bg-black\/30,
+.nyc-light-mode .bg-black\/50 {
   background-color: oklch(0 0 0 / 25%) !important;
-}
-
-/* ── Search dialog ── */
-.nyc-light-mode [class*="bg-[oklch(0.17"] {
-  background-color: oklch(0.98 0 0) !important;
-  color: oklch(0.15 0 0) !important;
 }
 
 /* ── Gradient text ── */
@@ -489,10 +489,6 @@ html {
 }
 
 /* ── Effects ── */
-.nyc-light-mode .FloatingParticles {
-  opacity: 0.3;
-}
-
 .nyc-light-mode .nyc-glow-subtle {
   box-shadow: 0 0 8px oklch(0.78 0.16 85 / 8%);
 }
@@ -547,6 +543,11 @@ html {
   color: oklch(0.25 0 0) !important;
 }
 
+/* ── Tailwind class text-[#c3cee3] ── */
+.nyc-light-mode [class*="text-[#c3cee3]"] {
+  color: oklch(0.25 0 0) !important;
+}
+
 /* ── Toast ── */
 .nyc-light-mode [class*="bg-[oklch(0.14"] {
   background-color: oklch(0.97 0 0) !important;
@@ -571,24 +572,11 @@ html {
   color: oklch(0.25 0 0) !important;
 }
 
-/* ── Code blocks: keep dark even in light mode ── */
-/* Must have HIGHER specificity than the generic oklch bg override above */
-.nyc-light-mode .code-block,
-.nyc-light-mode .code-block *,
-.nyc-light-mode div.code-block,
-.nyc-light-mode div[class*="bg-[oklch(0.08"] pre,
-.nyc-light-mode div[class*="bg-[oklch(0.09"] pre,
-.nyc-light-mode div[class*="bg-[oklch(0.11"] pre,
+/* Code block CONTAINERS stay dark */
+.nyc-light-mode .code-block pre,
 .nyc-light-mode pre[class*="bg-[oklch(0.08"],
 .nyc-light-mode pre[class*="bg-[oklch(0.09"],
 .nyc-light-mode pre[class*="bg-[oklch(0.11"] {
-  background-color: oklch(0.08 0 0) !important;
-  color: #c3cee3 !important;
-}
-
-/* Code block CONTAINERS also stay dark */
-.nyc-light-mode .code-block-hover-glow,
-.nyc-light-mode div.code-block-hover-glow {
   background-color: oklch(0.08 0 0) !important;
   color: #c3cee3 !important;
 }
@@ -597,6 +585,16 @@ html {
 .nyc-light-mode ::selection {
   background: oklch(0.78 0.16 85 / 30%);
   color: oklch(0.10 0 0);
+}
+
+/* ── Code block scrollbar stays dark ── */
+.nyc-light-mode .code-block::-webkit-scrollbar-track,
+.nyc-light-mode pre::-webkit-scrollbar-track {
+  background: oklch(0.1 0 0);
+}
+.nyc-light-mode .code-block::-webkit-scrollbar-thumb,
+.nyc-light-mode pre::-webkit-scrollbar-thumb {
+  background: oklch(0.25 0 0);
 }
 
 /* ═══════════════════════════════════════════════════════════════════

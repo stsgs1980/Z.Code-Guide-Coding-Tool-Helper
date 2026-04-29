@@ -958,3 +958,190 @@ Current Project Status:
 - All interactive features functional
 - Lint clean, no runtime errors
 
+
+---
+Task ID: 15
+Agent: Light Theme Fix Specialist
+Task: Fix light theme — make elements theme-aware using React state instead of relying solely on CSS overrides
+
+Work Log:
+
+**Root Cause Analysis:**
+The `.nyc-light-mode` CSS override approach with `!important` was fragile because:
+1. Inline `style={{}}` attributes hardcode dark colors (e.g., `style={{color:'#c3cee3'}}`)
+2. Elements with hardcoded Tailwind dark-bg classes like `bg-[oklch(0.14_0_0)]` need per-element handling
+3. CSS utility classes like `.nyc-card-enhanced` have hardcoded dark gradient backgrounds
+4. The sidebar, tables, and footer use dark inline styles
+5. The generic oklch bg CSS override also changed code block backgrounds (which should stay dark)
+
+**Implementation — Dual Approach: React `th()` helper + CSS overrides as safety net**
+
+1. **Added `th()` helper function** in the main component:
+   - `const th = (dark: string, light: string) => theme === 'light' ? light : dark`
+   - Wrapped in `useCallback` with `[theme]` dependency
+   - Used inline: `className={th('bg-[oklch(0.14_0_0)]', 'bg-[oklch(0.96_0_0)]')}`
+
+2. **Fixed SearchDialog** — added `theme` prop:
+   - Dialog background: `bg-[oklch(0.17)]` → conditional light bg
+   - Input text: `text-white` → conditional `text-oklch(0.15)` in light mode
+   - Placeholder text: conditional dark placeholder in light mode
+   - Keyboard hints: conditional dark text/border in light mode
+   - Result items: hover states and text colors theme-aware
+   - "Not found" text: conditional dark text in light mode
+
+3. **Fixed GuideTour** — added `theme` prop:
+   - Tooltip card bg: `bg-[oklch(0.14_0_0)]` → conditional light bg
+
+4. **Fixed main component JSX with `th()` helper** (20+ elements):
+   - **Root div**: explicit `bg-[oklch(0.97_0_0)]` in light mode instead of relying on `bg-background`
+   - **Tooltip**: bg and border conditional
+   - **TOC Panel**: `bg-[oklch(0.12_0_0)]` → conditional `bg-[oklch(0.97_0_0)]`
+   - **Mobile drawer**: `bg-[oklch(0.12_0_0)]` → conditional
+   - **Section indicator**: `bg-[oklch(0.1_0_0)]/90` → conditional
+   - **Hero cards**: `bg-[oklch(0.14_0_0)]` → conditional with border and shadow
+   - **Hero values**: `text-[oklch(0.95_0_0)]` → conditional dark text
+   - **Free alternatives cards**: bg, border, shadow all conditional
+   - **Compatibility table header**: bg + all text colors conditional
+   - **Stagewise table header**: bg + all text colors conditional
+   - **Table cell text**: `text-[oklch(0.85_0_0)]` → conditional dark text
+   - **Filter input**: bg, border, text, placeholder all conditional
+   - **Command rows**: bg, border conditional
+   - **API key cards**: bg, border conditional
+   - **Diagnostic command rows**: bg, border conditional
+   - **Error accordion items**: `bg-[oklch(0.11_0_0)]` → conditional (2 instances)
+   - **Architecture code wrapper**: bg, border conditional (code stays dark)
+   - **Tool cards**: bg, border conditional
+   - **Quick jump widget**: bg, border conditional
+   - **Scroll-to-top button**: bg, border, text, shadow all conditional
+   - **Footer gradient**: `from-[oklch(0.08)] to-[oklch(0.06)]` → conditional light gradient
+
+5. **Updated globals.css** — improved light mode CSS overrides as safety net:
+   - **Removed** the generic `[class*="bg-[oklch(0.08"]` through `[class*="bg-[oklch(0.17"]` overrides that were too aggressive (changed code block bg too)
+   - **Added** code block-specific token color overrides with `revert !important` to preserve syntax highlighting colors
+   - **Added** `.nyc-light-mode [class*="text-[#c3cee3]"]` override for CC_SECTIONS text
+   - **Added** code block scrollbar stays dark in light mode
+   - **Added** `.bg-black\/50` override (was missing)
+   - **Kept** all card overrides (nyc-card-enhanced, nyc-card-highlight-enhanced, nyc-card, nyc-card-highlight)
+   - **Kept** all white opacity text/border/bg overrides
+   - **Kept** navigation/panel overrides
+   - **Kept** gradient text, effects, scrollbar, label, section divider overrides
+
+**Key Design Decisions:**
+- Code blocks (CodeBlock component) intentionally stay DARK in light mode for contrast
+- The `th()` helper handles the JSX-level theming, CSS overrides are the safety net
+- Light mode uses warm whites: oklch(0.96-0.98) for backgrounds, oklch(0.82-0.85) for borders
+- Dark text in light mode: oklch(0.15-0.30) for various hierarchy levels
+- Footer uses gradient from oklch(0.95) to oklch(0.93) in light mode
+
+**Lint:** Clean, 0 errors
+**Dev Server:** Compiling successfully
+
+---
+Task ID: 16
+Agent: Light Theme Polish Specialist
+Task: Fix light theme visibility issues — border-white, bg-white, text-white elements invisible on light backgrounds
+
+Work Log:
+
+**Problem:** The light theme was mostly working but many elements used hardcoded dark-mode colors (`border-white/[0.06]`, `bg-white/[0.08]`, `text-white/40`, etc.) that are invisible on light backgrounds. These needed to be wrapped with the existing `th()` function to provide light-mode alternatives.
+
+**Components that received `theme` prop + `th()` function:**
+1. `SectionNav` — Added `theme` prop and `th()` for navigation link colors
+2. `SectionHeader` — Added `theme` prop and `th()` for bookmark/share button colors
+3. `TaxiDivider` — Added `theme` prop and `th()` for gradient divider color
+4. `InstallScriptGenerator` — Added `theme` prop and `th()` for deselect/button colors and checkbox borders
+5. `CopySummaryButton` — Added `theme` prop and `th()` for outline button border/bg
+6. `CopyButton` — Added optional `theme` prop and `th()` for icon colors and bg (backward compatible)
+
+**Border fixes (border-white/[0.0X] → th() wrapped):**
+- GuideTour tooltip header/footer borders → `th('border-white/[0.06]', 'border-oklch(0.85_0_0)')`
+- Sidebar divider → `th('border-white/[0.06]', 'border-oklch(0.85_0_0)')`
+- TOC panel header border → `th('border-white/[0.06]', 'border-oklch(0.85_0_0)')`
+- Mobile nav header/footer borders → `th('border-white/[0.06]', 'border-oklch(0.85_0_0)')`
+- Quick jump header border → `th('border-white/[0.06]', 'border-oklch(0.85_0_0)')`
+- Install checkbox unselected state → `th('bg-white/[0.02] border-white/[0.06] hover:border-white/10', 'bg-oklch(0.95_0_0) border-oklch(0.82_0_0) hover:border-oklch(0.7_0_0)')`
+- Badge elements → `th('bg-white/[0.08] text-white/70 border-white/[0.06]', 'bg-oklch(0.93_0_0) text-oklch(0.3_0_0) border-oklch(0.82_0_0)')`
+- GLM model cards, Plan Limits cards → `th('border-white/[0.06]', 'border-oklch(0.82_0_0)')`
+- Stagewise table rows → `th('border-white/[0.08] hover:bg-white/[0.04]', 'border-oklch(0.85_0_0) hover:bg-oklch(0.93_0_0)')`
+- Cline steps card, TabsList, Transport Protocols, Ready Prompts → wrapped with th()
+- Wizard options, badges, separators, placeholders → all wrapped with th()
+- Checklist checkbox border → `th('border-white/10', 'border-oklch(0.75_0_0)')`
+
+**Background fixes (bg-white/[0.0X] → th() wrapped):**
+- Install checkboxes, wizard options → `th('bg-white/[0.02]', 'bg-oklch(0.96_0_0)')`
+- Cline steps card → `th('bg-white/[0.04]', 'bg-oklch(0.95_0_0)')`
+- TabsList → `th('bg-white/[0.03]', 'bg-oklch(0.95_0_0)')`
+- Transport items → `th('bg-white/[0.03] border-white/[0.04]', 'bg-oklch(0.95_0_0) border-oklch(0.85_0_0)')`
+- Progress bars → `th('bg-white/5', 'bg-oklch(0.85_0_0)')`
+- Source links → `th('bg-white/[0.02] hover:bg-white/[0.05]', 'bg-oklch(0.96_0_0) hover:bg-oklch(0.93_0_0)')`
+
+**Text color fixes (text-white/XX → th() wrapped in panels with light mode):**
+- GuideTour buttons → `th('text-white/30 hover:text-white/60', 'text-oklch(0.4_0_0) hover:text-oklch(0.2_0_0)')`
+- Sidebar nav items → `th('text-white/35 hover:text-white/60 hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-oklch(0.2_0_0) hover:bg-oklch(0.9_0_0)')`
+- Sidebar utility buttons → `th('text-white/35 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.9_0_0)')`
+- TOC panel items → `th('text-white/50 hover:text-white/80 hover:bg-white/5', 'text-oklch(0.4_0_0) hover:text-oklch(0.2_0_0) hover:bg-oklch(0.93_0_0)')`
+- Mobile nav items → same pattern as TOC panel
+- Mobile nav bar buttons → `th('text-white/40 hover:text-[var(--nyc-taxi)]', 'text-oklch(0.4_0_0) hover:text-[var(--nyc-taxi)]')`
+- Section indicator text → `th('text-white/70', 'text-oklch(0.25_0_0)')`
+- Footer text → `th('text-white/25', 'text-oklch(0.5_0_0)')`
+- Various separators → `th('text-white/10', 'text-oklch(0.7_0_0)')`
+- Various labels → `th('text-white/20', 'text-oklch(0.5_0_0)')`
+
+**Other structural fixes:**
+- Sidebar background → `th('bg-[oklch(0.1_0_0)]/80 border-white/5', 'bg-[oklch(0.97_0_0)]/80 border-oklch(0.88_0_0)')`
+- Mobile nav bar → `th('bg-[oklch(0.1_0_0)]/90 border-white/10', 'bg-[oklch(0.97_0_0)]/90 border-oklch(0.85_0_0)')`
+- SearchDialog header → `theme === 'light' ? 'border-oklch(0.85_0_0)' : 'border-white/10'`
+- Hero outline button → `th('border-white/20 hover:bg-white/5', 'border-oklch(0.7_0_0) hover:bg-oklch(0.93_0_0)')`
+- TaxiDivider gradient → `th('via-white/15', 'via-oklch(0.75_0_0)')`
+- SectionNav links → `th('text-white/40 hover:text-[var(--nyc-taxi)] hover:bg-white/5', 'text-oklch(0.45_0_0) hover:text-[var(--nyc-taxi)] hover:bg-oklch(0.93_0_0)')`
+
+**CodeBlock elements intentionally left unchanged** (stays dark in both themes):
+- CodeBlock outer border and header border
+- CodeBlock line numbers and prompt symbols
+- Copy button inside CodeBlock
+
+**All component calls updated** to pass `theme={theme}`:
+- 13 `<SectionHeader>` calls
+- 12 `<TaxiDivider>` calls
+- 12 `<SectionNav>` calls
+- 1 `<InstallScriptGenerator>` call
+- 1 `<CopySummaryButton>` call
+- 2 `<CopyButton>` calls (outside CodeBlock)
+
+**Lint:** Clean, 0 errors
+**Dev Server:** Compiling successfully (HTTP 200)
+
+---
+Task ID: 15-16
+Agent: Main Agent + Sub-agents
+Task: Fix light theme rendering and theme switching flash
+
+Work Log:
+- User reported "блики при переключении со светлого на темную и обратно" (flashes when switching themes)
+- Added `.theme-transitioning` CSS class for smooth 0.3s transitions during theme toggle
+- Updated `toggleTheme` in page.tsx to add/remove transition class
+- VLM testing revealed light theme was fundamentally broken - elements remained dark
+- Root cause: `nyc-light-mode` CSS `!important` overrides didn't cover hardcoded dark classes
+- Sub-agent 15 added `th()` helper function: `th(darkClass, lightClass)` returns appropriate class based on theme
+- Applied `th()` to 20+ elements: sidebar, cards, tables, inputs, footer, search dialog, guide tour
+- Found bug: line 2607 had `th('bg-[oklch(0.08)]', 'bg-[oklch(0.08)]')` - same dark value in both args
+- Fixed to `th('bg-[oklch(0.08)]', 'bg-[oklch(0.97)]')`
+- Sub-agent 16 fixed 60+ remaining elements: all `border-white/[0.0X]`, `bg-white/[0.0X]`, `text-white/XX` classes
+- Added `theme` prop threading to 6 components that didn't have theme access
+- Verified with VLM: Dark theme 7/10, Light theme top 7/10, Light theme bottom 8/10
+- Transition: "smooth light theme with no visual glitches, flashes, or inconsistent colors"
+
+Stage Summary:
+- Theme switching flash fixed with CSS transition class
+- Light theme completely fixed from 3/10 to 7-8/10 VLM rating
+- `th()` helper function makes all elements theme-aware
+- Code blocks intentionally stay dark in both themes (standard pattern)
+- All QA checks pass, lint clean
+
+Current Project Status:
+- Full guide page with 13+ sections, NYC industrial theme
+- BOTH themes fully functional (dark 7/10, light 7-8/10)
+- Smooth theme transition without flashes
+- All interactive features working
+- Lint clean, no runtime errors
+
