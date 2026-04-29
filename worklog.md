@@ -929,3 +929,32 @@ Unresolved Issues / Next Steps:
 - Some state variables (bookmarks, visitedSections) still exist but are less visible in UI
 - Could add a subtle hover effect on section cards for better interactivity
 - Light mode could use more polish
+
+---
+Task ID: 14
+Agent: Main Agent
+Task: Fix theme switching flash/glitch (блики при переключении тем)
+
+Work Log:
+- Investigated user complaint about "блики" (flashes) when switching between light and dark themes
+- Root cause: CSS variables and !important overrides changed instantly without any transition, causing a jarring flash
+- Added `.theme-transitioning` CSS class in globals.css that applies smooth transitions (0.3s ease) to background-color, color, border-color, box-shadow, opacity, fill, stroke for all elements and pseudo-elements
+- Updated `toggleTheme` callback in page.tsx to:
+  1. Add `theme-transitioning` class to document.body before switching
+  2. Switch theme state
+  3. Remove `theme-transitioning` class after 350ms (matching transition duration)
+- This approach ensures transitions only happen during theme switch — normal hover/click animations are unaffected
+- Verified: lint clean, dev server compiling, class properly added and removed
+
+Stage Summary:
+- Theme switching flash/glitch fixed with temporary CSS transition class
+- Smooth 0.3s ease transition on all color-related properties during theme toggle
+- No impact on other animations or hover effects
+- All QA checks pass
+
+Current Project Status:
+- Full guide page with 13+ sections, NYC industrial theme
+- Theme switching now smooth (no more блики)
+- All interactive features functional
+- Lint clean, no runtime errors
+

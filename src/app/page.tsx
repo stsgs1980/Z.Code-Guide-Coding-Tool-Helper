@@ -1387,7 +1387,11 @@ export default function Home() {
   }, [wizardUsage, wizardBudget])
 
   const toggleTheme = useCallback(() => {
+    document.body.classList.add('theme-transitioning')
     setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+    setTimeout(() => {
+      document.body.classList.remove('theme-transitioning')
+    }, 350)
   }, [])
 
   // Sync html class with theme state (critical for shadcn/ui CSS variables)
