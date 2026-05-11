@@ -72,10 +72,8 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
   const lines = code.split("\n");
   const highlighted = highlightSyntax(code, lang);
   const contentRef = useRef<HTMLDivElement>(null);
-  const scrollProxyRef = useRef<HTMLDivElement>(null);
   const [needsHScroll, setNeedsHScroll] = useState(false);
   const [scrollContentWidth, setScrollContentWidth] = useState<number | null>(null);
-  const [isInView, setIsInView] = useState(true);
 
   // Check if content overflows horizontally
   useEffect(() => {
@@ -91,37 +89,6 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
     if (contentRef.current) ro.observe(contentRef.current);
     return () => ro.disconnect();
   }, [code]);
-
-  // Track if code block is in viewport
-  useEffect(() => {
-    if (!needsHScroll) return;
-    const el = contentRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-      },
-      { threshold: 0, rootMargin: "0px 0px -10px 0px" }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [needsHScroll]);
-
-  // Sync scroll: proxy → content
-  const syncScrollToContent = useCallback(() => {
-    if (scrollProxyRef.current && contentRef.current) {
-      contentRef.current.scrollLeft = scrollProxyRef.current.scrollLeft;
-    }
-  }, []);
-
-  // Sync scroll: content → proxy
-  const syncScrollToProxy = useCallback(() => {
-    if (contentRef.current && scrollProxyRef.current) {
-      scrollProxyRef.current.scrollLeft = contentRef.current.scrollLeft;
-    }
-  }, []);
 
   return (
     <div className={`code-block code-block-hover-glow relative ${className}`}>
@@ -140,11 +107,10 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
           <CopyButton text={code} />
         </div>
       </div>
-      {/* Code content — scrollbar hidden via CSS, scroll handled by proxy */}
+      {/* Code content — native scrollbar at bottom of code block */}
       <div
         ref={contentRef}
-        className="overflow-x-auto code-scroll-content"
-        onScroll={syncScrollToProxy}
+        className="overflow-x-auto"
       >
         <pre className="p-4 pl-12 text-sm leading-relaxed font-mono">
           <code dangerouslySetInnerHTML={{ __html: highlighted }} />
@@ -156,16 +122,10 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
           <div key={i} className="leading-relaxed text-right pr-2">{i + 1}</div>
         ))}
       </div>
-      {/* Sticky horizontal scroll proxy — always at bottom of viewport */}
-      {needsHScroll && isInView && (
-        <div className="code-scroll-proxy-sticky">
-          <div
-            ref={scrollProxyRef}
-            className="code-scroll-proxy"
-            onScroll={syncScrollToContent}
-          >
-            <div style={{ width: scrollContentWidth ? `${scrollContentWidth}px` : 'auto', height: '1px' }} />
-          </div>
+      {/* Horizontal scroll indicator arrow when content overflows */}
+      {needsHScroll && (
+        <div className="absolute right-2 top-[44px] pointer-events-none animate-pulse">
+          <span className="text-white/20 text-xs">→</span>
         </div>
       )}
     </div>
