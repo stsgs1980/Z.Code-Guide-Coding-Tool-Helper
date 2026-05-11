@@ -11,7 +11,6 @@ import {
   McpSection,
   PlanSection,
   ModelsSection,
-  ExamplesSection,
   TroubleshootSection,
   SourcesSection,
   SidebarNav,
@@ -167,7 +166,7 @@ function GuideContent() {
           </div>
 
           {/* Content sections */}
-          <main className="md:ml-14 md:pr-8 w-full px-4 sm:px-6 pb-20 flex-1 break-words">
+          <main className="md:ml-14 md:pr-18 lg:pr-18 w-full px-4 sm:px-6 pb-20 flex-1 break-words">
             <QuickStartSection />
             <HelperSection />
 
@@ -207,7 +206,6 @@ function GuideContent() {
             <McpSection />
             <PlanSection />
             <ModelsSection />
-            <ExamplesSection />
             <TroubleshootSection />
             <SourcesSection />
 
@@ -242,7 +240,7 @@ function GuideContent() {
       )}
 
       {currentPage === "zcode" && (
-        <main className="md:ml-14 md:pr-8 w-full px-4 sm:px-6 pb-20 flex-1 pt-14 md:pt-0 break-words">
+        <main className="md:ml-14 md:pr-18 lg:pr-18 w-full px-4 sm:px-6 pb-20 flex-1 pt-14 md:pt-0 break-words">
           <ZCodeSection onBack={handleBack} />
 
           {/* Footer */}

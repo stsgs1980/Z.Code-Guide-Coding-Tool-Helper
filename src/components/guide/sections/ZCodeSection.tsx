@@ -2,6 +2,7 @@
 
 import { Fragment } from "react";
 import { SectionHeader, TaxiDivider, CodeBlock, CopyButton } from "../ui";
+import { ExamplesSection } from "./ExamplesSection";
 import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
@@ -829,6 +830,11 @@ export function ZCodeSection({ onBack }: ZCodeSectionProps) {
           </div>
         </div>
       </div>
+
+      <TaxiDivider />
+
+      {/* Examples & Best Practices — moved from main guide */}
+      <ExamplesSection />
 
       <TaxiDivider />
 

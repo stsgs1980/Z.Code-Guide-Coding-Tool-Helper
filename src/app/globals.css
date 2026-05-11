@@ -597,6 +597,83 @@ html {
   background: oklch(0.25 0 0);
 }
 
+/* ── Code block sticky horizontal scrollbar ── */
+.code-scroll-content {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.30 0 0) transparent;
+}
+.code-scroll-content::-webkit-scrollbar {
+  height: 6px;
+}
+.code-scroll-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.code-scroll-content::-webkit-scrollbar-thumb {
+  background: oklch(0.30 0 0);
+  border-radius: 3px;
+}
+.code-scroll-content::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.45 0 0);
+}
+
+/* Hide the content area scrollbar when proxy is active */
+.code-block:hover .code-scroll-content::-webkit-scrollbar-thumb {
+  background: oklch(0.35 0 0);
+}
+
+/* Sticky scroll proxy wrapper */
+.code-scroll-proxy-wrapper {
+  position: relative;
+  z-index: 20;
+  transition: all 0.15s ease;
+}
+
+.code-scroll-proxy-wrapper.is-sticky {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+}
+
+.code-scroll-proxy {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.78 0.16 85 / 60%) oklch(0.12 0 0);
+}
+.code-scroll-proxy::-webkit-scrollbar {
+  height: 10px;
+}
+.code-scroll-proxy::-webkit-scrollbar-track {
+  background: oklch(0.08 0 0);
+  border-top: 1px solid oklch(1 0 0 / 8%);
+}
+.code-scroll-proxy::-webkit-scrollbar-thumb {
+  background: oklch(0.78 0.16 85 / 40%);
+  border-radius: 5px;
+  border: 2px solid oklch(0.08 0 0);
+}
+.code-scroll-proxy::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.78 0.16 85 / 70%);
+}
+
+/* Light mode proxy scrollbar */
+.nyc-light-mode .code-scroll-proxy {
+  scrollbar-color: oklch(0.78 0.16 85 / 50%) oklch(0.93 0 0);
+}
+.nyc-light-mode .code-scroll-proxy::-webkit-scrollbar-track {
+  background: oklch(0.93 0 0);
+  border-top: 1px solid oklch(0.85 0 0);
+}
+.nyc-light-mode .code-scroll-proxy::-webkit-scrollbar-thumb {
+  background: oklch(0.78 0.16 85 / 40%);
+  border: 2px solid oklch(0.93 0 0);
+}
+.nyc-light-mode .code-scroll-proxy::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.78 0.16 85 / 70%);
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    NYC INDUSTRIAL THEME — PREMIUM ENHANCEMENTS (Task 2-a)
    Visual Quality: 6.7/10 → 9/10

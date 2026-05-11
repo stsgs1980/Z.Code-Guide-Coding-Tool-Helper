@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useEffect, useState, useCallback } from "react";
 import { CopyButton } from "./CopyButton";
 
 interface CodeBlockProps {
@@ -82,9 +83,62 @@ function highlightSyntax(code: string, lang: string): string {
 export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBlockProps) {
   const lines = code.split("\n");
   const highlighted = highlightSyntax(code, lang);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const scrollProxyRef = useRef<HTMLDivElement>(null);
+  const [isSticky, setIsSticky] = useState(false);
+  const [needsHScroll, setNeedsHScroll] = useState(false);
+  const [scrollContentWidth, setScrollContentWidth] = useState<number | null>(null);
+
+  // Check if content overflows horizontally
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (contentRef.current) {
+        const el = contentRef.current;
+        setNeedsHScroll(el.scrollWidth > el.clientWidth);
+        setScrollContentWidth(el.scrollWidth);
+      }
+    };
+    checkOverflow();
+    const ro = new ResizeObserver(checkOverflow);
+    if (contentRef.current) ro.observe(contentRef.current);
+    return () => ro.disconnect();
+  }, [code]);
+
+  // Intersection observer for sticky scrollbar
+  useEffect(() => {
+    if (!needsHScroll) return;
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // When sentinel leaves viewport (bottom of code block is below fold),
+        // make the scroll proxy sticky at viewport bottom
+        setIsSticky(!entry.isIntersecting);
+      },
+      { threshold: 0, rootMargin: "0px 0px 0px 0px" }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [needsHScroll]);
+
+  // Sync scroll between content and proxy
+  const syncScrollToContent = useCallback(() => {
+    if (scrollProxyRef.current && contentRef.current) {
+      contentRef.current.scrollLeft = scrollProxyRef.current.scrollLeft;
+    }
+  }, []);
+
+  const syncScrollToProxy = useCallback(() => {
+    if (contentRef.current && scrollProxyRef.current) {
+      scrollProxyRef.current.scrollLeft = contentRef.current.scrollLeft;
+    }
+  }, []);
 
   return (
-    <div className={`code-block code-block-hover-glow relative overflow-hidden ${className}`}>
+    <div className={`code-block code-block-hover-glow relative ${className}`}>
       {/* macOS title bar */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-white/5">
         <div className="flex items-center gap-2">
@@ -100,8 +154,12 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
           <CopyButton text={code} />
         </div>
       </div>
-      {/* Code content */}
-      <div className="overflow-x-auto">
+      {/* Code content — overflow hidden, scroll handled by proxy */}
+      <div
+        ref={contentRef}
+        className="overflow-x-auto code-scroll-content"
+        onScroll={syncScrollToProxy}
+      >
         <pre className="p-4 pl-12 text-sm leading-relaxed font-mono">
           <code dangerouslySetInnerHTML={{ __html: highlighted }} />
         </pre>
@@ -112,6 +170,23 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
           <div key={i} className="leading-relaxed text-right pr-2">{i + 1}</div>
         ))}
       </div>
+      {/* Sentinel — detects when bottom of code block exits viewport */}
+      <div ref={sentinelRef} className="h-0" />
+      {/* Sticky horizontal scroll proxy — sticks to bottom of viewport */}
+      {needsHScroll && (
+        <div
+          className={`code-scroll-proxy-wrapper ${isSticky ? 'is-sticky' : ''}`}
+        >
+          <div
+            ref={scrollProxyRef}
+            className="code-scroll-proxy"
+            onScroll={syncScrollToContent}
+          >
+            {/* Invisible content with same width as code to enable scrolling */}
+            <div style={{ width: scrollContentWidth ? `${scrollContentWidth}px` : 'auto', height: '1px' }} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
