@@ -88,13 +88,13 @@ function GuideContent() {
         )}
       </AnimatePresence>
 
-      {/* Content area — sidebar offset + centered content */}
-      <div className="md:pl-14 flex-1 flex flex-col pt-14 md:pt-0">
-        {/* Hero — full width within offset area */}
+      {/* Hero — full width */}
+      <div className="md:ml-14 pt-14 md:pt-0">
         <HeroSection />
+      </div>
 
-        {/* Content sections — centered with max-width */}
-        <main className="mx-auto w-full max-w-6xl px-4 sm:px-6 md:px-8 lg:px-10 pb-20 flex-1 break-words">
+      {/* Content sections */}
+      <main className="md:ml-14 md:pr-10 w-full px-4 sm:px-6 md:px-8 lg:px-10 pb-20 flex-1 break-words">
         <QuickStartSection />
         <HelperSection />
         <ZCodeSection />
@@ -134,7 +134,6 @@ function GuideContent() {
           </p>
         </footer>
       </main>
-      </div>
 
       <ScrollToTop />
     </div>

@@ -26,8 +26,8 @@ export function HeroSection() {
         <div className={`absolute -bottom-24 -left-24 w-48 h-48 sm:w-60 sm:h-60 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/3', 'bg-[var(--nyc-taxi)]/5')}`} />
       </div>
 
-      <div className="relative z-10 w-full px-4 sm:px-6 md:px-8 lg:px-10 pt-20 md:pt-28 pb-16 md:pb-20">
-        <div className="mx-auto max-w-6xl flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 w-full">
+      <div className="relative z-10 w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-14 pt-20 md:pt-28 pb-16 md:pb-20">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 w-full">
           {/* Left: Text */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
