@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { SectionHeader, TaxiDivider, CodeBlock, CopyButton } from "../ui";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -41,6 +42,14 @@ const featureIcons: Record<string, typeof Brain> = {
   "multi-agent": Cpu,
   safety: Lock,
 };
+
+const pipelineConfig = [
+  { step: 1, label: "Plan & Manage", toolId: "task-manager", Icon: ListChecks },
+  { step: 2, label: "Code & Build", toolId: "terminal", Icon: Terminal },
+  { step: 3, label: "Review Changes", toolId: "diff-preview", Icon: GitCompare },
+  { step: 4, label: "Live Preview", toolId: "browser", Icon: Globe },
+  { step: 5, label: "Connect Anywhere", toolId: "remote-dev", Icon: Smartphone },
+];
 
 export function ZCodeSection() {
   const { theme } = useTheme();
@@ -384,95 +393,117 @@ export function ZCodeSection() {
 
       <TaxiDivider />
 
-      {/* ADE Tools — grouped into 2 columns */}
+      {/* ADE Tools — Workflow Pipeline */}
       <h3 className="text-xl font-semibold mb-4 mt-6 flex items-center gap-2">
         <Terminal className="h-5 w-5 text-nyc-taxi" />
-        Инструменты ADE
+        Инструменты ADE — рабочий процесс
       </h3>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        {/* Left: Management & Workflow */}
-        <div>
-          <h4 className={`text-sm font-semibold uppercase tracking-wider mb-3 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>Управление работой</h4>
-          <div className="space-y-3">
-            {adeTools.filter(t => t.id === 'task-manager' || t.id === 'remote-dev').map((tool, i) => (
+      <p className={`text-sm mb-5 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+        От планирования до деплоя — каждый инструмент встроен в рабочий процесс разработки.
+      </p>
+      {/* Desktop: horizontal pipeline */}
+      <div className="hidden lg:flex items-stretch mb-6 gap-0">
+        {pipelineConfig.map((item, i, arr) => {
+          const tool = adeTools.find(t => t.id === item.toolId);
+          if (!tool) return null;
+          return (
+            <Fragment key={item.toolId}>
               <motion.div
-                key={tool.id}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4 flex-1 min-w-0 flex flex-col`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                    i === 0
+                      ? 'bg-nyc-taxi text-black'
+                      : th('bg-white/5 text-white/40', 'bg-oklch(0.93 0 0) text-oklch(0.45 0 0)')
+                  }`}>
+                    {item.step}
+                  </div>
+                  <span className={`text-[10px] font-semibold uppercase tracking-wider ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+                    {item.label}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <item.Icon className="h-4 w-4 text-nyc-taxi flex-shrink-0" />
+                  <span className="text-sm font-semibold">{tool.name}</span>
+                  {tool.shortcut && (
+                    <kbd className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${th('bg-white/5 text-white/40 border border-white/10', 'bg-oklch(0.93 0 0) text-oklch(0.40 0 0) border border-oklch(0.85 0 0)')}`}>
+                      {tool.shortcut}
+                    </kbd>
+                  )}
+                </div>
+                <p className={`text-xs mb-2 ${th('text-white/40', 'text-oklch(0.55 0 0)')}`}>{tool.description}</p>
+                <ul className="space-y-1 mt-auto">
+                  {tool.details.slice(0, 3).map((detail) => (
+                    <li key={detail} className={`text-xs flex items-start gap-1.5 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
+                      <span className="nyc-status-dot nyc-status-active mt-1 flex-shrink-0" />
+                      <span>{detail}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+              {i < arr.length - 1 && (
+                <div className="flex items-center px-1.5 flex-shrink-0">
+                  <ChevronRight className={`h-5 w-5 ${th('text-nyc-taxi/40', 'text-oklch(0.78 0.16 85 / 30%)')}`} />
+                </div>
+              )}
+            </Fragment>
+          );
+        })}
+      </div>
+      {/* Mobile: vertical timeline */}
+      <div className="lg:hidden relative mb-6">
+        <div className={`absolute left-[15px] top-0 bottom-0 w-0.5 ${th('bg-gradient-to-b from-nyc-taxi/40 via-nyc-taxi/15 to-transparent', 'bg-gradient-to-b from-oklch(0.78 0.16 85 / 30%) via-oklch(0.78 0.16 85 / 10%) to-transparent')}`} />
+        <div className="space-y-4">
+          {pipelineConfig.map((item, i) => {
+            const tool = adeTools.find(t => t.id === item.toolId);
+            if (!tool) return null;
+            return (
+              <motion.div
+                key={item.toolId}
                 initial={{ opacity: 0, x: -10 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-5`}
+                className="flex gap-3 relative"
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${th('bg-nyc-taxi/10', 'bg-nyc-taxi/10')}`}>
-                    {tool.id === 'task-manager'
-                      ? <ListChecks className="h-4 w-4 text-nyc-taxi" />
-                      : <Smartphone className="h-4 w-4 text-nyc-taxi" />
-                    }
-                  </div>
-                  <div>
-                    <span className="font-semibold text-sm block">{tool.name}</span>
-                    <p className={`text-xs ${th('text-white/40', 'text-oklch(0.55 0 0)')}`}>{tool.description}</p>
+                <div className="relative z-10 flex-shrink-0">
+                  <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center text-xs font-bold ${
+                    i === 0
+                      ? 'bg-nyc-taxi text-black'
+                      : th('bg-oklch(0.18 0 0) border border-white/10 text-white/50', 'bg-oklch(0.96 0 0) border border-oklch(0.82 0 0) text-oklch(0.45 0 0)')
+                  }`}>
+                    {item.step}
                   </div>
                 </div>
-                <ul className="space-y-1 ml-10">
-                  {tool.details.map((detail) => (
-                    <li key={detail} className={`text-sm flex items-start gap-2 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
-                      <span className="nyc-status-dot nyc-status-active mt-1.5 flex-shrink-0" />
-                      <span>{detail}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right: Developer Panels */}
-        <div>
-          <h4 className={`text-sm font-semibold uppercase tracking-wider mb-3 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>Панели разработчика</h4>
-          <div className="space-y-3">
-            {adeTools.filter(t => t.id === 'terminal' || t.id === 'browser' || t.id === 'diff-preview').map((tool, i) => (
-              <motion.div
-                key={tool.id}
-                initial={{ opacity: 0, x: 10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-5`}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${th('bg-nyc-taxi/10', 'bg-nyc-taxi/10')}`}>
-                    {tool.id === 'terminal'
-                      ? <Terminal className="h-4 w-4 text-nyc-taxi" />
-                      : tool.id === 'browser'
-                        ? <Globe className="h-4 w-4 text-nyc-taxi" />
-                        : <GitCompare className="h-4 w-4 text-nyc-taxi" />
-                    }
+                <div className={`flex-1 ${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4`}>
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <item.Icon className="h-4 w-4 text-nyc-taxi flex-shrink-0" />
+                    <span className="text-sm font-semibold">{tool.name}</span>
+                    <span className={`text-xs ${th('text-white/30', 'text-oklch(0.60 0 0)')}`}>{item.label}</span>
+                    {tool.shortcut && (
+                      <kbd className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${th('bg-white/5 text-white/40 border border-white/10', 'bg-oklch(0.93 0 0) text-oklch(0.40 0 0) border border-oklch(0.85 0 0)')}`}>
+                        {tool.shortcut}
+                      </kbd>
+                    )}
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">{tool.name}</span>
-                      {tool.shortcut && (
-                        <kbd className={`text-xs px-2 py-0.5 rounded font-mono ${th('bg-white/5 text-white/40 border border-white/10', 'bg-oklch(0.93 0 0) text-oklch(0.40 0 0) border border-oklch(0.85 0 0)')}`}>
-                          {tool.shortcut}
-                        </kbd>
-                      )}
-                    </div>
-                    <p className={`text-xs ${th('text-white/40', 'text-oklch(0.55 0 0)')}`}>{tool.description}</p>
-                  </div>
+                  <p className={`text-xs mb-2 ${th('text-white/40', 'text-oklch(0.55 0 0)')}`}>{tool.description}</p>
+                  <ul className="space-y-1">
+                    {tool.details.slice(0, 3).map((detail) => (
+                      <li key={detail} className={`text-xs flex items-start gap-1.5 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
+                        <span className="nyc-status-dot nyc-status-active mt-1 flex-shrink-0" />
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-1 ml-10">
-                  {tool.details.map((detail) => (
-                    <li key={detail} className={`text-sm flex items-start gap-2 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
-                      <span className="nyc-status-dot nyc-status-active mt-1.5 flex-shrink-0" />
-                      <span>{detail}</span>
-                    </li>
-                  ))}
-                </ul>
               </motion.div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
 
@@ -602,86 +633,130 @@ export function ZCodeSection() {
 
       <TaxiDivider />
 
-      {/* Version History — Timeline */}
+      {/* Version History — Release Cards with Version Strip */}
       <h3 className="text-xl font-semibold mb-4 mt-6 flex items-center gap-2">
         <Globe className="h-5 w-5 text-nyc-taxi" />
         История версий
       </h3>
-      <div className="relative mb-6">
-        {/* Vertical timeline line */}
-        <div className={`absolute left-[17px] top-0 bottom-0 w-0.5 ${th('bg-gradient-to-b from-nyc-taxi/40 via-nyc-taxi/15 to-transparent', 'bg-gradient-to-b from-oklch(0.78 0.16 85 / 30%) via-oklch(0.78 0.16 85 / 10%) to-transparent')}`} />
-
-        <div className="space-y-6">
-          {zcodeVersions.map((ver, i) => (
-            <motion.div
-              key={ver.version}
-              initial={{ opacity: 0, x: -12 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="flex gap-4 relative"
-            >
-              {/* Timeline node */}
-              <div className="relative z-10 flex-shrink-0">
-                <div className={`w-[34px] h-[34px] rounded-full flex items-center justify-center text-xs font-bold ${
-                  i === 0
-                    ? 'bg-nyc-taxi text-black shadow-md shadow-nyc-taxi/30'
-                    : th(
-                        'bg-oklch(0.18 0 0) border border-white/10 text-white/50',
-                        'bg-oklch(0.96 0 0) border border-oklch(0.82 0 0) text-oklch(0.45 0 0)'
-                      )
-                }`}>
-                  {i + 1}
+      {/* Version strip */}
+      <div className="flex items-center gap-2.5 mb-5 overflow-x-auto pb-1">
+        {zcodeVersions.map((ver, i) => (
+          <div
+            key={ver.version}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full whitespace-nowrap flex-shrink-0 transition-colors ${
+              i === 0
+                ? 'bg-nyc-taxi text-black font-semibold'
+                : th('bg-white/5 text-white/50 border border-white/5', 'bg-oklch(0.93 0 0) text-oklch(0.45 0 0) border border-oklch(0.88 0 0)')
+            }`}
+          >
+            <span className="text-sm font-mono">{ver.version}</span>
+            {i === 0 && <span className="text-xs font-medium">● Текущая</span>}
+          </div>
+        ))}
+      </div>
+      {/* Featured card (latest version) */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4 }}
+        className={`relative mb-4 rounded-xl overflow-hidden ${th(
+          'border border-nyc-taxi/30 shadow-lg shadow-nyc-taxi/5',
+          'border-2 border-oklch(0.78 0.16 85 / 30%) shadow-lg shadow-oklch(0.78 0.16 85 / 10%)'
+        )}`}
+      >
+        <div className={`absolute inset-0 rounded-xl pointer-events-none ${th('bg-gradient-to-r from-nyc-taxi/5 via-transparent to-nyc-taxi/5', 'bg-gradient-to-r from-oklch(0.78 0.16 85 / 5%) via-transparent to-oklch(0.78 0.16 85 / 5%)')}`} />
+        <div className="relative p-5 sm:p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Badge className="bg-nyc-taxi text-black text-xs font-bold">{zcodeVersions[0].version}</Badge>
+            <span className={`text-sm ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{zcodeVersions[0].date}</span>
+            <Badge className="text-xs bg-green-500/10 text-green-400">Текущая</Badge>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {zcodeVersions[0].features.length > 0 && (
+              <div>
+                <div className={`text-sm font-medium mb-2 flex items-center gap-1.5 ${th('text-green-400/70', 'text-green-600')}`}>
+                  <span className={`w-2 h-2 rounded-full ${th('bg-green-400/70', 'bg-green-600')}`} />
+                  Новые возможности
                 </div>
+                <ul className="space-y-1.5">
+                  {zcodeVersions[0].features.map((f) => (
+                    <li key={f} className={`text-sm flex items-start gap-2 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+                      <span className="nyc-status-dot nyc-status-active mt-1.5 flex-shrink-0" />{f}
+                    </li>
+                  ))}
+                </ul>
               </div>
-
-              {/* Content card */}
-              <div className={`flex-1 ${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-5`}>
-                <div className="flex items-center gap-3 mb-3">
-                  <Badge className={`text-xs ${i === 0 ? 'bg-nyc-taxi text-black' : th('bg-white/10 text-white/60', 'bg-oklch(0.90 0 0) text-oklch(0.35 0 0)')}`}>
-                    {ver.version}
-                  </Badge>
-                  <span className={`text-sm ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{ver.date}</span>
-                  {i === 0 && (
-                    <Badge className="text-xs bg-green-500/10 text-green-400">Текущая</Badge>
-                  )}
+            )}
+            {zcodeVersions[0].fixes.length > 0 && (
+              <div>
+                <div className={`text-sm font-medium mb-2 flex items-center gap-1.5 ${th('text-amber-400/70', 'text-amber-600')}`}>
+                  <span className={`w-2 h-2 rounded-full ${th('bg-amber-400/70', 'bg-amber-600')}`} />
+                  Исправления
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {ver.features.length > 0 && (
-                    <div>
-                      <div className={`text-sm font-medium mb-1.5 flex items-center gap-1.5 ${th('text-green-400/70', 'text-green-600')}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${th('bg-green-400/70', 'bg-green-600')}`} />
-                        Новые возможности
-                      </div>
-                      <ul className="space-y-1">
-                        {ver.features.map((f) => (
-                          <li key={f} className={`text-sm flex items-start gap-2 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
-                            <span className="nyc-status-dot nyc-status-active mt-1.5 flex-shrink-0" />{f}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {ver.fixes.length > 0 && (
-                    <div>
-                      <div className={`text-sm font-medium mb-1.5 flex items-center gap-1.5 ${th('text-amber-400/70', 'text-amber-600')}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${th('bg-amber-400/70', 'bg-amber-600')}`} />
-                        Исправления
-                      </div>
-                      <ul className="space-y-1">
-                        {ver.fixes.map((f) => (
-                          <li key={f} className={`text-sm flex items-start gap-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
-                            <span className={`nyc-status-dot ${th('bg-amber-400/50', 'bg-amber-500/50')} mt-1.5 flex-shrink-0`} />{f}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
+                <ul className="space-y-1.5">
+                  {zcodeVersions[0].fixes.map((f) => (
+                    <li key={f} className={`text-sm flex items-start gap-2 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
+                      <span className={`nyc-status-dot ${th('bg-amber-400/50', 'bg-amber-500/50')} mt-1.5 flex-shrink-0`}/>{f}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </motion.div>
-          ))}
+            )}
+          </div>
         </div>
+      </motion.div>
+      {/* Compact cards (older versions) */}
+      <div className="space-y-3 mb-6">
+        {zcodeVersions.slice(1).map((ver, i) => (
+          <motion.div
+            key={ver.version}
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+            className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4 sm:p-5`}
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <Badge className={`text-xs ${th('bg-white/10 text-white/60', 'bg-oklch(0.90 0 0) text-oklch(0.35 0 0)')}`}>
+                {ver.version}
+              </Badge>
+              <span className={`text-sm ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{ver.date}</span>
+            </div>
+            <div className="space-y-3">
+              {ver.features.length > 0 && (
+                <div>
+                  <div className={`text-xs font-medium mb-1.5 flex items-center gap-1.5 ${th('text-green-400/60', 'text-green-600')}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${th('bg-green-400/60', 'bg-green-600')}`} />
+                    Новые возможности
+                  </div>
+                  <ul className="space-y-1">
+                    {ver.features.map((f) => (
+                      <li key={f} className={`text-sm flex items-start gap-2 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
+                        <span className="nyc-status-dot nyc-status-active mt-1.5 flex-shrink-0" />{f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {ver.fixes.length > 0 && (
+                <div>
+                  <div className={`text-xs font-medium mb-1.5 flex items-center gap-1.5 ${th('text-amber-400/60', 'text-amber-600')}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${th('bg-amber-400/60', 'bg-amber-600')}`} />
+                    Исправления
+                  </div>
+                  <ul className="space-y-1">
+                    {ver.fixes.map((f) => (
+                      <li key={f} className={`text-sm flex items-start gap-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+                        <span className={`nyc-status-dot ${th('bg-amber-400/50', 'bg-amber-500/50')} mt-1.5 flex-shrink-0`}/>{f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ))}
       </div>
 
       <TaxiDivider />

@@ -85,3 +85,37 @@ Stage Summary:
 - ADE Tools descriptions enriched with official docs details
 - FAQ answers enriched with ADE positioning, Vibe Coding direction, provider list
 - Total coverage: welcome, install, config, agents, edit-history, commands, plugin, mcp, skill, agent-framework, safety, ADE-tools, shortcuts, FAQ, feedback
+
+---
+Task ID: 2
+Agent: Redesign Agent
+Task: Redesign ADE Tools and Version History subsections in ZCodeSection.tsx for better visual impact
+
+Work Log:
+- Read worklog.md and current ZCodeSection.tsx / zcodeDesktop.ts to understand existing structure
+- Added `import { Fragment } from "react"` for Fragment support in pipeline layout
+- Added `pipelineConfig` constant outside component — defines 5-step workflow order:
+  Step 1: Plan & Manage → Task Manager (ListChecks)
+  Step 2: Code & Build → Terminal Panel (Terminal)
+  Step 3: Review Changes → Diff Preview (GitCompare)
+  Step 4: Live Preview → Browser Panel (Globe)
+  Step 5: Connect Anywhere → Remote Development (Smartphone)
+- Redesigned ADE Tools section (was: 2-column grouped layout "Управление работой" / "Панели разработчика"):
+  - Desktop (lg+): horizontal pipeline with 5 cards in a row connected by ChevronRight arrows
+  - Each card has: step number circle (taxi-yellow for step 1, muted for others), stage label, tool icon, name, shortcut badge, description, max 3 key bullet points
+  - Mobile: vertical timeline with step circles on left, cards on right, gradient connector line
+  - Added subtitle: "От планирования до деплоя — каждый инструмент встроен в рабочий процесс разработки"
+  - Section header changed from "Инструменты ADE" to "Инструменты ADE — рабочий процесс"
+- Redesigned Version History section (was: vertical timeline with numbered nodes):
+  - Added horizontal version strip at top — clickable-style badges/dots in a row, current version highlighted in taxi-yellow with "● Текущая" label
+  - Featured card for latest version (v2.0.0): larger card with gradient border glow, prominent taxi-yellow version badge, date, green "Текущая" badge, features/fixes in 2 columns on desktop, larger dots (w-2 h-2), more spacious layout
+  - Compact cards for older versions (v1.11.0, v1.9.0): smaller cards with muted version badge, features/fixes in single column, smaller dots (w-1.5 h-1.5)
+  - Gradient overlay on featured card for visual distinction
+- Preserved all existing: th() helper, useTheme() hook, motion animations, responsive design, theme support (dark/light), nyc-taxi color system
+- All lint checks pass clean
+
+Stage Summary:
+- ADE Tools now tells a story as a 5-step development workflow pipeline instead of a static 2-column list
+- Version History now has a quick-scan version strip + featured/compact card hierarchy instead of a flat timeline
+- Both sections fully responsive (horizontal pipeline → vertical timeline on mobile)
+- Dark and light themes both supported throughout
