@@ -48,23 +48,23 @@ export function QuickStartSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4 text-center`}
+            className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-5 text-center`}
           >
-            <div className="w-8 h-8 rounded-full bg-nyc-taxi/10 flex items-center justify-center mx-auto mb-3">
-              <step.icon className="h-4 w-4 text-nyc-taxi" />
+            <div className="w-10 h-10 rounded-full bg-nyc-taxi/10 flex items-center justify-center mx-auto mb-3">
+              <step.icon className="h-5 w-5 text-nyc-taxi" />
             </div>
             <div className="text-xs text-nyc-taxi font-mono mb-1">Шаг {i + 1}</div>
             <div className="font-semibold text-sm">{step.title}</div>
-            <div className={`text-xs ${th('text-white/40', 'text-oklch(0.50 0 0)')} mt-1`}>{step.desc}</div>
+            <div className={`text-xs mt-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{step.desc}</div>
           </motion.div>
         ))}
       </div>
 
       <TaxiDivider />
 
-      <div className="space-y-6 mt-6">
-        <h3 className="text-lg font-semibold">Регистрация и API-ключ</h3>
-        <p className={`text-sm ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold mb-3">Регистрация и API-ключ</h3>
+        <p className={`text-sm mb-6 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
           Перейдите на{" "}
           <a href="https://z.ai" target="_blank" rel="noopener" className="nyc-link-hover inline-flex items-center gap-1">
             z.ai <ExternalLink className="h-3 w-3" />
@@ -75,10 +75,12 @@ export function QuickStartSection() {
           </a>.
         </p>
 
-        <CodeBlock
-          lang="bash"
-          title="Способ 1: Автоматическая настройка (рекомендуется)"
-          code={`# Установите Coding Tool Helper
+        {/* 3-column layout for setup methods */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <CodeBlock
+            lang="bash"
+            title="Способ 1: Автоматическая настройка (рекомендуется)"
+            code={`# Установите Coding Tool Helper
 npm install -g @z_ai/coding-helper
 
 # Запустите мастер настройки
@@ -94,12 +96,12 @@ coding-helper init
 
 # Или настройте API-ключ напрямую:
 coding-helper auth glm_coding_plan_global YOUR_API_KEY`}
-        />
+          />
 
-        <CodeBlock
-          lang="bash"
-          title="Способ 2: Ручная настройка Claude Code"
-          code={`# Отредактируйте файл: ~/.claude/settings.json
+          <CodeBlock
+            lang="bash"
+            title="Способ 2: Ручная настройка Claude Code"
+            code={`# Отредактируйте файл: ~/.claude/settings.json
 # (macOS/Linux) или <user_dir>/.claude/settings.json (Windows)
 
 {
@@ -113,12 +115,12 @@ coding-helper auth glm_coding_plan_global YOUR_API_KEY`}
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air"
   }
 }`}
-        />
+          />
 
-        <CodeBlock
-          lang="bash"
-          title="Способ 3: OpenAI-совместимые инструменты"
-          code={`# Base URL: https://api.z.ai/api/coding/paas/v4
+          <CodeBlock
+            lang="bash"
+            title="Способ 3: OpenAI-совместимые инструменты"
+            code={`# Base URL: https://api.z.ai/api/coding/paas/v4
 # API Key: YOUR_API_KEY
 # Model: GLM-4.7
 
@@ -129,7 +131,8 @@ curl https://api.z.ai/api/coding/paas/v4/chat/completions \\
   -d '{"model":"GLM-4.7","messages":[{"role":"user","content":"Hello"}]}'
 
 # Подходит для: OpenCode, Cline, Cursor, Goose, Kilo Code и др.`}
-        />
+          />
+        </div>
       </div>
     </section>
   );

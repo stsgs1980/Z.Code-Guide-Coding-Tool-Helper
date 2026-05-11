@@ -57,7 +57,7 @@ export function McpSection() {
                   {server.name}
                   <Badge
                     variant="outline"
-                    className={`text-[10px] ${
+                    className={`text-xs ${
                       server.type === "remote"
                         ? th('border-emerald-500/30 text-emerald-400', 'border-emerald-500/40 text-emerald-600')
                         : th('border-white/10 text-white/40', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')
@@ -74,7 +74,7 @@ export function McpSection() {
 
             {/* Prerequisites & package info */}
             {(server.prerequisites || server.package || server.version) && (
-              <div className={`flex flex-wrap gap-2 mb-3 text-[11px] ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+              <div className={`flex flex-wrap gap-2 mb-3 text-sm ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
                 {server.package && (
                   <span className={`px-2 py-0.5 rounded ${th('bg-white/5', 'bg-oklch(0.93 0 0)')}`}>
                     Пакет: <code className="text-nyc-taxi">{server.package}</code>
@@ -109,7 +109,7 @@ export function McpSection() {
             {/* Tools */}
             {server.tools && server.tools.length > 0 && (
               <div className="mb-3">
-                <span className={`text-[11px] font-medium ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
+                <span className={`text-sm font-medium ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
                   Инструменты:
                 </span>
                 <div className="flex flex-wrap gap-1 mt-1">
@@ -117,7 +117,7 @@ export function McpSection() {
                     <Badge
                       key={tool}
                       variant="outline"
-                      className={`text-[10px] font-mono ${th('border-white/10 text-white/50', 'border-oklch(0.82 0 0) text-oklch(0.45 0 0)')}`}
+                      className={`text-xs font-mono ${th('border-white/10 text-white/50', 'border-oklch(0.82 0 0) text-oklch(0.45 0 0)')}`}
                     >
                       {tool}
                     </Badge>
@@ -136,7 +136,7 @@ export function McpSection() {
             {/* One-click install for remote servers */}
             {server.oneClickInstall && (
               <div className="mb-3">
-                <span className={`text-[11px] font-medium ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
+                <span className={`text-sm font-medium ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
                   Установка в один клик (Claude Code):
                 </span>
                 <CodeBlock
@@ -154,7 +154,7 @@ export function McpSection() {
                   <button
                     key={tab.key}
                     onClick={() => setTab(server.id, tab.key)}
-                    className={`text-[11px] px-2.5 py-1 rounded transition-colors ${
+                    className={`text-sm px-2.5 py-1 rounded transition-colors ${
                       getTab(server.id) === tab.key
                         ? "bg-nyc-taxi text-black font-semibold"
                         : th('bg-white/5 text-white/50 hover:text-white/80', 'bg-oklch(0.93 0 0) text-oklch(0.50 0 0) hover:text-oklch(0.30 0 0)')

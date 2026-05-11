@@ -111,7 +111,7 @@ export function TroubleshootSection() {
                   <code className="text-sm font-mono text-red-400">{err.error}</code>
                   <Badge
                     variant="outline"
-                    className={`text-[10px] ${categoryLabels[err.category].color}`}
+                    className={`text-xs ${categoryLabels[err.category].color}`}
                   >
                     {categoryLabels[err.category].text}
                   </Badge>
@@ -147,7 +147,7 @@ export function TroubleshootSection() {
               <code className="text-sm font-mono text-red-400">{err.title}</code>
               <Badge
                 variant="outline"
-                className={`text-[10px] ${categoryLabels[err.category].color}`}
+                className={`text-xs ${categoryLabels[err.category].color}`}
               >
                 {categoryLabels[err.category].text}
               </Badge>

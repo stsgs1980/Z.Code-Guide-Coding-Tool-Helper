@@ -55,12 +55,12 @@ export function ModelsSection() {
                   <h4 className="font-semibold text-lg font-mono">{model.name}</h4>
                   <Badge
                     variant="outline"
-                    className={`text-[10px] ${levelLabels[model.level].color}`}
+                    className={`text-xs ${levelLabels[model.level].color}`}
                   >
                     {levelLabels[model.level].text}
                   </Badge>
                   {model.context && (
-                    <Badge variant="outline" className={`text-[10px] ${th('border-white/10 text-white/30', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>
+                    <Badge variant="outline" className={`text-xs ${th('border-white/10 text-white/30', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>
                       {model.context}
                     </Badge>
                   )}
@@ -101,10 +101,10 @@ export function ModelsSection() {
           >
             <div className="flex items-center gap-2 mb-1">
               <span className="font-semibold text-sm font-mono">{m.name}</span>
-              <Badge className={`text-[10px] ${m.price === 'Бесплатно' ? 'bg-green-500/10 text-green-400 border-green-500/20' : th('bg-white/5 text-white/30', 'bg-oklch(0.93 0 0) text-oklch(0.50 0 0)')}`}>{m.price}</Badge>
+              <Badge className={`text-xs ${m.price === 'Бесплатно' ? 'bg-green-500/10 text-green-400 border-green-500/20' : th('bg-white/5 text-white/30', 'bg-oklch(0.93 0 0) text-oklch(0.50 0 0)')}`}>{m.price}</Badge>
             </div>
             <p className={`text-xs ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{m.description}</p>
-            <div className={`text-[10px] mt-1 ${th('text-white/30', 'text-oklch(0.60 0 0)')}`}>Контекст: {m.context}</div>
+            <div className={`text-xs mt-1 ${th('text-white/30', 'text-oklch(0.60 0 0)')}`}>Контекст: {m.context}</div>
           </motion.div>
         ))}
       </div>
@@ -128,10 +128,10 @@ export function ModelsSection() {
           >
             <div className="flex items-center gap-2 mb-1">
               <span className="font-semibold text-sm font-mono">{model.name}</span>
-              <Badge variant="outline" className={`text-[10px] ${th('border-white/10 text-white/30', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>{model.context}</Badge>
+              <Badge variant="outline" className={`text-xs ${th('border-white/10 text-white/30', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>{model.context}</Badge>
             </div>
             <p className={`text-xs ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
-            <p className={`text-[10px] mt-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+            <p className={`text-xs mt-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
               <span className="text-nyc-taxi">Применение:</span> {model.useCase}
             </p>
           </motion.div>
@@ -226,7 +226,7 @@ export function ModelsSection() {
           >
             <div className="flex items-center gap-2 mb-1">
               <span className="font-semibold text-sm">{model.name}</span>
-              <Badge variant="outline" className={`text-[10px] ${model.status === 'Beta' ? 'border-amber-500/20 text-amber-400' : th('border-white/10 text-white/40', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>
+              <Badge variant="outline" className={`text-xs ${model.status === 'Beta' ? 'border-amber-500/20 text-amber-400' : th('border-white/10 text-white/40', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>
                 {model.status}
               </Badge>
             </div>

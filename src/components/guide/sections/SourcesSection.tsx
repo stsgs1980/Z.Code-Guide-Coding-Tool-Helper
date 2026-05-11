@@ -60,7 +60,7 @@ export function SourcesSection() {
                       </div>
                       <div className={`text-xs truncate ${th('text-white/30', 'text-oklch(0.60 0 0)')}`}>{src.url}</div>
                     </div>
-                    <span className={`text-[10px] hidden sm:block ${th('text-white/20', 'text-oklch(0.70 0 0)')}`}>{src.description}</span>
+                    <span className={`text-xs hidden sm:block ${th('text-white/20', 'text-oklch(0.70 0 0)')}`}>{src.description}</span>
                   </a>
                 ))}
               </div>

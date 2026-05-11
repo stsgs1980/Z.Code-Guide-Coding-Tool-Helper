@@ -28,7 +28,7 @@ export function PlanSection() {
         {plans.map((plan, i) => (
           <div className="relative" key={plan.id}>
             {plan.highlight && (
-              <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 bg-nyc-taxi text-black text-[10px] px-3">
+              <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 bg-nyc-taxi text-black text-xs px-3">
                 Популярный
               </Badge>
             )}

@@ -132,40 +132,39 @@ export function HelperSection() {
 
       <TaxiDivider />
 
-      <div className="space-y-6 mt-6">
-        <h3 className="text-lg font-semibold">Установка</h3>
-        <CodeBlock lang="bash" code={helperInstallCode} />
-
-        <h3 className="text-lg font-semibold">Настройка API-ключа</h3>
-        <CodeBlock lang="bash" code={helperAuthCode} />
-
-        <h3 className="text-lg font-semibold">Управление языком</h3>
-        <CodeBlock lang="bash" code={helperLangCode} />
-
-        <TaxiDivider />
-
-        <h3 className="text-lg font-semibold">Справочник команд</h3>
-        <div className="space-y-2">
-          {commands.map((cmd, i) => (
-            <motion.div
-              key={cmd.cmd}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2`}
-            >
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <code className="text-sm font-mono text-nyc-taxi flex-shrink-0">{cmd.cmd}</code>
-                <CopyButton text={cmd.cmd} />
-              </div>
-              <span className={`text-xs sm:text-sm ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{cmd.description}</span>
-              <Badge variant="outline" className={`text-[10px] w-fit sm:ml-auto ${th('border-white/10 text-white/40', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>
-                {cmd.category}
-              </Badge>
-            </motion.div>
-          ))}
+      {/* 3-column layout for Install / API-key / Language */}
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold mb-4">Установка и базовая настройка</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+          <CodeBlock lang="bash" title="Установка" code={helperInstallCode} />
+          <CodeBlock lang="bash" title="Настройка API-ключа" code={helperAuthCode} />
+          <CodeBlock lang="bash" title="Управление языком" code={helperLangCode} />
         </div>
+      </div>
+
+      <TaxiDivider />
+
+      <h3 className="text-lg font-semibold mb-4">Справочник команд</h3>
+      <div className="space-y-2">
+        {commands.map((cmd, i) => (
+          <motion.div
+            key={cmd.cmd}
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.05 }}
+            className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2`}
+          >
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <code className="text-sm font-mono text-nyc-taxi flex-shrink-0">{cmd.cmd}</code>
+              <CopyButton text={cmd.cmd} />
+            </div>
+            <span className={`text-xs sm:text-sm ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{cmd.description}</span>
+            <Badge variant="outline" className={`text-xs w-fit sm:ml-auto ${th('border-white/10 text-white/40', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>
+              {cmd.category}
+            </Badge>
+          </motion.div>
+        ))}
       </div>
     </section>
   );

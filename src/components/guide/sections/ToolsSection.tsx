@@ -44,19 +44,19 @@ export function ToolsSection() {
               <h3 className="font-semibold text-sm">{tool.name}</h3>
               <Badge
                 variant="outline"
-                className={`text-[10px] ${typeColors[tool.type]}`}
+                className={`text-xs ${typeColors[tool.type]}`}
               >
                 {typeLabels[tool.type]}
               </Badge>
             </div>
-            <p className={`text-xs leading-relaxed ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{tool.description}</p>
+            <p className={`text-sm leading-relaxed ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{tool.description}</p>
             {tool.note && (
-              <p className={`text-[10px] mt-1 ${th('text-amber-400/60', 'text-amber-600')}`}>
+              <p className={`text-xs mt-1 ${th('text-amber-400/60', 'text-amber-600')}`}>
                 {tool.note}
               </p>
             )}
             <div className="mt-2 flex gap-2">
-              <Badge variant="outline" className={`text-[10px] ${th('border-white/10 text-white/30', 'border-oklch(0.82 0 0) text-oklch(0.60 0 0)')}`}>
+              <Badge variant="outline" className={`text-xs ${th('border-white/10 text-white/30', 'border-oklch(0.82 0 0) text-oklch(0.60 0 0)')}`}>
                 {tool.configFormat === "anthropic" ? "Anthropic API" : "OpenAI Compatible"}
               </Badge>
             </div>
