@@ -892,7 +892,7 @@ pre::-webkit-scrollbar-thumb:hover {
     oklch(1 0 0 / 8%) 85%,
     transparent 100%
   );
-  margin: 2rem 0;
+  margin: 1rem 0;
 }
 
 .nyc-section-divider-strong {

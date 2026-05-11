@@ -51,7 +51,7 @@ export function SourcesSection() {
                     href={src.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-3 flex items-center gap-3 group`}
+                    className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4 flex items-center gap-3 group`}
                   >
                     <ExternalLink className="h-4 w-4 text-nyc-taxi flex-shrink-0 group-hover:scale-110 transition-transform" />
                     <div className="flex-1 min-w-0">
