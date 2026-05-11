@@ -41,20 +41,6 @@ export function McpSection() {
         subtitle="Расширяйте возможности AI-ассистента с помощью Model Context Protocol"
       />
 
-      {/* MCP architecture image */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="mb-6"
-      >
-        <img
-          src="/images/mcp-servers.png"
-          alt="Архитектура MCP-серверов Z.AI: Vision, Web Search, Web Reader"
-          className="w-full max-w-2xl rounded-lg border border-white/10 shadow-xl"
-        />
-      </motion.div>
-
       <div className="space-y-6">
         {mcpServers.map((server, i) => (
           <motion.div

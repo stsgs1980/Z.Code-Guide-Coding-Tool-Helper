@@ -64,20 +64,6 @@ export function PlanSection() {
         ))}
       </div>
 
-      {/* Plans image */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="mb-6"
-      >
-        <img
-          src="/images/glm-plans.png"
-          alt="Сравнение тарифных планов GLM Coding Plan: Lite, Pro, Max"
-          className="w-full max-w-2xl rounded-lg border border-white/10 shadow-xl"
-        />
-      </motion.div>
-
       <TaxiDivider />
 
       <h3 className="text-lg font-semibold mb-4">Часто задаваемые вопросы</h3>

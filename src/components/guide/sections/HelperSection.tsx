@@ -51,21 +51,6 @@ export function HelperSection() {
         </div>
       </div>
 
-      {/* Helper screenshot */}
-      <div className="mb-6">
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <img
-            src="/images/coding-helper.png"
-            alt="Coding Tool Helper — интерактивный мастер настройки"
-            className="w-full max-w-2xl rounded-lg border border-white/10 shadow-xl"
-          />
-        </motion.div>
-      </div>
-
       <TaxiDivider />
 
       {/* Key Features */}
