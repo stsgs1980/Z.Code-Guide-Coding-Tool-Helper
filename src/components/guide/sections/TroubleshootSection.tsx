@@ -88,7 +88,7 @@ export function TroubleshootSection() {
   return (
     <section id="troubleshoot" className="py-10 md:py-14">
       <SectionHeader
-        num="09"
+        num="10"
         title="Решение проблем"
         subtitle="Частые ошибки и способы их устранения"
       />

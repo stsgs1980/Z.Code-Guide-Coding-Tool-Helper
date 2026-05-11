@@ -26,7 +26,7 @@ export function SourcesSection() {
   return (
     <section id="sources" className="py-10 md:py-14">
       <SectionHeader
-        num="10"
+        num="11"
         title="Источники"
         subtitle="Полезные ссылки и документация"
       />

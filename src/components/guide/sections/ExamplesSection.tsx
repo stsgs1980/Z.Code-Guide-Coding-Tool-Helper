@@ -1,8 +1,9 @@
 "use client";
 
-import { SectionHeader, CodeBlock } from "../ui";
+import { SectionHeader, CodeBlock, TaxiDivider } from "../ui";
+import { bestPractices, memoryTypes } from "../data/bestPractices";
 import { motion } from "framer-motion";
-import { MessageSquare, Bug, Rocket, Sparkles, Search, Eye, Lightbulb } from "lucide-react";
+import { MessageSquare, Bug, Rocket, Sparkles, Search, Eye, Lightbulb, Brain, Database } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 
 const examples = [
@@ -69,12 +70,14 @@ export function ExamplesSection() {
   return (
     <section id="examples" className="py-10 md:py-14">
       <SectionHeader
-        num="08"
-        title="Примеры использования"
+        num="09"
+        title="Примеры и практики"
         subtitle="Как использовать Z Code в повседневной разработке"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+      {/* Usage examples */}
+      <h3 className="text-lg font-semibold mb-4">Примеры использования</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-8">
         {examples.map((ex, i) => (
           <motion.div
             key={ex.title}
@@ -89,7 +92,7 @@ export function ExamplesSection() {
                 <ex.icon className="h-4 w-4 text-nyc-taxi" />
               </div>
               <div>
-                <h3 className="font-semibold text-sm">{ex.title}</h3>
+                <h4 className="font-semibold text-sm">{ex.title}</h4>
                 <p className={`text-xs ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{ex.desc}</p>
               </div>
             </div>
@@ -103,6 +106,77 @@ export function ExamplesSection() {
                 {ex.model}
               </span>
               <span className="inline-flex items-center gap-1"><Lightbulb className="h-3 w-3 text-nyc-taxi" /> {ex.tip}</span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <TaxiDivider />
+
+      {/* Best Practices */}
+      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+        <Brain className="h-5 w-5 text-nyc-taxi" />
+        Лучшие практики работы с AI-агентами
+      </h3>
+      <div className="space-y-3 mb-8">
+        {bestPractices.map((bp, i) => (
+          <motion.div
+            key={bp.principle}
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.06 }}
+            className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4`}
+          >
+            <div className="flex items-start gap-3">
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${th('bg-nyc-taxi/10 text-nyc-taxi', 'bg-nyc-taxi/10 text-nyc-taxi')}`}>
+                {i + 1}
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-sm mb-1">{bp.principle}</h4>
+                <p className={`text-xs mb-2 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{bp.description}</p>
+                <ul className="space-y-1">
+                  {bp.details.map((d) => (
+                    <li key={d} className={`text-[11px] flex items-center gap-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+                      <span className="nyc-status-dot nyc-status-active" />{d}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <TaxiDivider />
+
+      {/* Memory Mechanism */}
+      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+        <Database className="h-5 w-5 text-nyc-taxi" />
+        Механизм памяти AI-агентов
+      </h3>
+      <p className={`text-sm mb-4 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+        AI-агенты используют несколько типов памяти для эффективной работы. Краткосрочная память ограничена текущей сессией, а долгосрочная — сохраняется между задачами.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+        {memoryTypes.map((mem, i) => (
+          <motion.div
+            key={mem.name}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.06 }}
+            className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4`}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-semibold text-sm">{mem.name}</span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded ${mem.scope === 'Краткосрочная' ? th('bg-amber-500/10 text-amber-400', 'bg-amber-500/10 text-amber-600') : th('bg-green-500/10 text-green-400', 'bg-green-500/10 text-green-600')}`}>
+                {mem.scope}
+              </span>
+            </div>
+            <p className={`text-xs ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{mem.description}</p>
+            <div className={`text-[10px] mt-2 ${th('text-white/30', 'text-oklch(0.60 0 0)')}`}>
+              Хранение: <span className="text-nyc-taxi">{mem.storage}</span>
             </div>
           </motion.div>
         ))}

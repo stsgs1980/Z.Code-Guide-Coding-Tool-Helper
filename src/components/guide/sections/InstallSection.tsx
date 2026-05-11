@@ -12,7 +12,7 @@ export function InstallSection() {
   return (
     <section id="install" className="py-10 md:py-14">
       <SectionHeader
-        num="04"
+        num="05"
         title="Установка"
         subtitle="Пошаговая конфигурация для каждого инструмента"
       />

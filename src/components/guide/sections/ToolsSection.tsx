@@ -25,7 +25,7 @@ export function ToolsSection() {
   return (
     <section id="tools" className="py-10 md:py-14">
       <SectionHeader
-        num="03"
+        num="04"
         title="Инструменты"
         subtitle="Поддерживаемые AI-кодинг-инструменты"
       />

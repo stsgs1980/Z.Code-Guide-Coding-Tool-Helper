@@ -19,7 +19,7 @@ export function PlanSection() {
   return (
     <section id="plan" className="py-10 md:py-14">
       <SectionHeader
-        num="06"
+        num="07"
         title="GLM Coding Plan"
         subtitle="Тарифные планы для AI-кодинга с моделями GLM"
       />
@@ -84,10 +84,10 @@ export function PlanSection() {
                     value={`${group}-${i}`}
                     className={th('border-white/5', 'border-oklch(0.88 0 0)')}
                   >
-                    <AccordionTrigger className={`text-sm text-left font-semibold hover:text-nyc-taxi ${th('[&>svg]:text-white/30', '[&>svg]:text-oklch(0.50 0 0)')}`}>
-                      {faq.q}
+                    <AccordionTrigger className={`text-sm text-left font-bold ${th('text-white/90 hover:text-nyc-taxi', 'text-oklch(0.15 0 0) hover:text-oklch(0.78 0.16 85)')} hover:no-underline ${th('[&>svg]:text-white/30', '[&>svg]:text-oklch(0.50 0 0)')}`}>
+                      <span className={`${th('border-l-2 border-nyc-taxi/40 pl-3', 'border-l-2 border-oklch(0.78 0.16 85 / 40%) pl-3')}`}>{faq.q}</span>
                     </AccordionTrigger>
-                    <AccordionContent className={`text-sm whitespace-pre-line ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>
+                    <AccordionContent className={`text-sm whitespace-pre-line ${th('text-white/50 pl-5', 'text-oklch(0.40 0 0) pl-5')}`}>
                       {faq.a}
                     </AccordionContent>
                   </AccordionItem>

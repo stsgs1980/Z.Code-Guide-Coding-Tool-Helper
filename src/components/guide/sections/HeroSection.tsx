@@ -5,9 +5,9 @@ import { Terminal, Zap, Shield, Globe, BookOpen } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 
 const stats = [
-  { icon: Terminal, value: "10+", label: "Инструментов" },
-  { icon: Zap, value: "4", label: "GLM-модели" },
-  { icon: Shield, value: "3", label: "MCP-сервера" },
+  { icon: Terminal, value: "15+", label: "Инструментов" },
+  { icon: Zap, value: "12+", label: "GLM-модели" },
+  { icon: Shield, value: "4", label: "MCP-сервера" },
   { icon: Globe, value: "24/7", label: "Доступность" },
 ];
 

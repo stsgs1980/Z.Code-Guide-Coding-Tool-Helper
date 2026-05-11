@@ -13,10 +13,22 @@ export const sources: Source[] = [
     category: "docs",
   },
   {
-    title: "Z Code",
+    title: "ZCode Desktop",
     url: "https://zcode.z.ai",
-    description: "Страница продукта Z Code",
+    description: "Agentic Development Environment — десктопное приложение ZCode",
     category: "tools",
+  },
+  {
+    title: "ZCode Changelog",
+    url: "https://zcode.z.ai/changelog",
+    description: "История версий и обновлений ZCode",
+    category: "tools",
+  },
+  {
+    title: "ZCode Документация",
+    url: "https://zcode.z.ai/newdocs",
+    description: "Полная документация по ZCode Desktop",
+    category: "docs",
   },
   {
     title: "Z.AI API Reference",
@@ -37,9 +49,27 @@ export const sources: Source[] = [
     category: "tools",
   },
   {
+    title: "GLM Coding Plan",
+    url: "https://docs.z.ai/devpack/overview",
+    description: "Обзор GLM Coding Plan и тарифов",
+    category: "docs",
+  },
+  {
     title: "GLM Coding Plan FAQ",
     url: "https://docs.z.ai/devpack/faq",
     description: "Часто задаваемые вопросы о планах",
+    category: "docs",
+  },
+  {
+    title: "Best Practices",
+    url: "https://docs.z.ai/devpack/resources/best-practice",
+    description: "Лучшие практики работы с AI-кодинг-агентами",
+    category: "docs",
+  },
+  {
+    title: "Memory Mechanism",
+    url: "https://docs.z.ai/devpack/resources/memory-mechanism",
+    description: "Механизм памяти AI-агентов: типы и архитектура",
     category: "docs",
   },
   {
@@ -65,6 +95,12 @@ export const sources: Source[] = [
     url: "https://docs.z.ai/devpack/mcp/zread-mcp-server",
     description: "Документация MCP Zread",
     category: "tools",
+  },
+  {
+    title: "Scenario Examples",
+    url: "https://docs.z.ai/scenario-example/develop-tools/claude",
+    description: "Примеры интеграции с различными инструментами",
+    category: "docs",
   },
   {
     title: "Управление API-ключами",

@@ -36,7 +36,7 @@ export function McpSection() {
   return (
     <section id="mcp" className="py-10 md:py-14">
       <SectionHeader
-        num="05"
+        num="06"
         title="MCP-серверы"
         subtitle="Расширяйте возможности AI-ассистента с помощью Model Context Protocol"
       />

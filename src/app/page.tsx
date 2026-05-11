@@ -5,6 +5,7 @@ import {
   HeroSection,
   QuickStartSection,
   HelperSection,
+  ZCodeSection,
   ToolsSection,
   InstallSection,
   McpSection,
@@ -97,6 +98,7 @@ function GuideContent() {
       <main className="md:ml-14 w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-14 pb-20 flex-1">
         <QuickStartSection />
         <HelperSection />
+        <ZCodeSection />
         <ToolsSection />
         <InstallSection />
         <McpSection />
@@ -120,6 +122,15 @@ function GuideContent() {
               className="nyc-link-hover"
             >
               docs.z.ai
+            </a>
+            {" · "}
+            <a
+              href="https://zcode.z.ai"
+              target="_blank"
+              rel="noopener"
+              className="nyc-link-hover"
+            >
+              zcode.z.ai
             </a>
           </p>
         </footer>

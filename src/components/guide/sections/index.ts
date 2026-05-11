@@ -1,6 +1,7 @@
 export { HeroSection } from "./HeroSection";
 export { QuickStartSection } from "./QuickStartSection";
 export { HelperSection } from "./HelperSection";
+export { ZCodeSection } from "./ZCodeSection";
 export { ToolsSection } from "./ToolsSection";
 export { InstallSection } from "./InstallSection";
 export { McpSection } from "./McpSection";
