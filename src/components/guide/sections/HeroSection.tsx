@@ -20,15 +20,15 @@ export function HeroSection() {
       id="hero"
       className={`relative overflow-hidden ${th('nyc-ambient-bg', 'bg-oklch(0.97 0 0)')}`}
     >
-      {/* Full-bleed background layer */}
+      {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className={`absolute -top-32 -right-32 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/5', 'bg-[var(--nyc-taxi)]/8')}`} />
-        <div className={`absolute -bottom-24 -left-24 w-48 h-48 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/3', 'bg-[var(--nyc-taxi)]/5')}`} />
+        <div className={`absolute -top-32 -right-32 w-64 h-64 sm:w-80 sm:h-80 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/5', 'bg-[var(--nyc-taxi)]/8')}`} />
+        <div className={`absolute -bottom-24 -left-24 w-48 h-48 sm:w-60 sm:h-60 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/3', 'bg-[var(--nyc-taxi)]/5')}`} />
       </div>
 
       <div className="relative z-10 w-full px-6 md:px-10 pt-20 md:pt-28 pb-16 md:pb-20">
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 w-full max-w-6xl mx-auto">
-          {/* Left: Text content */}
+          {/* Left: Text */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -67,7 +67,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="grid grid-cols-2 gap-4 w-full sm:w-auto"
+            className="grid grid-cols-2 gap-3 md:gap-4 w-full sm:w-auto"
           >
             {stats.map((stat, i) => (
               <motion.div
@@ -75,11 +75,11 @@ export function HeroSection() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-                className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} nyc-hero-card-glow p-5 md:p-7 text-center min-w-[130px] sm:min-w-[150px] md:min-w-[170px]`}
+                className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} nyc-hero-card-glow p-4 md:p-6 text-center`}
               >
-                <stat.icon className="h-5 w-5 md:h-6 md:w-6 text-nyc-taxi mx-auto mb-3" />
-                <div className="text-2xl sm:text-3xl md:text-4xl font-black nyc-gradient-text">{stat.value}</div>
-                <div className={`text-xs mt-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{stat.label}</div>
+                <stat.icon className="h-4 w-4 md:h-5 md:w-5 text-nyc-taxi mx-auto mb-2" />
+                <div className="text-2xl md:text-3xl font-black nyc-gradient-text">{stat.value}</div>
+                <div className={`text-xs mt-1.5 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>

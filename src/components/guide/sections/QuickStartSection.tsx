@@ -40,7 +40,7 @@ export function QuickStartSection() {
         subtitle="От регистрации до первого AI-запроса за 4 шага"
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {steps.map((step, i) => (
           <motion.div
             key={step.title}
