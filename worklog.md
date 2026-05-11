@@ -1,37 +1,64 @@
 # Z Code — Руководство пользователя: Worklog
 
 ---
-Task ID: 1
+Task ID: 2
 Agent: Main Agent
-Task: Layout audit and fixes — max-width, timeline, spacing consistency
+Task: Full-width content, timeline wizard, layout fixes
 
 Work Log:
-- Changed max-w-6xl (1152px) → max-w-7xl (1280px) across all containers (page.tsx, HeroSection.tsx) to use full W1280 width
-- Converted wizard steps in HelperSection from flex-wrap chips to vertical timeline layout with:
-  - Gradient vertical connector line
-  - Numbered circular nodes (first step highlighted with taxi accent)
-  - Hover effects on nodes and labels
-  - Staggered entrance animations
-- Unified section padding: py-8 → py-10 md:py-14 across ALL 10 sections for consistent breathing room
-- Fixed SectionHeader margin: mb-6 → mb-6 md:mb-8 for responsive spacing
-- Added explicit w-14 to SidebarNav (matching md:ml-14 offset in content)
-- Standardized grid gaps: gap-4 → gap-3 sm:gap-4 for mobile-first consistency
-- Fixed Hero padding to match main content: px-4 sm:px-6 md:px-8 lg:px-12
-- Footer changed from mt-12 to mt-auto (proper sticky footer with flex-1 parent)
-- Lint clean, server returning 200
+- Removed max-w-7xl constraint from main and Hero — content fills available width
+- Unified responsive padding: px-4 sm:px-6 md:px-8 lg:px-10 xl:px-14
+- Section spacing standardized to py-10 md:py-14
+- Grid gaps aligned: gap-3 sm:gap-4
+- Timeline layout for wizard steps with vertical gradient line, animated nodes, hover effects
+- SectionHeader margin: mb-6 md:mb-8
+- Sidebar explicit w-14 matching md:ml-14 offset
+- Footer mt-auto for sticky behavior
 
 Stage Summary:
-- Full W1280 (max-w-7xl) width now properly utilized
-- Timeline layout for wizard steps implemented
-- All 10 sections have consistent py-10 md:py-14 padding
-- Grid gaps standardized across components
-- Sidebar has explicit w-14 width matching content offset
-- Footer uses mt-auto for proper bottom-stick behavior
+- Content fills full available width (no more max-w constraint)
+- Timeline wizard implemented
+- Consistent spacing across all sections
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Copyable commands, FAQ visual fix, fact-checking against official docs
+
+Work Log:
+- Added CopyButton to every command in Справочник команд (HelperSection)
+- FAQ group headers: bold uppercase with border-left taxi accent + bg highlight
+- FAQ triggers: font-semibold for distinction from answers
+- Fact-check against docs.z.ai, zcode.z.ai revealed CRITICAL errors:
+  - OpenAI Base URL WRONG: api/paas/v4 → api/coding/paas/v4
+  - ANTHROPIC_DEFAULT_OPUS_MODEL default WRONG: glm-5.1 → glm-4.7
+  - Vision MCP env vars WRONG: ZAI_API_KEY → Z_AI_API_KEY + Z_AI_MODE=ZAI
+  - Vision MCP config key: zai-vision → zai-mcp-server
+  - MCP source URLs 404: /devpack/extension/ → /devpack/mcp/
+  - MCP error fix had wrong package name
+- Added missing content:
+  - Zread MCP Server (4th MCP server)
+  - 5 new tools: TRAE, Qoder, Eigent, Hermes Agent, SillyTavern
+  - Peak hours definition (14:00-18:00 UTC+8)
+  - Vision quota clarification (shared prompt pool, not separate monthly)
+  - Zread quota sharing detail
+  - GLM-5 model added (separate from GLM-5-Turbo)
+  - type: streamableHttp for Cline MCP configs
+  - Coding vs General API endpoint distinction in openaiCompatConfig
+- Tool notes for general-purpose agents (amber warning)
+- Lint clean, server 200
+
+Stage Summary:
+- All critical fact-check errors fixed
+- All 4 MCP servers documented
+- 15 tools now listed (was 10)
+- FAQ visually distinct with border-left accent headers
+- Copy buttons on commands
+- 3 commits ready, need PAT token for push
 
 ---
 Previous entries:
 
+- Task 1: Layout audit — max-width, timeline, spacing
 - Task 13: Fix allowedDevOrigins and Hero layout
-- Server instability: Next.js dev process dies after ~20s in sandbox; cron restarts it
-- Hero section now uses full page width
-- ALL NEURO logo references completely removed
+- Server instability: Next.js dev process dies after ~20s in sandbox; cron restarts
