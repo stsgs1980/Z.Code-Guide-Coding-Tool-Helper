@@ -55,7 +55,7 @@ export function HelperSection() {
 
       {/* Key Features */}
       <h3 className="text-lg font-semibold mb-4 mt-6">Ключевые возможности</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
         {keyFeatures.map((feat, i) => (
           <motion.div
             key={feat.title}
@@ -63,7 +63,7 @@ export function HelperSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.05 }}
-            className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-3`}
+            className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4`}
           >
             <div className="flex items-center gap-2 mb-1">
               <feat.icon className="h-4 w-4 text-nyc-taxi" />
@@ -119,7 +119,7 @@ export function HelperSection() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-3 flex flex-col sm:flex-row sm:items-center gap-2`}
+              className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4 flex flex-col sm:flex-row sm:items-center gap-2`}
             >
               <code className="text-sm font-mono text-nyc-taxi flex-shrink-0">{cmd.cmd}</code>
               <span className={`text-xs sm:text-sm ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{cmd.description}</span>

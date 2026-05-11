@@ -172,8 +172,6 @@ export function McpSection() {
             </div>
           </motion.div>
         ))}
-
-        <TaxiDivider />
       </div>
     </section>
   );
