@@ -1,7 +1,7 @@
 "use client";
 
 import { SectionHeader, TaxiDivider } from "../ui";
-import { plans, planFaqs } from "../data/plans";
+import { plans, planFaqs, planFaqGroups } from "../data/plans";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -56,37 +56,58 @@ export function PlanSection() {
               </div>
               <div className={`h-px ${th('bg-white/5', 'bg-oklch(0.90 0 0)')} my-2`} />
               <div className="flex justify-between">
-                <span className={th('text-white/40', 'text-oklch(0.50 0 0)')}>MCP Web Search</span>
-                <span className={`font-mono text-xs ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>{plan.mcpWebSearch}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className={th('text-white/40', 'text-oklch(0.50 0 0)')}>MCP Vision</span>
-                <span className={`font-mono text-xs ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>{plan.mcpVision}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className={th('text-white/40', 'text-oklch(0.50 0 0)')}>MCP Reader</span>
-                <span className={`font-mono text-xs ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>{plan.mcpReader}</span>
+                <span className={th('text-white/40', 'text-oklch(0.50 0 0)')}>MCP поиск + чтение</span>
+                <span className={`font-mono text-xs ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>{plan.mcpSearchesAndReaders}</span>
               </div>
             </div>
           </motion.div>
         ))}
       </div>
 
+      {/* Plans image */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mb-6"
+      >
+        <img
+          src="/images/glm-plans.png"
+          alt="Сравнение тарифных планов GLM Coding Plan: Lite, Pro, Max"
+          className="w-full max-w-2xl rounded-lg border border-white/10 shadow-xl"
+        />
+      </motion.div>
+
       <TaxiDivider />
 
       <h3 className="text-lg font-semibold mb-4">Часто задаваемые вопросы</h3>
-      <Accordion type="single" collapsible className="w-full">
-        {planFaqs.map((faq, i) => (
-          <AccordionItem key={i} value={`faq-${i}`} className={th('border-white/5', 'border-oklch(0.88 0 0)')}>
-            <AccordionTrigger className="text-sm text-left hover:text-nyc-taxi">
-              {faq.q}
-            </AccordionTrigger>
-            <AccordionContent className={`text-sm ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>
-              {faq.a}
-            </AccordionContent>
-          </AccordionItem>
+      <div className="space-y-6">
+        {planFaqGroups.map((group) => (
+          <div key={group}>
+            <h4 className={`text-sm font-semibold mb-2 ${th('text-white/60', 'text-oklch(0.40 0 0)')}`}>
+              {group}
+            </h4>
+            <Accordion type="single" collapsible className="w-full">
+              {planFaqs
+                .filter((faq) => faq.group === group)
+                .map((faq, i) => (
+                  <AccordionItem
+                    key={`${group}-${i}`}
+                    value={`${group}-${i}`}
+                    className={th('border-white/5', 'border-oklch(0.88 0 0)')}
+                  >
+                    <AccordionTrigger className="text-sm text-left hover:text-nyc-taxi">
+                      {faq.q}
+                    </AccordionTrigger>
+                    <AccordionContent className={`text-sm whitespace-pre-line ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>
+                      {faq.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+            </Accordion>
+          </div>
         ))}
-      </Accordion>
+      </div>
     </section>
   );
 }

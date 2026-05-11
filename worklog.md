@@ -85,3 +85,101 @@ Unresolved Issues:
 - Need to verify theme toggle works consistently via the button click
 - Some sections may need more content from additional docs.z.ai pages
 - Images/screenshots not yet generated for the guide
+
+---
+Task ID: 3-4-5
+Agent: Data Updater
+Task: Update 3 data files with real content from docs.z.ai
+
+Work Log:
+- Read worklog.md and all existing data files (plans.ts, commands.ts, mcpServers.ts)
+- Read section components that consume these data files (PlanSection.tsx, HelperSection.tsx, McpSection.tsx)
+- Read barrel export file (data/index.ts)
+
+- Updated plans.ts:
+  - Replaced separate mcpWebSearch/mcpVision/mcpReader fields with single mcpSearchesAndReaders field (matching real docs: "100 веб-поисков и чтений в месяц")
+  - Added PlanFaq interface with group field
+  - Added planFaqGroups constant and PlanFaqGroup type
+  - Replaced 5 placeholder FAQs with 13 real FAQs from docs, organized into 4 groups:
+    1. Детали плана GLM Coding (6 FAQs)
+    2. MCP-вызовы (2 FAQs)
+    3. Управление подпиской (3 FAQs)
+    4. Изменение плана (2 FAQs)
+
+- Updated commands.ts:
+  - Added "mcp" to Command category type union
+  - Added 4 new commands: chelper init, lang set en_US, auth reload claude, --help, --version
+  - Updated descriptions to match real docs
+  - Rewrote helperInstallCode with both install methods, chelper alias, sudo note
+  - Rewrote helperAuthCode with interactive, direct, reload, revoke flows
+  - Rewrote helperLangCode with show, set ru, set en_US
+
+- Updated mcpServers.ts:
+  - Completely rewrote McpServer interface with: type (local/remote), tools[], bestPractice, prerequisites, package, version, oneClickInstall, configClaudeCode/configCline/configOpenCode
+  - Removed port field and mcpCombinedConfig export (not in real docs)
+  - Vision MCP Server: local type, @z_ai/mcp-server package, 8 tools, prerequisites, bestPractice
+  - Web Search MCP Server: remote type, webSearchPrime tool, one-click install command, 3 client configs
+  - Web Reader MCP Server: remote type, webReader tool, one-click install command, 3 client configs
+
+- Updated PlanSection.tsx:
+  - Replaced 3 separate MCP rows with single "MCP поиск + чтение" row
+  - Replaced flat FAQ accordion with grouped FAQ display using planFaqGroups
+  - Added group headers for each FAQ section
+  - Added whitespace-pre-line to FAQ content for proper line breaks
+
+- Updated McpSection.tsx:
+  - Added remote/local badge distinction (green for remote)
+  - Added prerequisites/package/version info display
+  - Added tools list with Badge components
+  - Added bestPractice callout box
+  - Added one-click install code block for remote servers
+  - Added tabbed config viewer (Claude Code / Cline / OpenCode) with useState
+  - Removed mcpCombinedConfig section
+
+- Updated data/index.ts:
+  - Added exports: planFaqGroups, PlanFaq, PlanFaqGroup
+  - Removed mcpCombinedConfig export
+
+- Lint: 0 errors
+- Dev server: running, HTTP 200
+
+Stage Summary:
+- All 3 data files updated with real content from docs.z.ai
+- 2 section components updated to display new data fields
+- 1 barrel export file updated
+- Total 6 files modified
+- 0 lint errors, dev server healthy
+
+---
+Task ID: 6-7
+Agent: Main Agent
+Task: Add images, improve practical examples, expand Helper/Troubleshoot sections with real docs content
+
+Work Log:
+- Generated 5 AI images for the guide using z-ai image CLI: hero.png, coding-helper.png, glm-plans.png, mcp-servers.png, models.png
+- Saved all images to /home/z/my-project/public/images/
+- Added images to 5 section components: HeroSection, HelperSection, PlanSection, McpSection, ModelsSection
+- Rewrote HelperSection with real docs content: 6 key features, 8 wizard steps, troubleshooting errors from Coding Tool Helper docs
+- Rewrote ExamplesSection with 6 practical examples including model recommendations and MCP usage tips
+- Rewrote TroubleshootSection with 2 categories: General API errors + Coding Tool Helper specific errors (6 from real docs)
+- Rewrote QuickStartSection with 3 setup methods: automatic (coding-helper), manual (Claude Code), OpenAI-compatible
+- Updated SourcesSection links with correct URLs from docs.z.ai/llms.txt
+- Cleaned up eslint-disable directives (5 warnings → 0)
+- Lint: 0 errors, 0 warnings
+- Dev server: HTTP 200
+
+Stage Summary:
+- 5 AI-generated images added to guide sections
+- All sections now contain real content from docs.z.ai sources
+- HelperSection expanded: key features, wizard steps, commands from real docs
+- TroubleshootSection expanded: real errors from Coding Tool Helper docs with code solutions
+- ExamplesSection expanded: 6 practical examples with model recommendations
+- QuickStartSection expanded: 3 setup methods with real config from docs
+- All FAQ data verified against docs.z.ai/devpack/faq
+- All MCP server data verified against docs.z.ai/devpack/mcp/*
+- 0 lint errors, 0 warnings
+
+Unresolved Issues:
+- Theme toggle button may not always propagate click consistently (DOM class changes work)
+- globals.css still has !important declarations (M2 pending)
+- Light theme image borders use border-white/10 which may not look ideal in light mode

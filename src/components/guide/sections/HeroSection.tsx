@@ -72,6 +72,22 @@ export function HeroSection() {
         </motion.div>
       </div>
 
+      {/* Hero image */}
+      <div className="relative z-10 px-6 md:px-12 lg:px-16 pb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className="max-w-4xl"
+        >
+          <img
+            src="/images/hero.png"
+            alt="Z Code — платформа AI-кодинга нового поколения"
+            className="w-full rounded-lg border border-white/10 shadow-2xl"
+          />
+        </motion.div>
+      </div>
+
       <div className="nyc-caution-stripe" />
     </section>
   );

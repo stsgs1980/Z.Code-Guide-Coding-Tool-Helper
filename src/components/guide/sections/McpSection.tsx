@@ -1,14 +1,36 @@
 "use client";
 
 import { SectionHeader, TaxiDivider, CodeBlock } from "../ui";
-import { mcpServers, mcpCombinedConfig } from "../data/mcpServers";
+import { mcpServers } from "../data/mcpServers";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { useTheme } from "../hooks/useTheme";
+import { useState } from "react";
+
+type ConfigTab = "claude" | "cline" | "opencode";
 
 export function McpSection() {
   const { theme } = useTheme();
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
+  const [activeTabs, setActiveTabs] = useState<Record<string, ConfigTab>>({});
+
+  const getTab = (serverId: string): ConfigTab => activeTabs[serverId] ?? "claude";
+  const setTab = (serverId: string, tab: ConfigTab) =>
+    setActiveTabs((prev) => ({ ...prev, [serverId]: tab }));
+
+  const getConfig = (server: typeof mcpServers[number], tab: ConfigTab) => {
+    switch (tab) {
+      case "claude": return server.configClaudeCode;
+      case "cline": return server.configCline;
+      case "opencode": return server.configOpenCode;
+    }
+  };
+
+  const tabLabels: { key: ConfigTab; label: string }[] = [
+    { key: "claude", label: "Claude Code" },
+    { key: "cline", label: "Cline" },
+    { key: "opencode", label: "OpenCode" },
+  ];
 
   return (
     <section id="mcp" className="py-8">
@@ -17,6 +39,20 @@ export function McpSection() {
         title="MCP-серверы"
         subtitle="Расширяйте возможности AI-ассистента с помощью Model Context Protocol"
       />
+
+      {/* MCP architecture image */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mb-6"
+      >
+        <img
+          src="/images/mcp-servers.png"
+          alt="Архитектура MCP-серверов Z.AI: Vision, Web Search, Web Reader"
+          className="w-full max-w-2xl rounded-lg border border-white/10 shadow-xl"
+        />
+      </motion.div>
 
       <div className="space-y-6">
         {mcpServers.map((server, i) => (
@@ -32,35 +68,125 @@ export function McpSection() {
               <div>
                 <h3 className="font-semibold flex items-center gap-2">
                   {server.name}
-                  <Badge variant="outline" className={`text-[10px] ${th('border-white/10 text-white/40', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>
-                    порт {server.port}
+                  <Badge
+                    variant="outline"
+                    className={`text-[10px] ${
+                      server.type === "remote"
+                        ? th('border-emerald-500/30 text-emerald-400', 'border-emerald-500/40 text-emerald-600')
+                        : th('border-white/10 text-white/40', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')
+                    }`}
+                  >
+                    {server.type === "remote" ? "Remote MCP" : "Local MCP"}
                   </Badge>
                 </h3>
-                <p className={`text-xs mt-1 ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{server.description}</p>
+                <p className={`text-xs mt-1 ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>
+                  {server.description}
+                </p>
               </div>
             </div>
-            <ul className="space-y-1 mb-4">
+
+            {/* Prerequisites & package info */}
+            {(server.prerequisites || server.package || server.version) && (
+              <div className={`flex flex-wrap gap-2 mb-3 text-[11px] ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+                {server.package && (
+                  <span className={`px-2 py-0.5 rounded ${th('bg-white/5', 'bg-oklch(0.93 0 0)')}`}>
+                    Пакет: <code className="text-nyc-taxi">{server.package}</code>
+                  </span>
+                )}
+                {server.version && (
+                  <span className={`px-2 py-0.5 rounded ${th('bg-white/5', 'bg-oklch(0.93 0 0)')}`}>
+                    Версия: <code className="text-nyc-taxi">{server.version}</code>
+                  </span>
+                )}
+                {server.prerequisites && (
+                  <span className={`px-2 py-0.5 rounded ${th('bg-white/5', 'bg-oklch(0.93 0 0)')}`}>
+                    Требуется: {server.prerequisites}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Capabilities */}
+            <ul className="space-y-1 mb-3">
               {server.capabilities.map((cap) => (
-                <li key={cap} className={`text-xs flex items-center gap-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+                <li
+                  key={cap}
+                  className={`text-xs flex items-center gap-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}
+                >
                   <span className="nyc-status-dot nyc-status-active" />
                   {cap}
                 </li>
               ))}
             </ul>
-            <CodeBlock lang="json" title={`Конфигурация ${server.name}`} code={server.configJson} />
+
+            {/* Tools */}
+            {server.tools && server.tools.length > 0 && (
+              <div className="mb-3">
+                <span className={`text-[11px] font-medium ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
+                  Инструменты:
+                </span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {server.tools.map((tool) => (
+                    <Badge
+                      key={tool}
+                      variant="outline"
+                      className={`text-[10px] font-mono ${th('border-white/10 text-white/50', 'border-oklch(0.82 0 0) text-oklch(0.45 0 0)')}`}
+                    >
+                      {tool}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Best practice */}
+            {server.bestPractice && (
+              <div className={`text-xs mb-3 p-2 rounded ${th('bg-white/5 text-white/50', 'bg-oklch(0.95 0 0) text-oklch(0.40 0 0)')}`}>
+                💡 {server.bestPractice}
+              </div>
+            )}
+
+            {/* One-click install for remote servers */}
+            {server.oneClickInstall && (
+              <div className="mb-3">
+                <span className={`text-[11px] font-medium ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>
+                  Установка в один клик (Claude Code):
+                </span>
+                <CodeBlock
+                  lang="bash"
+                  title="One-click install"
+                  code={server.oneClickInstall}
+                />
+              </div>
+            )}
+
+            {/* Config tabs */}
+            <div>
+              <div className="flex gap-1 mb-2">
+                {tabLabels.map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setTab(server.id, tab.key)}
+                    className={`text-[11px] px-2.5 py-1 rounded transition-colors ${
+                      getTab(server.id) === tab.key
+                        ? "bg-nyc-taxi text-black font-semibold"
+                        : th('bg-white/5 text-white/50 hover:text-white/80', 'bg-oklch(0.93 0 0) text-oklch(0.50 0 0) hover:text-oklch(0.30 0 0)')
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+              <CodeBlock
+                lang={server.type === "remote" ? "bash" : "json"}
+                title={`Конфигурация ${server.name} — ${tabLabels.find((t) => t.key === getTab(server.id))?.label}`}
+                code={getConfig(server, getTab(server.id))}
+              />
+            </div>
           </motion.div>
         ))}
 
         <TaxiDivider />
-
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <h3 className="text-lg font-semibold mb-3">Полная конфигурация (все серверы)</h3>
-          <CodeBlock lang="json" title="Все MCP-серверы" code={mcpCombinedConfig} />
-        </motion.div>
       </div>
     </section>
   );

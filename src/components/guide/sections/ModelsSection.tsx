@@ -66,6 +66,20 @@ export function ModelsSection() {
         ))}
       </div>
 
+      {/* Models image */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mb-6"
+      >
+        <img
+          src="/images/models.png"
+          alt="Модели GLM: GLM-5.1, GLM-5-Turbo, GLM-4.7, GLM-4.5-Air"
+          className="w-full max-w-2xl rounded-lg border border-white/10 shadow-xl"
+        />
+      </motion.div>
+
       <CodeBlock
         lang="json"
         title="Маппинг моделей (Anthropic API)"
