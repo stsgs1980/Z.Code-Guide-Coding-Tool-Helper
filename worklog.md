@@ -51,3 +51,37 @@ Stage Summary:
 - Full model lineup from docs.z.ai now reflected (coding, vision, image gen, video gen, audio, agents)
 - Best practices and memory mechanism added from docs.z.ai
 - Server running on port 3000, all pages compile successfully
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Enrich ZCode Desktop section with full official docs from zcode.z.ai/en/newdocs/
+
+Work Log:
+- Fetched all 15 pages from https://zcode.z.ai/en/newdocs/ (welcome, install, configuration, agents, edit-history, commands, plugin, mcp-services, skill, agent-framework, safety-confirm, ADE-tools, keyboard-shortcuts, qa, feedback)
+- Updated zcodeDesktop.ts with new data:
+  - Permission modes: enriched descriptions from official docs
+  - Agent frameworks: added bestUseCases field (e.g., "Рефакторинг архитектуры, миграция legacy")
+  - ADE Tools: expanded Task Manager with archive/pin/copy paths details, expanded Browser Panel with DevTools info, expanded Diff Preview with line counts
+  - Safety decisions: new data with 3 options (Allow, Always Allow, Reject) + recommended scenarios
+  - API providers: NEW — 6 providers (BigModel, Z.AI, Anthropic, OpenRouter, Moonshot, Custom) with step-by-step setup instructions, Base URLs, model lists
+  - Edit history use cases: NEW — 3 cards (fix mistakes, add detail, experiment)
+  - Feedback info: NEW — form URL, log paths (macOS ~/.zcode, Windows %USERPROFILE%\.zcode), in-app feedback
+  - ZCode FAQ: enriched answers with more details (ADE positioning, Vibe Coding direction, supported provider list)
+  - Download links: added installNote field (e.g., "Откройте DMG, перетащите Z Code.app в Applications")
+- Updated ZCodeSection.tsx with new sections:
+  - "Редактирование отправленных сообщений" — Edit History with 3 use case cards
+  - "Команды (/Commands)" — /Commands feature description
+  - "Настройка API-провайдеров" — expanded from 2 methods to full provider list with step-by-step instructions
+  - "Подтверждение безопасности" — now has decision options cards (Allow/Always Allow/Reject) + scenario table
+  - "Обратная связь и поддержка" — NEW section with form URL, in-app feedback, log paths
+  - FAQ questions now use same enhanced styling (border-l-2 accent, font-bold, pl-3/pl-5)
+- All lint checks pass clean, server running on port 3000
+
+Stage Summary:
+- ZCode Desktop section now comprehensively covers ALL content from zcode.z.ai/en/newdocs/
+- 6 API providers documented with step-by-step setup instructions
+- Edit History, /Commands, Safety Decisions, and Feedback sections added
+- ADE Tools descriptions enriched with official docs details
+- FAQ answers enriched with ADE positioning, Vibe Coding direction, provider list
+- Total coverage: welcome, install, config, agents, edit-history, commands, plugin, mcp, skill, agent-framework, safety, ADE-tools, shortcuts, FAQ, feedback
