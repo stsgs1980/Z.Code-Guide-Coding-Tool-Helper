@@ -20,7 +20,7 @@ export function SectionHeader({ num, title, subtitle, className = "" }: SectionH
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5 }}
-      className={`mb-6 ${className}`}
+      className={`mb-6 md:mb-8 ${className}`}
     >
       <span className="section-number">{num}</span>
       <h2 className="text-2xl md:text-3xl font-bold mt-1 tracking-tight">{title}</h2>

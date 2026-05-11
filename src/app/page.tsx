@@ -92,8 +92,9 @@ function GuideContent() {
         <HeroSection />
       </div>
 
+
       {/* Content sections */}
-      <main className="md:ml-14 max-w-6xl mx-auto px-6 md:px-10 lg:px-16 pb-20 flex-1">
+      <main className="md:ml-14 w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-14 pb-20 flex-1">
         <QuickStartSection />
         <HelperSection />
         <ToolsSection />
@@ -106,7 +107,7 @@ function GuideContent() {
         <SourcesSection />
 
         {/* Footer */}
-        <footer className="nyc-footer-glow-line mt-12 pt-6 pb-8 text-center">
+        <footer className="nyc-footer-glow-line mt-auto pt-8 pb-8 text-center">
           <p className={`text-xs ${th('text-white/20', 'text-oklch(0.70 0 0)')}`}>
             Z Code User Guide — Руководство пользователя
           </p>

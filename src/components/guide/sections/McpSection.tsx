@@ -34,7 +34,7 @@ export function McpSection() {
   ];
 
   return (
-    <section id="mcp" className="py-8">
+    <section id="mcp" className="py-10 md:py-14">
       <SectionHeader
         num="05"
         title="MCP-серверы"

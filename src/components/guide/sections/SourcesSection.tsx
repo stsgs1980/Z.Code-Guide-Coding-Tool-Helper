@@ -24,7 +24,7 @@ export function SourcesSection() {
   }));
 
   return (
-    <section id="sources" className="py-8">
+    <section id="sources" className="py-10 md:py-14">
       <SectionHeader
         num="10"
         title="Источники"

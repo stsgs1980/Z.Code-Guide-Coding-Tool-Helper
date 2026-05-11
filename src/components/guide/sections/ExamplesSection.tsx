@@ -67,14 +67,14 @@ export function ExamplesSection() {
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
 
   return (
-    <section id="examples" className="py-8">
+    <section id="examples" className="py-10 md:py-14">
       <SectionHeader
         num="08"
         title="Примеры использования"
         subtitle="Как использовать Z Code в повседневной разработке"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {examples.map((ex, i) => (
           <motion.div
             key={ex.title}

@@ -18,7 +18,7 @@ export function ModelsSection() {
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
 
   return (
-    <section id="models" className="py-8">
+    <section id="models" className="py-10 md:py-14">
       <SectionHeader
         num="07"
         title="Модели GLM"

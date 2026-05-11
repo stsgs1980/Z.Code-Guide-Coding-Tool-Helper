@@ -32,7 +32,7 @@ export function HelperSection() {
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
 
   return (
-    <section id="helper" className="py-8">
+    <section id="helper" className="py-10 md:py-14">
       <SectionHeader
         num="02"
         title="Coding Tool Helper"
@@ -55,7 +55,7 @@ export function HelperSection() {
 
       {/* Key Features */}
       <h3 className="text-lg font-semibold mb-4 mt-6">Ключевые возможности</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-8">
         {keyFeatures.map((feat, i) => (
           <motion.div
             key={feat.title}
@@ -76,24 +76,58 @@ export function HelperSection() {
 
       <TaxiDivider />
 
-      {/* Wizard steps */}
+      {/* Wizard steps — Timeline */}
       <h3 className="text-lg font-semibold mb-4 mt-6">Шаги мастера настройки</h3>
-      <p className={`text-sm mb-4 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+      <p className={`text-sm mb-6 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
         После запуска <code className="text-nyc-taxi">coding-helper init</code> мастер проведёт вас через следующие шаги.
         Используйте стрелки для выбора и Enter для подтверждения.
       </p>
-      <div className="flex flex-wrap gap-2 mb-8">
-        {wizardSteps.map((step) => (
-          <div
-            key={step.num}
-            className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} px-3 py-2 flex items-center gap-2`}
-          >
-            <span className="w-5 h-5 rounded-full bg-nyc-taxi/10 flex items-center justify-center text-[10px] font-bold text-nyc-taxi">
-              {step.num}
-            </span>
-            <span className={`text-xs ${th('text-white/70', 'text-oklch(0.35 0 0)')}`}>{step.label}</span>
-          </div>
-        ))}
+      <div className="relative mb-8">
+        {/* Vertical line */}
+        <div className={`absolute left-[15px] top-2 bottom-2 w-px ${th('bg-gradient-to-b from-nyc-taxi/40 via-nyc-taxi/20 to-transparent', 'bg-gradient-to-b from-oklch(0.78 0.16 85 / 30%) via-oklch(0.78 0.16 85 / 15%) to-transparent')}`} />
+
+        <div className="space-y-1">
+          {wizardSteps.map((step, i) => (
+            <motion.div
+              key={step.num}
+              initial={{ opacity: 0, x: -12 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.06 }}
+              className="flex items-center gap-4 group"
+            >
+              {/* Timeline node */}
+              <div className="relative z-10 flex-shrink-0">
+                <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                  i === 0
+                    ? 'bg-nyc-taxi text-black shadow-md shadow-nyc-taxi/30'
+                    : th(
+                        'bg-oklch(0.18 0 0) border border-white/10 text-white/50 group-hover:border-nyc-taxi/40 group-hover:text-nyc-taxi',
+                        'bg-oklch(0.96 0 0) border border-oklch(0.82 0 0) text-oklch(0.45 0 0) group-hover:border-oklch(0.78 0.16 85 / 50%) group-hover:text-oklch(0.78 0.16 85)'
+                      )
+                }`}>
+                  {step.num}
+                </div>
+              </div>
+
+              {/* Label */}
+              <div className={`py-2 px-4 rounded-lg transition-colors duration-200 flex-1 ${
+                th(
+                  'bg-white/[0.02] group-hover:bg-white/[0.05]',
+                  'bg-oklch(0.97 0 0) group-hover:bg-oklch(0.94 0 0)'
+                )
+              }`}>
+                <span className={`text-sm font-medium transition-colors duration-200 ${
+                  i === 0
+                    ? 'text-nyc-taxi'
+                    : th('text-white/60 group-hover:text-white/80', 'text-oklch(0.35 0 0) group-hover:text-oklch(0.20 0 0)')
+                }`}>
+                  {step.label}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       <TaxiDivider />

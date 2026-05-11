@@ -17,14 +17,14 @@ export function PlanSection() {
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
 
   return (
-    <section id="plan" className="py-8">
+    <section id="plan" className="py-10 md:py-14">
       <SectionHeader
         num="06"
         title="GLM Coding Plan"
         subtitle="Тарифные планы для AI-кодинга с моделями GLM"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-8">
         {plans.map((plan, i) => (
           <div className="relative" key={plan.id}>
             {plan.highlight && (

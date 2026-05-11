@@ -26,7 +26,7 @@ export function SidebarNav({ onSearchOpen }: SidebarNavProps) {
   };
 
   return (
-    <nav className={`hidden md:flex flex-col items-center gap-1 py-4 px-2 fixed left-0 top-0 h-full z-40 bg-background/80 backdrop-blur-sm border-r ${th('border-white/5', 'border-oklch(0.88 0 0)')}`}>
+    <nav className={`hidden md:flex flex-col items-center gap-1 py-4 px-2 fixed left-0 top-0 h-full z-40 w-14 bg-background/80 backdrop-blur-sm border-r ${th('border-white/5', 'border-oklch(0.88 0 0)')}`}>
       <button
         onClick={onSearchOpen}
         className={`p-2 rounded-lg transition-colors group mb-2 ${th('hover:bg-white/5', 'hover:bg-oklch(0.90 0 0)')}`}

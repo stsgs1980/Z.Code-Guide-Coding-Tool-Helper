@@ -23,14 +23,14 @@ export function ToolsSection() {
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
 
   return (
-    <section id="tools" className="py-8">
+    <section id="tools" className="py-10 md:py-14">
       <SectionHeader
         num="03"
         title="Инструменты"
         subtitle="Поддерживаемые AI-кодинг-инструменты"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {tools.map((tool, i) => (
           <motion.div
             key={tool.id}

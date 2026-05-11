@@ -10,7 +10,7 @@ export function InstallSection() {
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
 
   return (
-    <section id="install" className="py-8">
+    <section id="install" className="py-10 md:py-14">
       <SectionHeader
         num="04"
         title="Установка"

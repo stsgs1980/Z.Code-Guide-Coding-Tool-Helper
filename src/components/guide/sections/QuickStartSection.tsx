@@ -33,14 +33,14 @@ export function QuickStartSection() {
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
 
   return (
-    <section id="quick-start" className="py-8">
+    <section id="quick-start" className="py-10 md:py-14">
       <SectionHeader
         num="01"
         title="Быстрый старт"
         subtitle="От регистрации до первого AI-запроса за 4 шага"
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
         {steps.map((step, i) => (
           <motion.div
             key={step.title}
@@ -62,7 +62,7 @@ export function QuickStartSection() {
 
       <TaxiDivider />
 
-      <div className="space-y-4 mt-6">
+      <div className="space-y-6 mt-6">
         <h3 className="text-lg font-semibold">Регистрация и API-ключ</h3>
         <p className={`text-sm ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
           Перейдите на{" "}
