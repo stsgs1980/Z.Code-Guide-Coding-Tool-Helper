@@ -69,7 +69,7 @@ export function HelperSection() {
               <feat.icon className="h-4 w-4 text-nyc-taxi" />
               <span className="text-sm font-semibold">{feat.title}</span>
             </div>
-            <p className={`text-xs ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{feat.desc}</p>
+            <p className={`text-sm leading-relaxed ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{feat.desc}</p>
           </motion.div>
         ))}
       </div>
@@ -78,7 +78,7 @@ export function HelperSection() {
 
       {/* Wizard steps — Timeline */}
       <h3 className="text-lg font-semibold mb-4 mt-6">Шаги мастера настройки</h3>
-      <p className={`text-sm mb-6 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+      <p className={`text-sm leading-relaxed mb-6 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
         После запуска <code className="text-nyc-taxi">coding-helper init</code> мастер проведёт вас через следующие шаги.
         Используйте стрелки для выбора и Enter для подтверждения.
       </p>

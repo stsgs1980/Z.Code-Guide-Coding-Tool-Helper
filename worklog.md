@@ -119,3 +119,79 @@ Stage Summary:
 - Version History now has a quick-scan version strip + featured/compact card hierarchy instead of a flat timeline
 - Both sections fully responsive (horizontal pipeline → vertical timeline on mobile)
 - Dark and light themes both supported throughout
+
+---
+Task ID: 5
+Agent: Typography Fix Agent
+Task: Fix typography issues across all section files (excluding ZCodeSection.tsx)
+
+Work Log:
+- Read worklog.md and all 9 section files (ToolsSection, McpSection, SourcesSection, PlanSection, QuickStartSection, HelperSection, ExamplesSection, TroubleshootSection, ModelsSection)
+- Did NOT touch ZCodeSection.tsx per instructions (handled by another task)
+
+- Rule 1 (text-[10px] → text-xs): Skipped — only applies to ZCodeSection.tsx
+- Rule 2 (Standardize h3 to text-lg font-semibold):
+  - ToolsSection.tsx: h3 `font-semibold text-sm` → `text-lg font-semibold`
+  - McpSection.tsx: h3 `font-semibold text-base` → `text-lg font-semibold`
+  - SourcesSection.tsx: h3 `text-sm font-semibold` → `text-lg font-semibold`
+  - PlanSection.tsx: plan name h3 `text-xl font-bold` → `text-lg font-semibold`
+- Rule 3 (Upgrade body text-xs → text-sm):
+  - QuickStartSection: step descriptions
+  - HelperSection: feature descriptions
+  - ToolsSection: tool notes
+  - ExamplesSection: example descriptions, tip lines, best practice descriptions/details, memory descriptions
+  - TroubleshootSection: error cause and fix text
+  - McpSection: server descriptions, capability text, best practice text
+  - ModelsSection: model descriptions, use-case text, vision/image/video/audio/agent descriptions
+  - SourcesSection: link descriptions
+- Rule 4 (Add leading-relaxed to multi-line text-sm paragraphs):
+  - Added to all upgraded text-sm body text and to existing text-sm paragraphs that were multi-line (QuickStart intro, HelperSection wizard intro, ExamplesSection memory intro)
+- Rule 5 (Normalize font-weight):
+  - PlanSection.tsx: h4 `font-bold` → `font-semibold`
+- Kept text-xs for: badges, kbd elements, URLs/paths, version numbers, context info labels, step number labels, code blocks, metadata grids
+
+- Ran `bun run lint` — all checks pass clean
+
+Stage Summary:
+- 9 section files updated with consistent typography
+- h3 headings now uniformly `text-lg font-semibold` across all sections
+- Body text upgraded from `text-xs` to `text-sm` with `leading-relaxed` for readability
+- Font weight normalized: h3/h4 always `font-semibold`
+- ZCodeSection.tsx left untouched (another task handles it)
+- Lint passes clean
+Task ID: 6
+Agent: Page Switcher Agent
+Task: Move ZCode Desktop content to a separate "page" using client-side page switcher within the / route
+
+Work Log:
+- Updated toc.ts:
+  - Added `isPage?: boolean` field to TocItem interface
+  - Marked ZCode Desktop entry as `isPage: true`
+- Updated SidebarNav.tsx:
+  - Added `onNavigate` and `currentPage` props to SidebarNavProps interface
+  - When item has `isPage: true`, clicking calls `onNavigate(item.id)` instead of scrolling
+  - Active state for page items uses `currentPage` comparison instead of `activeId`
+- Updated ZCodeSection.tsx:
+  - Added `ZCodeSectionProps` interface with `onBack?: () => void` prop
+  - Added sticky page header with back arrow button + "ZCode Desktop" title when `onBack` is provided
+  - Header uses `backdrop-blur-md`, responsive layout, ArrowLeft icon with hover animation
+  - Imported ArrowLeft from lucide-react
+- Updated page.tsx:
+  - Added `currentPage` state: `useState<'guide' | 'zcode'>('guide')`
+  - When `currentPage === 'guide'`: shows Hero + all sections EXCEPT ZCodeSection
+  - When `currentPage === 'zcode'`: shows ZCodeSection as full page with `onBack` callback
+  - Mobile header: shows back button with "Назад" when on zcode page
+  - Mobile menu: ZCode Desktop item shows "→" badge to indicate it's a page, not a section
+  - Both pages have footer, ScrollToTop, ReadingProgress, SearchDialog
+  - Added `useEffect` to scroll to top on page switch
+  - Passes `onNavigate` and `currentPage` to SidebarNav for proper active state
+- Fixed pre-existing parsing error in PlanSection.tsx line 75: double `>>` → single `>`
+- All lint checks pass clean, server running on port 3000
+
+Stage Summary:
+- ZCode Desktop is now a separate "page" navigated via client-side state switcher
+- Sidebar ZCode Desktop icon triggers page navigation instead of scroll-to-section
+- ZCode page has sticky header with back button + "ZCode Desktop" title
+- Mobile header shows back button instead of "Z Code" brand when on zcode page
+- Guide page no longer includes ZCodeSection in content flow
+- Both pages share footer, sidebar, search, scroll-to-top, reading progress, theme toggle

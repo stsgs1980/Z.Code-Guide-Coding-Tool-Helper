@@ -41,7 +41,7 @@ export function SourcesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <h3 className={`text-sm font-semibold mb-3 font-mono uppercase tracking-wider ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+              <h3 className={`text-lg font-semibold mb-3 font-mono uppercase tracking-wider ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
                 {group.label}
               </h3>
               <div className="space-y-2">
@@ -60,7 +60,7 @@ export function SourcesSection() {
                       </div>
                       <div className={`text-xs truncate ${th('text-white/30', 'text-oklch(0.60 0 0)')}`}>{src.url}</div>
                     </div>
-                    <span className={`text-xs hidden sm:block ${th('text-white/20', 'text-oklch(0.70 0 0)')}`}>{src.description}</span>
+                    <span className={`text-sm leading-relaxed hidden sm:block ${th('text-white/20', 'text-oklch(0.70 0 0)')}`}>{src.description}</span>
                   </a>
                 ))}
               </div>

@@ -93,7 +93,7 @@ export function ExamplesSection() {
               </div>
               <div>
                 <h4 className="font-semibold text-sm">{ex.title}</h4>
-                <p className={`text-xs ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{ex.desc}</p>
+                <p className={`text-sm leading-relaxed ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{ex.desc}</p>
               </div>
             </div>
             <CodeBlock
@@ -101,7 +101,7 @@ export function ExamplesSection() {
               code={ex.prompt}
               className="text-xs mb-2"
             />
-            <div className={`text-xs flex items-center gap-2 ${th('text-white/40', 'text-oklch(0.55 0 0)')}`}>
+            <div className={`text-sm leading-relaxed flex items-center gap-2 ${th('text-white/40', 'text-oklch(0.55 0 0)')}`}>
               <span className="px-1.5 py-0.5 rounded bg-nyc-taxi/10 text-nyc-taxi font-mono font-semibold">
                 {ex.model}
               </span>
@@ -134,10 +134,10 @@ export function ExamplesSection() {
               </div>
               <div className="flex-1">
                 <h4 className="font-semibold text-sm mb-1">{bp.principle}</h4>
-                <p className={`text-xs mb-2 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{bp.description}</p>
+                <p className={`text-sm leading-relaxed mb-2 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{bp.description}</p>
                 <ul className="space-y-1">
                   {bp.details.map((d) => (
-                    <li key={d} className={`text-xs flex items-center gap-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+                    <li key={d} className={`text-sm leading-relaxed flex items-center gap-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
                       <span className="nyc-status-dot nyc-status-active" />{d}
                     </li>
                   ))}
@@ -155,7 +155,7 @@ export function ExamplesSection() {
         <Database className="h-5 w-5 text-nyc-taxi" />
         Механизм памяти AI-агентов
       </h3>
-      <p className={`text-sm mb-4 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+      <p className={`text-sm leading-relaxed mb-4 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
         AI-агенты используют несколько типов памяти для эффективной работы. Краткосрочная память ограничена текущей сессией, а долгосрочная — сохраняется между задачами.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
@@ -174,7 +174,7 @@ export function ExamplesSection() {
                 {mem.scope}
               </span>
             </div>
-            <p className={`text-xs ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{mem.description}</p>
+            <p className={`text-sm leading-relaxed ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{mem.description}</p>
             <div className={`text-xs mt-2 ${th('text-white/30', 'text-oklch(0.60 0 0)')}`}>
               Хранение: <span className="text-nyc-taxi">{mem.storage}</span>
             </div>

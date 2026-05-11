@@ -55,7 +55,7 @@ export function QuickStartSection() {
             </div>
             <div className="text-xs text-nyc-taxi font-mono mb-1">Шаг {i + 1}</div>
             <div className="font-semibold text-sm">{step.title}</div>
-            <div className={`text-xs mt-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{step.desc}</div>
+            <div className={`text-sm leading-relaxed mt-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{step.desc}</div>
           </motion.div>
         ))}
       </div>
@@ -64,7 +64,7 @@ export function QuickStartSection() {
 
       <div className="mt-6">
         <h3 className="text-lg font-semibold mb-3">Регистрация и API-ключ</h3>
-        <p className={`text-sm mb-6 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+        <p className={`text-sm leading-relaxed mb-6 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
           Перейдите на{" "}
           <a href="https://z.ai" target="_blank" rel="noopener" className="nyc-link-hover inline-flex items-center gap-1">
             z.ai <ExternalLink className="h-3 w-3" />

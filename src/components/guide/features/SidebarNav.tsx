@@ -9,9 +9,11 @@ import { motion } from "framer-motion";
 
 interface SidebarNavProps {
   onSearchOpen: () => void;
+  onNavigate?: (page: string) => void;
+  currentPage?: string;
 }
 
-export function SidebarNav({ onSearchOpen }: SidebarNavProps) {
+export function SidebarNav({ onSearchOpen, onNavigate, currentPage }: SidebarNavProps) {
   const activeId = useActiveSection();
   const { theme } = useTheme();
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
@@ -36,11 +38,17 @@ export function SidebarNav({ onSearchOpen }: SidebarNavProps) {
       </button>
 
       {tocItems.map((item) => {
-        const isActive = activeId === item.id;
+        const isActive = item.isPage ? currentPage === item.id : activeId === item.id;
         return (
           <button
             key={item.id}
-            onClick={() => scrollTo(item.id)}
+            onClick={() => {
+              if (item.isPage && onNavigate) {
+                onNavigate(item.id);
+              } else {
+                scrollTo(item.id);
+              }
+            }}
             className={`relative p-2 rounded-lg transition-all group ${
               isActive
                 ? `${th('bg-white/5', 'bg-oklch(0.90 0 0)')} text-nyc-taxi`

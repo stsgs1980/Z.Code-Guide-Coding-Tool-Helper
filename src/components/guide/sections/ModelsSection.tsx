@@ -65,8 +65,8 @@ export function ModelsSection() {
                     </Badge>
                   )}
                 </div>
-                <p className={`text-sm ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{model.description}</p>
-                <p className={`text-xs mt-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+                <p className={`text-sm leading-relaxed ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{model.description}</p>
+                <p className={`text-sm leading-relaxed mt-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
                   <span className="text-nyc-taxi">Применение:</span> {model.useCase}
                 </p>
               </div>
@@ -103,7 +103,7 @@ export function ModelsSection() {
               <span className="font-semibold text-sm font-mono">{m.name}</span>
               <Badge className={`text-xs ${m.price === 'Бесплатно' ? 'bg-green-500/10 text-green-400 border-green-500/20' : th('bg-white/5 text-white/30', 'bg-oklch(0.93 0 0) text-oklch(0.50 0 0)')}`}>{m.price}</Badge>
             </div>
-            <p className={`text-xs ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{m.description}</p>
+            <p className={`text-sm leading-relaxed ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{m.description}</p>
             <div className={`text-xs mt-1 ${th('text-white/30', 'text-oklch(0.60 0 0)')}`}>Контекст: {m.context}</div>
           </motion.div>
         ))}
@@ -130,8 +130,8 @@ export function ModelsSection() {
               <span className="font-semibold text-sm font-mono">{model.name}</span>
               <Badge variant="outline" className={`text-xs ${th('border-white/10 text-white/30', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>{model.context}</Badge>
             </div>
-            <p className={`text-xs ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
-            <p className={`text-xs mt-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+            <p className={`text-sm leading-relaxed ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
+            <p className={`text-sm leading-relaxed mt-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
               <span className="text-nyc-taxi">Применение:</span> {model.useCase}
             </p>
           </motion.div>
@@ -156,7 +156,7 @@ export function ModelsSection() {
             className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4`}
           >
             <span className="font-semibold text-sm font-mono">{model.name}</span>
-            <p className={`text-xs mt-1 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
+            <p className={`text-sm leading-relaxed mt-1 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
           </motion.div>
         ))}
       </div>
@@ -179,7 +179,7 @@ export function ModelsSection() {
             className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4`}
           >
             <span className="font-semibold text-sm font-mono">{model.name}</span>
-            <p className={`text-xs mt-1 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
+            <p className={`text-sm leading-relaxed mt-1 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
           </motion.div>
         ))}
       </div>
@@ -202,7 +202,7 @@ export function ModelsSection() {
             className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4`}
           >
             <span className="font-semibold text-sm font-mono">{model.name}</span>
-            <p className={`text-xs mt-1 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
+            <p className={`text-sm leading-relaxed mt-1 ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
           </motion.div>
         ))}
       </div>
@@ -230,7 +230,7 @@ export function ModelsSection() {
                 {model.status}
               </Badge>
             </div>
-            <p className={`text-xs ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
+            <p className={`text-sm leading-relaxed ${th('text-white/50', 'text-oklch(0.45 0 0)')}`}>{model.description}</p>
           </motion.div>
         ))}
       </div>

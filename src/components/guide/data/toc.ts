@@ -9,13 +9,14 @@ export interface TocItem {
   num: string;
   title: string;
   icon: LucideIcon;
+  isPage?: boolean;
 }
 
 export const tocItems: TocItem[] = [
   { id: "hero", num: "00", title: "Z Code", icon: Home },
   { id: "quick-start", num: "01", title: "Быстрый старт", icon: Zap },
   { id: "helper", num: "02", title: "Coding Tool Helper", icon: Wrench },
-  { id: "zcode-desktop", num: "03", title: "ZCode Desktop", icon: Monitor },
+  { id: "zcode-desktop", num: "03", title: "ZCode Desktop", icon: Monitor, isPage: true },
   { id: "tools", num: "04", title: "Инструменты", icon: Code2 },
   { id: "install", num: "05", title: "Установка", icon: Download },
   { id: "mcp", num: "06", title: "MCP-серверы", icon: Server },

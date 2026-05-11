@@ -41,7 +41,7 @@ export function ToolsSection() {
             className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4`}
           >
             <div className="flex items-start justify-between mb-2">
-              <h3 className="font-semibold text-sm">{tool.name}</h3>
+              <h3 className="text-lg font-semibold">{tool.name}</h3>
               <Badge
                 variant="outline"
                 className={`text-xs ${typeColors[tool.type]}`}
@@ -51,7 +51,7 @@ export function ToolsSection() {
             </div>
             <p className={`text-sm leading-relaxed ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{tool.description}</p>
             {tool.note && (
-              <p className={`text-xs mt-1 ${th('text-amber-400/60', 'text-amber-600')}`}>
+              <p className={`text-sm leading-relaxed mt-1 ${th('text-amber-400/60', 'text-amber-600')}`}>
                 {tool.note}
               </p>
             )}

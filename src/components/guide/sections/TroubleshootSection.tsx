@@ -116,10 +116,10 @@ export function TroubleshootSection() {
                     {categoryLabels[err.category].text}
                   </Badge>
                 </div>
-                <p className={`text-xs mb-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+                <p className={`text-sm leading-relaxed mb-1 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
                   <span className={th('text-white/60', 'text-oklch(0.35 0 0)')}>Причина:</span> {err.cause}
                 </p>
-                <p className={`text-xs ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>
+                <p className={`text-sm leading-relaxed ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>
                   <span className="text-nyc-taxi">Решение:</span> {err.fix}
                 </p>
               </div>
@@ -152,7 +152,7 @@ export function TroubleshootSection() {
                 {categoryLabels[err.category].text}
               </Badge>
             </div>
-            <p className={`text-xs mb-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
+            <p className={`text-sm leading-relaxed mb-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>
               <span className={th('text-white/60', 'text-oklch(0.35 0 0)')}>Причина:</span> {err.cause}
             </p>
             <CodeBlock lang="bash" code={err.fix} className="text-xs" />

@@ -53,7 +53,7 @@ export function McpSection() {
           >
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="font-semibold text-base flex items-center gap-2">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
                   {server.name}
                   <Badge
                     variant="outline"
@@ -66,7 +66,7 @@ export function McpSection() {
                     {server.type === "remote" ? "Remote MCP" : "Local MCP"}
                   </Badge>
                 </h3>
-                <p className={`text-xs mt-1 ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>
+                <p className={`text-sm leading-relaxed mt-1 ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>
                   {server.description}
                 </p>
               </div>
@@ -98,7 +98,7 @@ export function McpSection() {
               {server.capabilities.map((cap) => (
                 <li
                   key={cap}
-                  className={`text-xs flex items-center gap-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}
+                  className={`text-sm leading-relaxed flex items-center gap-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}
                 >
                   <span className="nyc-status-dot nyc-status-active" />
                   {cap}
@@ -128,7 +128,7 @@ export function McpSection() {
 
             {/* Best practice */}
             {server.bestPractice && (
-              <div className={`text-xs mb-3 p-2 rounded ${th('bg-white/5 text-white/50', 'bg-oklch(0.95 0 0) text-oklch(0.40 0 0)')}`}>
+              <div className={`text-sm leading-relaxed mb-3 p-2 rounded ${th('bg-white/5 text-white/50', 'bg-oklch(0.95 0 0) text-oklch(0.40 0 0)')}`}>
                 <Lightbulb className="h-3 w-3 inline mr-1 text-nyc-taxi" />{server.bestPractice}
               </div>
             )}

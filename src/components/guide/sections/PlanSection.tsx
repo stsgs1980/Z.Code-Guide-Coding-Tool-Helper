@@ -44,7 +44,7 @@ export function PlanSection() {
                 : th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')
             }`}
           >
-            <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
+            <h3 className="text-lg font-semibold mb-1">{plan.name}</h3>
             <div className="text-2xl font-bold nyc-gradient-text mb-4">{plan.price}</div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -72,7 +72,7 @@ export function PlanSection() {
       <div className="space-y-6">
         {planFaqGroups.map((group) => (
           <div key={group}>
-            <h4 className={`text-sm font-bold uppercase tracking-wider mb-3 px-3 py-2 rounded-lg ${th('bg-white/[0.03] text-nyc-taxi border-l-2 border-nyc-taxi/40', 'bg-oklch(0.95 0 0) text-oklch(0.78 0.16 85) border-l-2 border-oklch(0.78 0.16 85 / 40%)')}`}>
+            <h4 className={`text-sm font-semibold uppercase tracking-wider mb-3 px-3 py-2 rounded-lg ${th('bg-white/[0.03] text-nyc-taxi border-l-2 border-nyc-taxi/40', 'bg-oklch(0.95 0 0) text-oklch(0.78 0.16 85) border-l-2 border-oklch(0.78 0.16 85 / 40%)')}`}>
               {group}
             </h4>
             <Accordion type="single" collapsible className="w-full">
