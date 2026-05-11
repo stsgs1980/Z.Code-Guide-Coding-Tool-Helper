@@ -10,7 +10,7 @@ export const commands: Command[] = [
   { cmd: "coding-helper init", description: "Запуск мастера настройки", category: "init" },
   { cmd: "chelper init", description: "Альтернативное имя команды", category: "init" },
   { cmd: "coding-helper lang show", description: "Показать текущий язык", category: "lang" },
-  { cmd: "coding-helper lang set en_US", description: "Установить английский язык", category: "lang" },
+  { cmd: "coding-helper lang set en", description: "Установить английский язык", category: "lang" },
   { cmd: "coding-helper lang set ru", description: "Установить русский язык", category: "lang" },
   { cmd: "coding-helper auth", description: "Интерактивная настройка API-ключа", category: "auth" },
   { cmd: "coding-helper auth glm_coding_plan_global <token>", description: "Установить API-ключ для Global плана", category: "auth" },
@@ -54,4 +54,4 @@ coding-helper lang show
 coding-helper lang set ru
 
 # Установить английский язык
-coding-helper lang set en_US`;
+coding-helper lang set en`;
