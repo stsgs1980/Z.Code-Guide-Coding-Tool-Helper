@@ -94,7 +94,7 @@ function GuideContent() {
       </div>
 
       {/* Content sections */}
-      <main className="md:ml-14 md:mr-14 w-full px-4 sm:px-6 md:px-8 lg:px-10 pb-20 flex-1 break-words">
+      <main className="md:ml-14 md:pr-14 lg:pr-14 w-full px-4 sm:px-6 md:px-8 lg:px-10 pb-20 flex-1 break-words">
         <QuickStartSection />
         <HelperSection />
         <ZCodeSection />
