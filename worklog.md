@@ -1,187 +1,37 @@
+# Z Code — Руководство пользователя: Worklog
+
 ---
-Task ID: 4
+Task ID: 1
 Agent: Main Agent
-Task: Sync agent-toolkit missing files
+Task: Layout audit and fixes — max-width, timeline, spacing consistency
 
 Work Log:
-- Compared /home/z/agent-toolkit with /home/z/my-project for missing/outdated files
-- Found missing: instructions/sandbox-rules.md
-- Found outdated: instructions/git-workflow-rules.md (differs from repo)
-- Copied sandbox-rules.md from agent-toolkit repo
-- Updated git-workflow-rules.md from agent-toolkit repo
-- Added Sandbox Rules to AGENT_RULES.md instructions table (section 8)
-- Added sections 10-12 to AGENT_RULES.md: Sandbox Environment, Project in Sandbox, Dev Server Startup
-- Added logo-agent.js and logos/*.svg to Infrastructure table in section 9
-
-Stage Summary:
-- 2 missing/outdated files synced from agent-toolkit repo
-- AGENT_RULES.md updated to v1.5.0 parity with full 12 sections
-- Sandbox rules and dev-watchdog startup protocol now documented
-
----
-Task ID: 5
-Agent: Main Agent
-Task: Integrate NEURO logo from agent-logo repo into project UI
-
-Work Log:
-- Analyzed agent-logo repo: 7 SVG variants, logo-agent.js detection engine, Express server, CI workflow
-- All logo SVGs already present in /home/z/my-project/logos/ and /home/z/my-project/public/logo-*.svg
-- Created /home/z/my-project/public/logos/ directory and copied all SVGs for API access
-- Created NeuroLogo.tsx component (src/components/guide/ui/NeuroLogo.tsx) with:
-  - Auto-switching dark/light variant based on app theme
-  - showTagline prop for outline variants
-  - height and variant props
-- Integrated NeuroLogo into 4 locations:
-  1. HeroSection.tsx - 44px with tagline, animated entrance
-  2. SidebarNav.tsx - 28px at top of sidebar
-  3. page.tsx mobile header - 24px replacing "Z Code" text
-  4. page.tsx footer - 20px centered above copyright
-- Added NeuroLogo to ui/index.ts barrel export
-- Updated hero image border to be theme-aware (was hardcoded border-white/10)
-- Updated PROJECT_CONFIG.md stack signature to include "NEURO Brand Identity"
-
-Stage Summary:
-- NEURO brand identity fully integrated into the Z Code guide
-- Logo auto-switches between dark/light variants with app theme
-- 4 UI locations now display the NEURO logo
-- All changes lint-clean
-
----
-Task ID: 6
-Agent: Sub-agent (Full-Stack Developer)
-Task: Create logo-theme and logo-svg API routes
-
-Work Log:
-- Created /src/app/api/logo-theme/route.ts - GET endpoint with logo detection logic
-- Created /src/app/api/logo-svg/route.ts - GET endpoint serving SVG files
-- Ported all logo-agent.js detection logic to TypeScript
-- Verified API returns correct theme for default project description
-
-Stage Summary:
-- GET /api/logo-theme returns JSON with detected theme, darkUI, logoUrl
-- GET /api/logo-svg serves SVG files with proper content type and caching
-- Default "Z Code" description resolves to "dark" theme
-
----
-Task ID: 7
-Agent: Main Agent
-Task: Apply No-Unicode Policy v2.1 - scan and clean source files
-
-Work Log:
-- Scanned all src/ files for emoji/Unicode graphic characters (U+1F000-U+1FFFF range)
-- Found 2 violations:
-  1. McpSection.tsx line 145: lightbulb emoji before bestPractice text
-  2. ExamplesSection.tsx line 105: lightbulb emoji before tip text
-- Replaced both with Lucide React Lightbulb SVG icon component
-- Added Lightbulb import to both files
-- Re-verified: 0 emoji/Unicode violations in src/
-
-Stage Summary:
-- No-Unicode Policy [C] level compliance achieved for all source code
-- 2 emoji instances replaced with SVG (Lucide) icons
-- All src/ files clean of Unicode graphic characters
-
----
-Task ID: 8
-Agent: Sub-agent (Full-Stack Developer)
-Task: Create .env.example per REPRODUCIBILITY standard
-
-Work Log:
-- Analyzed package.json and prisma/schema.prisma for required env vars
-- Created /home/z/my-project/.env.example with 7 variables:
-  - DATABASE_URL (required, relative path)
-  - NEXTAUTH_SECRET (optional)
-  - NEXTAUTH_URL (optional)
-  - ZAI_API_KEY (optional)
-  - ZAI_API_BASE_URL (optional, default https://api.z.ai)
-  - PORT (optional, default 3000)
-  - NEXT_TELEMETRY_DISABLED (optional, default 1)
-
-Stage Summary:
-- .env.example created per REPRODUCIBILITY-STANDARD requirements
-- All variables documented with comments and safe defaults
-- Relative DATABASE_URL path for cross-machine portability
-
----
-Task ID: 11
-Agent: Main Agent
-Task: Create scheduled cron task for webDevReview
-
-Work Log:
-- Created cron job "Z Code Guide - Auto Review & Development" (ID: 143604)
-- Schedule: every 900 seconds (15 minutes)
-- Payload: webDevReview with comprehensive instructions including:
-  - Review worklog.md for project status
-  - Test/QA with agent-browser
-  - Fix bugs first, then propose new features
-  - Mandatory styling improvements and feature additions
-  - Update worklog.md after each phase
-
-Stage Summary:
-- Cron job 143604 created, running every 15 minutes
-- webDevReview kind with full development cycle instructions
-
----
-Current Project Status
-
-The Z Code User Guide is a fully functional Next.js 16 single-page application with:
-- 11 content sections covering Z Code tools, MCP servers, GLM models, etc.
-- NEURO brand identity integrated (logo in Hero, Sidebar, mobile header, footer)
-- Dark/light theme toggle with React Context
-- Agent Toolkit v1.5.0 fully integrated (standards, skills, instructions, templates)
-- No-Unicode Policy [C] level compliance
-- REPRODUCIBILITY standard (.env.example, relative paths)
-- Logo Theme API (GET /api/logo-theme) and Logo SVG API (GET /api/logo-svg)
-
-Unresolved Issues:
-- Dev server process dies intermittently in sandbox (needs dev-watchdog cron)
-- Light theme could use more refined color overrides in some sections
-- README.md not yet updated per README_TEMPLATE standard
-- Some sections may benefit from additional content from docs.z.ai
-
----
-Task ID: 12
-Agent: Main Agent
-Task: Make Hero full width, remove NEURO logo/images, fix 502 server crashes
-
-Work Log:
-- Made HeroSection full width: removed md:ml-14 offset, reduced padding (px-4 md:px-8), added max-w-[1800px] container
-- Removed NeuroLogo from footer (was the only remaining placement per user request)
-- Deleted NeuroLogo.tsx component file
-- Removed NeuroLogo export from ui/index.ts
-- Deleted /api/logo-theme and /api/logo-svg API routes
-- Deleted /public/logos/ directory (7 NEURO SVG files)
-- Deleted 7 old logo SVGs from /public/ root (logo-dark.svg, logo-inverted.svg, etc.)
-- Kept only /public/logo.svg (the Z favicon, not NEURO)
-- Fixed 502 issue: created cron keepalive job (every 5 min) to restart server
-- Created webDevReview cron job (every 15 min) for continuous QA
-- Server instability: Next.js dev process dies after ~20s in sandbox; cron restarts it
-
-Stage Summary:
-- Hero section now uses full page width (no sidebar offset, minimal padding)
-- ALL NEURO logo references completely removed from the project
-- NeuroLogo component, API routes, and 14 SVG files deleted
-- Two cron jobs created for server keepalive and automated QA
-- Server stability is managed via cron (inherent sandbox limitation)
-
-
----
-Task ID: 13
-Agent: Main Agent
-Task: Fix allowedDevOrigins and Hero layout
-
-Work Log:
-- Added ".chatglm.site" to allowedDevOrigins in next.config.ts (fixes 502 in sandbox preview)
-- Rewrote HeroSection.tsx with proper full-width layout:
-  - Added decorative blur gradient background blobs
-  - Responsive padding: px-6 sm:px-10 md:px-16 lg:px-20
-  - Proper vertical spacing: pt-20 md:pt-28 pb-16 md:pb-24
-  - Stats grid responsive sizing
-  - max-w-screen-2xl inner container for ultra-wide screens
-- Fixed page.tsx Hero container: added md:ml-14 back (respects sidebar), pt-14 for mobile header
+- Changed max-w-6xl (1152px) → max-w-7xl (1280px) across all containers (page.tsx, HeroSection.tsx) to use full W1280 width
+- Converted wizard steps in HelperSection from flex-wrap chips to vertical timeline layout with:
+  - Gradient vertical connector line
+  - Numbered circular nodes (first step highlighted with taxi accent)
+  - Hover effects on nodes and labels
+  - Staggered entrance animations
+- Unified section padding: py-8 → py-10 md:py-14 across ALL 10 sections for consistent breathing room
+- Fixed SectionHeader margin: mb-6 → mb-6 md:mb-8 for responsive spacing
+- Added explicit w-14 to SidebarNav (matching md:ml-14 offset in content)
+- Standardized grid gaps: gap-4 → gap-3 sm:gap-4 for mobile-first consistency
+- Fixed Hero padding to match main content: px-4 sm:px-6 md:px-8 lg:px-12
+- Footer changed from mt-12 to mt-auto (proper sticky footer with flex-1 parent)
 - Lint clean, server returning 200
 
 Stage Summary:
-- allowedDevOrigins now includes .chatglm.site for sandbox preview access
-- Hero layout fixed: full width with sidebar offset, proper spacing, responsive
-- Server operational at 200
+- Full W1280 (max-w-7xl) width now properly utilized
+- Timeline layout for wizard steps implemented
+- All 10 sections have consistent py-10 md:py-14 padding
+- Grid gaps standardized across components
+- Sidebar has explicit w-14 width matching content offset
+- Footer uses mt-auto for proper bottom-stick behavior
+
+---
+Previous entries:
+
+- Task 13: Fix allowedDevOrigins and Hero layout
+- Server instability: Next.js dev process dies after ~20s in sandbox; cron restarts it
+- Hero section now uses full page width
+- ALL NEURO logo references completely removed
