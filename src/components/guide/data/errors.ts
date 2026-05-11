@@ -39,7 +39,7 @@ export const errors: ErrorItem[] = [
   {
     error: "MCP server not responding",
     cause: "MCP-сервер не запущен или неправильно сконфигурирован",
-    fix: "Убедитесь, что MCP-сервер установлен: npx -y @z_ai/mcp-server-web-search@latest. Проверьте API-ключ в env.",
+    fix: "Для Vision: убедитесь, что установлен @z_ai/mcp-server (npx -y @z_ai/mcp-server@latest). Для Web Search/Reader: это удалённые HTTP-сервисы, проверьте API-ключ в заголовке Authorization.",
     category: "tool",
   },
   {

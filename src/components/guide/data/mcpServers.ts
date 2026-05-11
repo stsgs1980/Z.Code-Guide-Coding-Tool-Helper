@@ -44,33 +44,36 @@ export const mcpServers: McpServer[] = [
     version: ">= 0.1.2",
     configClaudeCode: `{
   "mcpServers": {
-    "zai-vision": {
+    "zai-mcp-server": {
       "command": "npx",
       "args": ["-y", "@z_ai/mcp-server@latest"],
       "env": {
-        "ZAI_API_KEY": "your_zai_api_key"
+        "Z_AI_API_KEY": "your_zai_api_key",
+        "Z_AI_MODE": "ZAI"
       }
     }
   }
 }`,
     configCline: `{
   "mcpServers": {
-    "zai-vision": {
+    "zai-mcp-server": {
       "command": "npx",
       "args": ["-y", "@z_ai/mcp-server@latest"],
       "env": {
-        "ZAI_API_KEY": "your_zai_api_key"
+        "Z_AI_API_KEY": "your_zai_api_key",
+        "Z_AI_MODE": "ZAI"
       }
     }
   }
 }`,
     configOpenCode: `{
   "mcpServers": {
-    "zai-vision": {
+    "zai-mcp-server": {
       "command": "npx",
       "args": ["-y", "@z_ai/mcp-server@latest"],
       "env": {
-        "ZAI_API_KEY": "your_zai_api_key"
+        "Z_AI_API_KEY": "your_zai_api_key",
+        "Z_AI_MODE": "ZAI"
       }
     }
   }
@@ -96,6 +99,7 @@ export const mcpServers: McpServer[] = [
     configCline: `{
   "mcpServers": {
     "web-search-prime": {
+      "type": "streamableHttp",
       "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
       "headers": {
         "Authorization": "Bearer your_api_key"
@@ -135,6 +139,7 @@ export const mcpServers: McpServer[] = [
     configCline: `{
   "mcpServers": {
     "web-reader": {
+      "type": "streamableHttp",
       "url": "https://api.z.ai/api/mcp/web_reader/mcp",
       "headers": {
         "Authorization": "Bearer your_api_key"
@@ -146,6 +151,48 @@ export const mcpServers: McpServer[] = [
   "mcpServers": {
     "web-reader": {
       "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    }
+  }
+}`,
+  },
+  {
+    name: "Zread MCP Server",
+    id: "zread",
+    type: "remote",
+    description:
+      "Поиск по документации и коду open-source репозиториев — быстрый доступ к знаниям без покидания IDE",
+    capabilities: [
+      "Поиск по документации открытых репозиториев",
+      "Чтение структуры репозитория",
+      "Чтение файлов из репозитория",
+      "Интеграция с любым MCP-клиентом",
+    ],
+    tools: ["search_doc", "get_repo_structure", "read_file"],
+    bestPractice:
+      "Используйте Zread для быстрого поиска документации по библиотекам и фреймворкам без переключения контекста.",
+    oneClickInstall:
+      'claude mcp add -s user -t http zread https://api.z.ai/api/mcp/zread/mcp --header "Authorization: Bearer your_api_key"',
+    configClaudeCode: `claude mcp add -s user -t http zread \\
+  https://api.z.ai/api/mcp/zread/mcp \\
+  --header "Authorization: Bearer your_api_key"`,
+    configCline: `{
+  "mcpServers": {
+    "zread": {
+      "type": "streamableHttp",
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer your_api_key"
+      }
+    }
+  }
+}`,
+    configOpenCode: `{
+  "mcpServers": {
+    "zread": {
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
       "headers": {
         "Authorization": "Bearer your_api_key"
       }

@@ -23,10 +23,21 @@ export const models: GLMModel[] = [
     quality: "Максимальная",
   },
   {
+    name: "GLM-5",
+    id: "glm-5",
+    level: "opus",
+    description: "Модель Opus-уровня, сбалансированная между качеством и скоростью",
+    useCase: "Сложные задачи кодинга, не требующие максимального качества GLM-5.1",
+    quotaPeak: "3x",
+    quotaOffPeak: "2x",
+    speed: "Средняя",
+    quality: "Высокая",
+  },
+  {
     name: "GLM-5-Turbo",
     id: "glm-5-turbo",
     level: "opus",
-    description: "Быстрая Opus-модель с теми же лимитами, оптимизированная для скорости",
+    description: "Быстрая Opus-модель, оптимизированная для скорости при тех же лимитах",
     useCase: "Быстрый кодинг с высоким качеством, итеративная разработка",
     quotaPeak: "3x",
     quotaOffPeak: "2x",
@@ -59,7 +70,7 @@ export const models: GLMModel[] = [
 
 export const modelMapping = {
   anthropic: {
-    opus: "glm-5.1",
+    opus: "glm-4.7",
     sonnet: "glm-4.7",
     haiku: "glm-4.5-air",
   },

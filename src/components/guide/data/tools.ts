@@ -4,6 +4,7 @@ export interface Tool {
   description: string;
   type: "cli" | "ide" | "agent";
   configFormat: "anthropic" | "openai" | "custom";
+  note?: string;
 }
 
 export const tools: Tool[] = [
@@ -77,6 +78,44 @@ export const tools: Tool[] = [
     type: "ide",
     configFormat: "openai",
   },
+  {
+    name: "TRAE",
+    id: "trae",
+    description: "AI-редактор для быстрой разработки с контекстным пониманием кода",
+    type: "ide",
+    configFormat: "openai",
+  },
+  {
+    name: "Qoder",
+    id: "qoder",
+    description: "Платформа агрессивного AI-кодинга с автоматизацией задач",
+    type: "agent",
+    configFormat: "openai",
+  },
+  {
+    name: "Eigent",
+    id: "eigent",
+    description: "Десктопный AI-агент с мультиагентной архитектурой",
+    type: "agent",
+    configFormat: "openai",
+    note: "Универсальный агент — возможны ограничения в пиковые часы",
+  },
+  {
+    name: "Hermes Agent",
+    id: "hermes-agent",
+    description: "Открытый развивающийся AI-агент общего назначения",
+    type: "agent",
+    configFormat: "openai",
+    note: "Универсальный агент — возможны ограничения в пиковые часы",
+  },
+  {
+    name: "SillyTavern",
+    id: "sillytavern",
+    description: "Настраиваемый AI-чат фронтенд общего назначения",
+    type: "agent",
+    configFormat: "openai",
+    note: "Универсальный агент — возможны ограничения в пиковые часы",
+  },
 ];
 
 export const claudeCodeConfig = {
@@ -88,7 +127,7 @@ export const claudeCodeConfig = {
     "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1,
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5.1",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.7",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air"
   }
@@ -99,7 +138,10 @@ export const openaiCompatConfig = {
   title: "Общая конфигурация (OpenAI Compatible)",
   lang: "yaml",
   code: `API Provider: OpenAI Compatible
-Base URL: https://api.z.ai/api/paas/v4
+Base URL: https://api.z.ai/api/coding/paas/v4
 API Key: your_zai_api_key
-Model: GLM-4.7`,
+Model: GLM-4.7
+
+# Внимание: используйте coding-эндпоинт для GLM Coding Plan
+# Общий API: https://api.z.ai/api/paas/v4 (не для Coding Plan)`,
 };

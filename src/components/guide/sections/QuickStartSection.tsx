@@ -108,7 +108,7 @@ coding-helper auth glm_coding_plan_global YOUR_API_KEY`}
     "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1,
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5.1",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.7",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air"
   }
@@ -118,12 +118,12 @@ coding-helper auth glm_coding_plan_global YOUR_API_KEY`}
         <CodeBlock
           lang="bash"
           title="Способ 3: OpenAI-совместимые инструменты"
-          code={`# Base URL: https://api.z.ai/api/paas/v4
+          code={`# Base URL: https://api.z.ai/api/coding/paas/v4
 # API Key: YOUR_API_KEY
 # Model: GLM-4.7
 
 # Пример с curl
-curl https://api.z.ai/api/paas/v4/chat/completions \\
+curl https://api.z.ai/api/coding/paas/v4/chat/completions \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"model":"GLM-4.7","messages":[{"role":"user","content":"Hello"}]}'

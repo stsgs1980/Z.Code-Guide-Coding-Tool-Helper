@@ -50,7 +50,12 @@ export function ToolsSection() {
               </Badge>
             </div>
             <p className={`text-xs leading-relaxed ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{tool.description}</p>
-            <div className="mt-2">
+            {tool.note && (
+              <p className={`text-[10px] mt-1 ${th('text-amber-400/60', 'text-amber-600')}`}>
+                {tool.note}
+              </p>
+            )}
+            <div className="mt-2 flex gap-2">
               <Badge variant="outline" className={`text-[10px] ${th('border-white/10 text-white/30', 'border-oklch(0.82 0 0) text-oklch(0.60 0 0)')}`}>
                 {tool.configFormat === "anthropic" ? "Anthropic API" : "OpenAI Compatible"}
               </Badge>

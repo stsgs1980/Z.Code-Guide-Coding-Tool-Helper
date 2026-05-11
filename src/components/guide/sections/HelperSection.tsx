@@ -1,6 +1,6 @@
 "use client";
 
-import { SectionHeader, TaxiDivider, CodeBlock } from "../ui";
+import { SectionHeader, TaxiDivider, CodeBlock, CopyButton } from "../ui";
 import { Badge } from "@/components/ui/badge";
 import { commands, helperInstallCode, helperAuthCode, helperLangCode } from "../data/commands";
 import { motion } from "framer-motion";
@@ -153,11 +153,14 @@ export function HelperSection() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-4 flex flex-col sm:flex-row sm:items-center gap-2`}
+              className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2`}
             >
-              <code className="text-sm font-mono text-nyc-taxi flex-shrink-0">{cmd.cmd}</code>
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <code className="text-sm font-mono text-nyc-taxi flex-shrink-0">{cmd.cmd}</code>
+                <CopyButton text={cmd.cmd} />
+              </div>
               <span className={`text-xs sm:text-sm ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>{cmd.description}</span>
-              <Badge variant="outline" className={`text-[10px] w-fit ml-auto ${th('border-white/10 text-white/40', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>
+              <Badge variant="outline" className={`text-[10px] w-fit sm:ml-auto ${th('border-white/10 text-white/40', 'border-oklch(0.82 0 0) text-oklch(0.50 0 0)')}`}>
                 {cmd.category}
               </Badge>
             </motion.div>

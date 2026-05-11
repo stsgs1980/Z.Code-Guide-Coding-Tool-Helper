@@ -44,20 +44,26 @@ export const sources: Source[] = [
   },
   {
     title: "MCP Web Search",
-    url: "https://docs.z.ai/devpack/extension/mcp-server-web-search",
+    url: "https://docs.z.ai/devpack/mcp/search-mcp-server",
     description: "Документация MCP Web Search",
     category: "tools",
   },
   {
     title: "MCP Vision",
-    url: "https://docs.z.ai/devpack/extension/mcp-server-vision",
+    url: "https://docs.z.ai/devpack/mcp/vision-mcp-server",
     description: "Документация MCP Vision",
     category: "tools",
   },
   {
     title: "MCP Web Reader",
-    url: "https://docs.z.ai/devpack/extension/mcp-server-web-reader",
+    url: "https://docs.z.ai/devpack/mcp/reader-mcp-server",
     description: "Документация MCP Web Reader",
+    category: "tools",
+  },
+  {
+    title: "MCP Zread",
+    url: "https://docs.z.ai/devpack/mcp/zread-mcp-server",
+    description: "Документация MCP Zread",
     category: "tools",
   },
   {

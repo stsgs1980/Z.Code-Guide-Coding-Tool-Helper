@@ -72,7 +72,7 @@ export function PlanSection() {
       <div className="space-y-6">
         {planFaqGroups.map((group) => (
           <div key={group}>
-            <h4 className={`text-sm font-semibold mb-2 ${th('text-white/60', 'text-oklch(0.40 0 0)')}`}>
+            <h4 className={`text-sm font-bold uppercase tracking-wider mb-3 px-3 py-2 rounded-lg ${th('bg-white/[0.03] text-nyc-taxi border-l-2 border-nyc-taxi/40', 'bg-oklch(0.95 0 0) text-oklch(0.78 0.16 85) border-l-2 border-oklch(0.78 0.16 85 / 40%)')}`}>
               {group}
             </h4>
             <Accordion type="single" collapsible className="w-full">
@@ -84,7 +84,7 @@ export function PlanSection() {
                     value={`${group}-${i}`}
                     className={th('border-white/5', 'border-oklch(0.88 0 0)')}
                   >
-                    <AccordionTrigger className="text-sm text-left hover:text-nyc-taxi">
+                    <AccordionTrigger className={`text-sm text-left font-semibold hover:text-nyc-taxi ${th('[&>svg]:text-white/30', '[&>svg]:text-oklch(0.50 0 0)')}`}>
                       {faq.q}
                     </AccordionTrigger>
                     <AccordionContent className={`text-sm whitespace-pre-line ${th('text-white/50', 'text-oklch(0.40 0 0)')}`}>
