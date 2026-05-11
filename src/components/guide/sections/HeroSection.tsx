@@ -16,9 +16,18 @@ export function HeroSection() {
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
 
   return (
-    <section id="hero" className={`relative overflow-hidden ${th('nyc-ambient-bg', 'bg-oklch(0.97 0 0)')}`}>
-      <div className="relative z-10 w-full px-4 md:px-8 pt-16 md:pt-24 pb-16 md:pb-24">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 w-full max-w-[1800px] mx-auto">
+    <section
+      id="hero"
+      className={`relative overflow-hidden ${th('nyc-ambient-bg', 'bg-oklch(0.97 0 0)')}`}
+    >
+      {/* Full-bleed background layer */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className={`absolute -top-32 -right-32 w-96 h-96 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/5', 'bg-[var(--nyc-taxi)]/8')}`} />
+        <div className={`absolute -bottom-24 -left-24 w-72 h-72 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/3', 'bg-[var(--nyc-taxi)]/5')}`} />
+      </div>
+
+      <div className="relative z-10 w-full px-6 sm:px-10 md:px-16 lg:px-20 pt-20 md:pt-28 pb-16 md:pb-24">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-12 lg:gap-20 w-full max-w-screen-2xl mx-auto">
           {/* Left: Text content */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -26,11 +35,11 @@ export function HeroSection() {
             transition={{ duration: 0.7 }}
             className="flex-1 min-w-0"
           >
-            <div className="nyc-label mb-5">Руководство пользователя</div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-5">
+            <div className="nyc-label mb-4">Руководство пользователя</div>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6">
               <span className="nyc-gradient-text">Z Code</span>
             </h1>
-            <p className={`text-lg md:text-xl max-w-xl mb-10 leading-relaxed ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+            <p className={`text-base sm:text-lg md:text-xl max-w-xl mb-10 leading-relaxed ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
               Платформа AI-кодинга нового поколения. Используйте мощные модели GLM
               в ваших любимых инструментах разработки с поддержкой MCP-серверов.
             </p>
@@ -58,7 +67,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="grid grid-cols-2 gap-4 md:gap-6 w-full lg:w-auto lg:grid-cols-2"
+            className="grid grid-cols-2 gap-4 md:gap-5 w-full sm:w-auto"
           >
             {stats.map((stat, i) => (
               <motion.div
@@ -66,10 +75,10 @@ export function HeroSection() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-                className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} nyc-hero-card-glow p-6 md:p-8 text-center min-w-[140px] md:min-w-[170px]`}
+                className={`${th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')} nyc-hero-card-glow p-5 md:p-7 text-center min-w-[130px] sm:min-w-[150px] md:min-w-[170px]`}
               >
-                <stat.icon className="h-6 w-6 text-nyc-taxi mx-auto mb-3" />
-                <div className="text-3xl md:text-4xl font-black nyc-gradient-text">{stat.value}</div>
+                <stat.icon className="h-5 w-5 md:h-6 md:w-6 text-nyc-taxi mx-auto mb-3" />
+                <div className="text-2xl sm:text-3xl md:text-4xl font-black nyc-gradient-text">{stat.value}</div>
                 <div className={`text-xs mt-2 ${th('text-white/40', 'text-oklch(0.50 0 0)')}`}>{stat.label}</div>
               </motion.div>
             ))}

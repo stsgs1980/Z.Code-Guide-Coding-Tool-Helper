@@ -164,3 +164,24 @@ Stage Summary:
 - Two cron jobs created for server keepalive and automated QA
 - Server stability is managed via cron (inherent sandbox limitation)
 
+
+---
+Task ID: 13
+Agent: Main Agent
+Task: Fix allowedDevOrigins and Hero layout
+
+Work Log:
+- Added ".chatglm.site" to allowedDevOrigins in next.config.ts (fixes 502 in sandbox preview)
+- Rewrote HeroSection.tsx with proper full-width layout:
+  - Added decorative blur gradient background blobs
+  - Responsive padding: px-6 sm:px-10 md:px-16 lg:px-20
+  - Proper vertical spacing: pt-20 md:pt-28 pb-16 md:pb-24
+  - Stats grid responsive sizing
+  - max-w-screen-2xl inner container for ultra-wide screens
+- Fixed page.tsx Hero container: added md:ml-14 back (respects sidebar), pt-14 for mobile header
+- Lint clean, server returning 200
+
+Stage Summary:
+- allowedDevOrigins now includes .chatglm.site for sandbox preview access
+- Hero layout fixed: full width with sidebar offset, proper spacing, responsive
+- Server operational at 200

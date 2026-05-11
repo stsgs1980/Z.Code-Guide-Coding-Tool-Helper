@@ -87,12 +87,12 @@ function GuideContent() {
         )}
       </AnimatePresence>
 
-      {/* Hero — full width, edge to edge */}
-      <div className="pt-16 md:pt-0">
+      {/* Hero — full width */}
+      <div className="md:ml-14 pt-14 md:pt-0">
         <HeroSection />
       </div>
 
-      {/* Content sections — wider layout */}
+      {/* Content sections */}
       <main className="md:ml-14 max-w-6xl mx-auto px-6 md:px-10 pb-20 flex-1">
         <QuickStartSection />
         <HelperSection />
