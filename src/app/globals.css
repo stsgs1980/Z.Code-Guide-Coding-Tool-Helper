@@ -598,37 +598,17 @@ html {
 }
 
 /* ── Code block sticky horizontal scrollbar ── */
+/* Hide the in-content scrollbar completely — only the sticky proxy at window bottom is visible */
 .code-scroll-content {
-  scrollbar-width: thin;
-  scrollbar-color: oklch(0.30 0 0) transparent;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 .code-scroll-content::-webkit-scrollbar {
-  height: 6px;
-}
-.code-scroll-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-.code-scroll-content::-webkit-scrollbar-thumb {
-  background: oklch(0.30 0 0);
-  border-radius: 3px;
-}
-.code-scroll-content::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.45 0 0);
+  display: none; /* Chrome/Safari */
 }
 
-/* Hide the content area scrollbar when proxy is active */
-.code-block:hover .code-scroll-content::-webkit-scrollbar-thumb {
-  background: oklch(0.35 0 0);
-}
-
-/* Sticky scroll proxy wrapper */
-.code-scroll-proxy-wrapper {
-  position: relative;
-  z-index: 20;
-  transition: all 0.15s ease;
-}
-
-.code-scroll-proxy-wrapper.is-sticky {
+/* Sticky scroll proxy — always at bottom of viewport */
+.code-scroll-proxy-sticky {
   position: fixed;
   bottom: 0;
   left: 0;

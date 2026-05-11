@@ -23,15 +23,10 @@ function highlightSyntax(code: string, lang: string): string {
       .replace(/:\s*(\d+)/g, ': <span class="token-number">$1</span>')
       .replace(/:\s*(true|false|null)/g, ': <span class="token-boolean">$1</span>');
   } else if (lang === "bash" || lang === "shell" || lang === "yaml") {
-    // Bash/shell syntax highlighting — order matters!
-    // 1. Comments (must be first to avoid conflicts)
     html = html.replace(/(#.*$)/gm, '<span class="token-comment">$1</span>');
-
-    // 2. Strings in double quotes (skip if already inside a span)
     html = html.replace(/(?<!class=)&quot;([^&]*)&quot;/g, '<span class="token-string">"$1"</span>');
     html = html.replace(/"([^"]*?)"/g, '<span class="token-string">"$1"</span>');
 
-    // 3. Common commands at start of line or after && / | / ;
     const bashCommands = [
       'npm', 'npx', 'yarn', 'pnpm', 'bun', 'sudo', 'curl', 'wget',
       'git', 'docker', 'node', 'python', 'pip', 'coding-helper', 'chelper',
@@ -41,26 +36,19 @@ function highlightSyntax(code: string, lang: string): string {
     ];
     const cmdPattern = new RegExp(`\\b(${bashCommands.join('|')})\\b`, 'g');
     html = html.replace(cmdPattern, (match, cmd, offset, str) => {
-      // Don't highlight inside already-created spans
       const before = str.substring(Math.max(0, offset - 30), offset);
       if (before.includes('class="token-')) return match;
       return `<span class="token-function">${cmd}</span>`;
     });
 
-    // 4. Flags and options: --word, -w
     html = html.replace(/(?<!class="token-\w+"[^>]*)(\s)(-{1,2}[\w-]+)/g, '$1<span class="token-attr-value">$2</span>');
-
-    // 5. Variables: $VAR or ${VAR}
     html = html.replace(/(\$\{[^}]+\}|\$\w+)/g, '<span class="token-variable">$1</span>');
-
-    // 6. Numbers
     html = html.replace(/\b(\d+)\b/g, (match, num, offset, str) => {
       const before = str.substring(Math.max(0, offset - 30), offset);
       if (before.includes('class="token-')) return match;
       return `<span class="token-number">${num}</span>`;
     });
 
-    // 7. Sub-commands after main command: auth, init, lang, etc.
     const subCommands = ['install', 'init', 'auth', 'lang', 'show', 'set', 'revoke', 'reload', 'doctor', 'run', 'start', 'build', 'dev', 'test', 'global', 'local'];
     const subPattern = new RegExp(`\\b(${subCommands.join('|')})\\b`, 'g');
     html = html.replace(subPattern, (match, cmd, offset, str) => {
@@ -84,11 +72,10 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
   const lines = code.split("\n");
   const highlighted = highlightSyntax(code, lang);
   const contentRef = useRef<HTMLDivElement>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
   const scrollProxyRef = useRef<HTMLDivElement>(null);
-  const [isSticky, setIsSticky] = useState(false);
   const [needsHScroll, setNeedsHScroll] = useState(false);
   const [scrollContentWidth, setScrollContentWidth] = useState<number | null>(null);
+  const [isInView, setIsInView] = useState(true);
 
   // Check if content overflows horizontally
   useEffect(() => {
@@ -105,32 +92,31 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
     return () => ro.disconnect();
   }, [code]);
 
-  // Intersection observer for sticky scrollbar
+  // Track if code block is in viewport
   useEffect(() => {
     if (!needsHScroll) return;
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
+    const el = contentRef.current;
+    if (!el) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // When sentinel leaves viewport (bottom of code block is below fold),
-        // make the scroll proxy sticky at viewport bottom
-        setIsSticky(!entry.isIntersecting);
+        setIsInView(entry.isIntersecting);
       },
-      { threshold: 0, rootMargin: "0px 0px 0px 0px" }
+      { threshold: 0, rootMargin: "0px 0px -10px 0px" }
     );
 
-    observer.observe(sentinel);
+    observer.observe(el);
     return () => observer.disconnect();
   }, [needsHScroll]);
 
-  // Sync scroll between content and proxy
+  // Sync scroll: proxy → content
   const syncScrollToContent = useCallback(() => {
     if (scrollProxyRef.current && contentRef.current) {
       contentRef.current.scrollLeft = scrollProxyRef.current.scrollLeft;
     }
   }, []);
 
+  // Sync scroll: content → proxy
   const syncScrollToProxy = useCallback(() => {
     if (contentRef.current && scrollProxyRef.current) {
       scrollProxyRef.current.scrollLeft = contentRef.current.scrollLeft;
@@ -154,7 +140,7 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
           <CopyButton text={code} />
         </div>
       </div>
-      {/* Code content — overflow hidden, scroll handled by proxy */}
+      {/* Code content — scrollbar hidden via CSS, scroll handled by proxy */}
       <div
         ref={contentRef}
         className="overflow-x-auto code-scroll-content"
@@ -170,19 +156,14 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
           <div key={i} className="leading-relaxed text-right pr-2">{i + 1}</div>
         ))}
       </div>
-      {/* Sentinel — detects when bottom of code block exits viewport */}
-      <div ref={sentinelRef} className="h-0" />
-      {/* Sticky horizontal scroll proxy — sticks to bottom of viewport */}
-      {needsHScroll && (
-        <div
-          className={`code-scroll-proxy-wrapper ${isSticky ? 'is-sticky' : ''}`}
-        >
+      {/* Sticky horizontal scroll proxy — always at bottom of viewport */}
+      {needsHScroll && isInView && (
+        <div className="code-scroll-proxy-sticky">
           <div
             ref={scrollProxyRef}
             className="code-scroll-proxy"
             onScroll={syncScrollToContent}
           >
-            {/* Invisible content with same width as code to enable scrolling */}
             <div style={{ width: scrollContentWidth ? `${scrollContentWidth}px` : 'auto', height: '1px' }} />
           </div>
         </div>
