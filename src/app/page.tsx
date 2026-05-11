@@ -20,7 +20,6 @@ import {
 } from "@/components/guide";
 import { ThemeToggle } from "@/components/guide/features/ThemeToggle";
 import { Menu, X } from "lucide-react";
-import { NeuroLogo } from "@/components/guide/ui/NeuroLogo";
 import { useActiveSection } from "@/components/guide/hooks/useActiveSection";
 import { useTheme, ThemeProvider } from "@/components/guide/hooks/useTheme";
 import { tocItems } from "@/components/guide/data/toc";
@@ -88,8 +87,8 @@ function GuideContent() {
         )}
       </AnimatePresence>
 
-      {/* Hero — full width */}
-      <div className="md:ml-14 pt-16 md:pt-0 flex-1">
+      {/* Hero — full width, edge to edge */}
+      <div className="pt-16 md:pt-0">
         <HeroSection />
       </div>
 
@@ -108,9 +107,6 @@ function GuideContent() {
 
         {/* Footer */}
         <footer className="nyc-footer-glow-line mt-12 pt-6 pb-8 text-center">
-          <div className="flex justify-center mb-3">
-            <NeuroLogo height={20} variant="auto" />
-          </div>
           <p className={`text-xs ${th('text-white/20', 'text-oklch(0.70 0 0)')}`}>
             Z Code User Guide — Руководство пользователя
           </p>

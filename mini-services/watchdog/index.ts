@@ -1,19 +1,18 @@
 /**
- * Dev Server Watchdog
+ * Dev Server Watchdog v2
  *
- * Monitors the Next.js dev server on port 3000.
- * If the server is down, restarts it automatically.
- * Runs on port 3001 with a health endpoint.
+ * Aggressively monitors and restarts the Next.js dev server on port 3000.
+ * Checks every 10 seconds. Restarts after 2 consecutive failures.
+ * Runs on port 3001 with health/restart endpoints.
  */
 
-const CHECK_INTERVAL = 30_000; // Check every 30 seconds
+const CHECK_INTERVAL = 10_000; // Check every 10 seconds
 const SERVER_PORT = 3000;
 const WATCHDOG_PORT = 3001;
-const MAX_RESTART_ATTEMPTS = 3;
-const RESTART_COOLDOWN = 60_000; // 1 minute between restart attempts
+const MAX_CONSECUTIVE_RESTARTS = 10;
 
 import { execSync, spawn } from "child_process";
-import { createWriteStream } from "fs";
+import { createWriteStream, openSync, closeSync, writeSync } from "fs";
 import { createServer, type IncomingMessage, type ServerResponse } from "http";
 
 interface HealthStatus {
@@ -22,13 +21,25 @@ interface HealthStatus {
   lastRestart: string | null;
   restartCount: number;
   uptime: number;
+  serverPid: number | null;
 }
 
 const startTime = Date.now();
 let lastRestart: string | null = null;
 let restartCount = 0;
 let consecutiveFailures = 0;
-let lastRestartTime = 0;
+let serverPid: number | null = null;
+
+function log(msg: string) {
+  const ts = new Date().toISOString();
+  const line = `[${ts}] ${msg}\n`;
+  try {
+    const fd = openSync("/home/z/my-project/watchdog.log", "a");
+    writeSync(fd, line);
+    closeSync(fd);
+  } catch {}
+  console.log(line.trimEnd());
+}
 
 function checkServerHealth(): boolean {
   try {
@@ -42,25 +53,32 @@ function checkServerHealth(): boolean {
   }
 }
 
+function killExistingServer() {
+  try {
+    execSync("pkill -9 -f 'next-server' 2>/dev/null", { timeout: 3000 });
+  } catch {}
+  try {
+    execSync("pkill -9 -f 'next dev' 2>/dev/null", { timeout: 3000 });
+  } catch {}
+  try {
+    if (serverPid) {
+      process.kill(serverPid, 0); // check if alive
+      process.kill(serverPid, 9);
+    }
+  } catch {}
+  serverPid = null;
+}
+
 function restartServer(): boolean {
-  const now = Date.now();
-  if (now - lastRestartTime < RESTART_COOLDOWN) {
-    console.log(`[watchdog] Cooldown active, skipping restart`);
-    return false;
-  }
+  log(`[watchdog] Restarting server...`);
+
+  killExistingServer();
 
   try {
-    // Kill existing process
-    try {
-      execSync("pkill -f 'next dev' 2>/dev/null", { timeout: 3000 });
-    } catch {
-      // No process to kill, fine
-    }
-
-    // Wait a moment
     execSync("sleep 1", { timeout: 3000 });
+  } catch {}
 
-    // Start the server
+  try {
     const child = spawn(
       "npx",
       ["next", "dev", "-p", String(SERVER_PORT)],
@@ -76,21 +94,25 @@ function restartServer(): boolean {
     );
 
     child.unref();
+    serverPid = child.pid ?? null;
 
-    // Redirect output to log
-    const logStream = createWriteStream("/tmp/zdev.log", { flags: "a" });
+    const logStream = createWriteStream("/home/z/my-project/dev.log", { flags: "w" });
     child.stdout?.pipe(logStream);
     child.stderr?.pipe(logStream);
 
+    child.on("exit", (code, signal) => {
+      log(`[watchdog] Server process exited with code=${code} signal=${signal}`);
+      serverPid = null;
+    });
+
     lastRestart = new Date().toISOString();
-    lastRestartTime = now;
     restartCount++;
     consecutiveFailures = 0;
 
-    console.log(`[watchdog] Server restart initiated (attempt #${restartCount})`);
+    log(`[watchdog] Server restart initiated (attempt #${restartCount}, PID=${serverPid})`);
     return true;
   } catch (err) {
-    console.error(`[watchdog] Restart failed:`, err);
+    log(`[watchdog] Restart failed: ${err}`);
     return false;
   }
 }
@@ -100,18 +122,22 @@ function monitor() {
 
   if (alive) {
     consecutiveFailures = 0;
-    console.log(`[watchdog] Server OK`);
+    log(`[watchdog] Server OK`);
   } else {
     consecutiveFailures++;
-    console.log(`[watchdog] Server DOWN (failures: ${consecutiveFailures})`);
+    log(`[watchdog] Server DOWN (failures: ${consecutiveFailures})`);
 
-    if (consecutiveFailures >= 2 && consecutiveFailures <= MAX_RESTART_ATTEMPTS + 1) {
+    if (consecutiveFailures >= 2 && consecutiveFailures <= MAX_CONSECUTIVE_RESTARTS + 1) {
       restartServer();
+    } else if (consecutiveFailures > MAX_CONSECUTIVE_RESTARTS + 1) {
+      // Reset after too many failures, try again next cycle
+      log(`[watchdog] Too many failures, resetting counter`);
+      consecutiveFailures = 1;
     }
   }
 }
 
-// HTTP health endpoint for the watchdog itself
+// HTTP health endpoint
 const watchdogServer = createServer((req: IncomingMessage, res: ServerResponse) => {
   const url = new URL(req.url ?? "/", `http://127.0.0.1:${WATCHDOG_PORT}`);
 
@@ -122,6 +148,7 @@ const watchdogServer = createServer((req: IncomingMessage, res: ServerResponse) 
       lastRestart,
       restartCount,
       uptime: Math.floor((Date.now() - startTime) / 1000),
+      serverPid,
     };
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(status, null, 2));
@@ -136,10 +163,10 @@ const watchdogServer = createServer((req: IncomingMessage, res: ServerResponse) 
 });
 
 watchdogServer.listen(WATCHDOG_PORT, "127.0.0.1", () => {
-  console.log(`[watchdog] Monitoring on port ${WATCHDOG_PORT}`);
-  console.log(`[watchdog] Checking server on port ${SERVER_PORT} every ${CHECK_INTERVAL / 1000}s`);
+  log(`[watchdog] v2 Monitoring on port ${WATCHDOG_PORT}`);
+  log(`[watchdog] Checking server on port ${SERVER_PORT} every ${CHECK_INTERVAL / 1000}s`);
 });
 
-// Start monitoring
+// Initial check and start if needed
 monitor();
 setInterval(monitor, CHECK_INTERVAL);

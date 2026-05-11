@@ -17,8 +17,8 @@ export function HeroSection() {
 
   return (
     <section id="hero" className={`relative overflow-hidden ${th('nyc-ambient-bg', 'bg-oklch(0.97 0 0)')}`}>
-      <div className="relative z-10 w-full px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-16 md:pb-24">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 w-full">
+      <div className="relative z-10 w-full px-4 md:px-8 pt-16 md:pt-24 pb-16 md:pb-24">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 w-full max-w-[1800px] mx-auto">
           {/* Left: Text content */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
