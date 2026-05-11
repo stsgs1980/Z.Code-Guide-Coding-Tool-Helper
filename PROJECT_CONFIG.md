@@ -10,7 +10,7 @@
 ## Stack Signature
 
 ```
-Built with: Next.js 16.1.3 + TypeScript 5 + Tailwind CSS 4 + shadcn/ui + Prisma + Framer Motion
+Built with: Next.js 16.1.3 + TypeScript 5 + Tailwind CSS 4 + shadcn/ui + Prisma + Framer Motion + NEURO Brand Identity
 ```
 
 > Format defined by: `MARKDOWN_STANDARD v2.1`

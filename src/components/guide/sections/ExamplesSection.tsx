@@ -2,7 +2,7 @@
 
 import { SectionHeader, CodeBlock } from "../ui";
 import { motion } from "framer-motion";
-import { MessageSquare, Bug, Rocket, Sparkles, Search, Eye } from "lucide-react";
+import { MessageSquare, Bug, Rocket, Sparkles, Search, Eye, Lightbulb } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 
 const examples = [
@@ -102,7 +102,7 @@ export function ExamplesSection() {
               <span className="px-1.5 py-0.5 rounded bg-nyc-taxi/10 text-nyc-taxi font-mono font-semibold">
                 {ex.model}
               </span>
-              <span>💡 {ex.tip}</span>
+              <span className="inline-flex items-center gap-1"><Lightbulb className="h-3 w-3 text-nyc-taxi" /> {ex.tip}</span>
             </div>
           </motion.div>
         ))}

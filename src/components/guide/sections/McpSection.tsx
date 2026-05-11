@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { useTheme } from "../hooks/useTheme";
 import { useState } from "react";
+import { Lightbulb } from "lucide-react";
 
 type ConfigTab = "claude" | "cline" | "opencode";
 
@@ -142,7 +143,7 @@ export function McpSection() {
             {/* Best practice */}
             {server.bestPractice && (
               <div className={`text-xs mb-3 p-2 rounded ${th('bg-white/5 text-white/50', 'bg-oklch(0.95 0 0) text-oklch(0.40 0 0)')}`}>
-                💡 {server.bestPractice}
+                <Lightbulb className="h-3 w-3 inline mr-1 text-nyc-taxi" />{server.bestPractice}
               </div>
             )}
 

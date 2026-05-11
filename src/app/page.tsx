@@ -20,6 +20,7 @@ import {
 } from "@/components/guide";
 import { ThemeToggle } from "@/components/guide/features/ThemeToggle";
 import { Menu, X } from "lucide-react";
+import { NeuroLogo } from "@/components/guide/ui/NeuroLogo";
 import { useActiveSection } from "@/components/guide/hooks/useActiveSection";
 import { useTheme, ThemeProvider } from "@/components/guide/hooks/useTheme";
 import { tocItems } from "@/components/guide/data/toc";
@@ -40,7 +41,7 @@ function GuideContent() {
 
       {/* Mobile header */}
       <header className={`md:hidden fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-sm border-b px-4 py-3 flex items-center justify-between ${th('border-white/5', 'border-oklch(0.88 0 0)')}`}>
-        <span className="font-bold text-sm nyc-gradient-text">Z Code</span>
+        <NeuroLogo height={24} />
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <button
@@ -107,6 +108,9 @@ function GuideContent() {
 
         {/* Footer */}
         <footer className="nyc-footer-glow-line mt-12 pt-6 pb-8 text-center">
+          <div className="flex justify-center mb-3">
+            <NeuroLogo height={20} variant="auto" />
+          </div>
           <p className={`text-xs ${th('text-white/20', 'text-oklch(0.70 0 0)')}`}>
             Z Code User Guide — Руководство пользователя
           </p>

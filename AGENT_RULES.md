@@ -183,6 +183,7 @@ See `instructions/writing-plans.md` for full details.
 | Language Rule | `instructions/language-rule.md` |
 | Diagnostic Disclosure | `instructions/diagnostic-disclosure.md` |
 | Writing Plans | `instructions/writing-plans.md` |
+| Sandbox Rules | `instructions/sandbox-rules.md` |
 
 ## 9. Document Classification
 
@@ -218,6 +219,46 @@ Deploy AFTER Group B. These SUBMIT to Group B standards.
 | `AGENT_RULES.md` | This file -- agent behavioral rules |
 | `PROJECT_CONFIG.md` | Project-specific settings (stack, paths, server) |
 | `instructions/*.md` | Detailed behavioral instructions |
+| `scripts/logo-agent.js` | NEURO logo theme detection engine |
+| `logos/*.svg` | NEURO brand logo variants (7 themes) |
+
+## 10. Sandbox Environment
+
+This project runs in the Z.ai sandbox environment. Key constraints:
+
+- **Shared filesystem**: All chat sessions share the same filesystem, no isolation
+- **Mortal processes**: When a chat ends, its shell process dies. Child processes (like dev servers) also die. Files survive.
+- **No interactive git**: `git rebase --continue` is impossible when the environment is blocked by a conflict
+- **Session continuity**: Use `worklog.md` as the coordination layer between sessions
+
+See `instructions/sandbox-rules.md` for full details.
+
+## 11. Project in Sandbox
+
+When working on this project within the sandbox:
+
+1. Always check dev server status first: `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000`
+2. If server is down, restart using `dev-watchdog` skill protocol
+3. After code changes, verify server health with curl
+4. Use `worklog.md` to track all changes for session continuity
+
+## 12. Dev Server Startup
+
+Standard startup sequence (per `dev-watchdog` skill):
+
+```bash
+pkill -f 'next dev' 2>/dev/null
+npx next dev -p 3000 </dev/null >/tmp/zdev.log 2>&1 & disown
+sleep 6
+curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000
+```
+
+Always use:
+- `127.0.0.1` (NOT `localhost`)
+- `npx next dev` (NOT `bun run dev` -- more stable)
+- `disown` to detach from shell
+- Output redirect to log file
+- Close stdin with `</dev/null`
 
 ---
 
