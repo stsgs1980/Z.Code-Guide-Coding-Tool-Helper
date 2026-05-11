@@ -22,12 +22,12 @@ export function HeroSection() {
     >
       {/* Full-bleed background layer */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className={`absolute -top-32 -right-32 w-96 h-96 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/5', 'bg-[var(--nyc-taxi)]/8')}`} />
-        <div className={`absolute -bottom-24 -left-24 w-72 h-72 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/3', 'bg-[var(--nyc-taxi)]/5')}`} />
+        <div className={`absolute -top-32 -right-32 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/5', 'bg-[var(--nyc-taxi)]/8')}`} />
+        <div className={`absolute -bottom-24 -left-24 w-48 h-48 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full blur-3xl ${th('bg-[var(--nyc-taxi)]/3', 'bg-[var(--nyc-taxi)]/5')}`} />
       </div>
 
-      <div className="relative z-10 w-full px-6 sm:px-10 md:px-16 lg:px-20 pt-20 md:pt-28 pb-16 md:pb-24">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-12 lg:gap-20 w-full max-w-screen-2xl mx-auto">
+      <div className="relative z-10 w-full px-6 md:px-10 pt-20 md:pt-28 pb-16 md:pb-20">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 w-full max-w-6xl mx-auto">
           {/* Left: Text content */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -36,17 +36,17 @@ export function HeroSection() {
             className="flex-1 min-w-0"
           >
             <div className="nyc-label mb-4">Руководство пользователя</div>
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight mb-5">
               <span className="nyc-gradient-text">Z Code</span>
             </h1>
-            <p className={`text-base sm:text-lg md:text-xl max-w-xl mb-10 leading-relaxed ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
+            <p className={`text-base sm:text-lg md:text-xl max-w-xl mb-8 leading-relaxed ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
               Платформа AI-кодинга нового поколения. Используйте мощные модели GLM
               в ваших любимых инструментах разработки с поддержкой MCP-серверов.
             </p>
 
             <div className="flex flex-wrap gap-3">
               <a
-                href="#quickstart"
+                href="#quick-start"
                 className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all ${th('bg-[var(--nyc-taxi)] text-black hover:bg-[var(--nyc-amber)] shadow-xl shadow-[var(--nyc-taxi)]/30 nyc-cta-glow', 'bg-[var(--nyc-taxi)] text-black hover:bg-[var(--nyc-amber)] shadow-md')}`}
               >
                 <Zap className="h-4 w-4" />
@@ -67,7 +67,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="grid grid-cols-2 gap-4 md:gap-5 w-full sm:w-auto"
+            className="grid grid-cols-2 gap-4 w-full sm:w-auto"
           >
             {stats.map((stat, i) => (
               <motion.div

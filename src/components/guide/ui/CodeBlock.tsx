@@ -59,7 +59,7 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
       </div>
       {/* Code content */}
       <div className="overflow-x-auto">
-        <pre className="p-4 text-sm leading-relaxed font-mono">
+        <pre className="p-4 pl-12 text-sm leading-relaxed font-mono">
           <code dangerouslySetInnerHTML={{ __html: highlighted }} />
         </pre>
       </div>
@@ -69,9 +69,6 @@ export function CodeBlock({ code, lang = "bash", title, className = "" }: CodeBl
           <div key={i} className="leading-relaxed text-right pr-2">{i + 1}</div>
         ))}
       </div>
-      {lines.length > 0 && (
-        <style>{`.code-block pre { padding-left: 3rem; }`}</style>
-      )}
     </div>
   );
 }

@@ -26,23 +26,24 @@ export function PlanSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {plans.map((plan, i) => (
+          <div className="relative" key={plan.id}>
+            {plan.highlight && (
+              <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 bg-nyc-taxi text-black text-[10px] px-3">
+                Популярный
+              </Badge>
+            )}
           <motion.div
             key={plan.id}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className={`p-5 relative ${
+            className={`p-5 ${
               plan.highlight
                 ? th('nyc-card-highlight-enhanced', 'rounded-xl border border-oklch(0.78 0.16 85 / 25%) bg-oklch(0.99 0 0) shadow-sm')
                 : th('nyc-card-enhanced', 'rounded-xl border border-oklch(0.85 0 0) bg-oklch(0.98 0 0) shadow-sm')
             }`}
           >
-            {plan.highlight && (
-              <Badge className="absolute -top-2 right-4 bg-nyc-taxi text-black text-[10px]">
-                Популярный
-              </Badge>
-            )}
             <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
             <div className="text-2xl font-bold nyc-gradient-text mb-4">{plan.price}</div>
             <div className="space-y-2 text-sm">
@@ -61,6 +62,7 @@ export function PlanSection() {
               </div>
             </div>
           </motion.div>
+          </div>
         ))}
       </div>
 

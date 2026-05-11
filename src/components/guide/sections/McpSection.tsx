@@ -53,7 +53,7 @@ export function McpSection() {
           >
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="font-semibold flex items-center gap-2">
+                <h3 className="font-semibold text-base flex items-center gap-2">
                   {server.name}
                   <Badge
                     variant="outline"

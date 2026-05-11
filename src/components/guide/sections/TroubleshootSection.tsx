@@ -94,7 +94,7 @@ export function TroubleshootSection() {
       />
 
       {/* General errors */}
-      <h3 className="text-base font-semibold mb-3">Общие ошибки API и конфигурации</h3>
+      <h3 className="text-lg font-semibold mb-3">Общие ошибки API и конфигурации</h3>
       <div className="space-y-3 mb-8">
         {errors.map((err, i) => (
           <motion.div
@@ -129,7 +129,7 @@ export function TroubleshootSection() {
       </div>
 
       {/* Coding Tool Helper specific errors */}
-      <h3 className="text-base font-semibold mb-3">Ошибки Coding Tool Helper</h3>
+      <h3 className="text-lg font-semibold mb-3">Ошибки Coding Tool Helper</h3>
       <p className={`text-sm mb-4 ${th('text-white/60', 'text-oklch(0.35 0 0)')}`}>
         Если возникли проблемы, сначала запустите <code className="text-nyc-taxi">coding-helper doctor</code> для диагностики.
       </p>

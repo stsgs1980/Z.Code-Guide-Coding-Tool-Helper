@@ -18,7 +18,11 @@ export function SidebarNav({ onSearchOpen }: SidebarNavProps) {
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (el) {
+      const offset = window.innerWidth < 768 ? 56 : 0;
+      const y = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
   };
 
   return (
