@@ -13,6 +13,8 @@ const MAX_RESTART_ATTEMPTS = 3;
 const RESTART_COOLDOWN = 60_000; // 1 minute between restart attempts
 
 import { execSync, spawn } from "child_process";
+import { createWriteStream } from "fs";
+import { createServer, type IncomingMessage, type ServerResponse } from "http";
 
 interface HealthStatus {
   serverAlive: boolean;
@@ -76,8 +78,7 @@ function restartServer(): boolean {
     child.unref();
 
     // Redirect output to log
-    const fs = require("fs");
-    const logStream = fs.createWriteStream("/tmp/zdev.log", { flags: "a" });
+    const logStream = createWriteStream("/tmp/zdev.log", { flags: "a" });
     child.stdout?.pipe(logStream);
     child.stderr?.pipe(logStream);
 
@@ -111,9 +112,8 @@ function monitor() {
 }
 
 // HTTP health endpoint for the watchdog itself
-const http = require("http");
-const server = http.createServer((req: any, res: any) => {
-  const url = new URL(req.url, `http://127.0.0.1:${WATCHDOG_PORT}`);
+const watchdogServer = createServer((req: IncomingMessage, res: ServerResponse) => {
+  const url = new URL(req.url ?? "/", `http://127.0.0.1:${WATCHDOG_PORT}`);
 
   if (url.pathname === "/health") {
     const status: HealthStatus = {
@@ -135,7 +135,7 @@ const server = http.createServer((req: any, res: any) => {
   }
 });
 
-server.listen(WATCHDOG_PORT, "127.0.0.1", () => {
+watchdogServer.listen(WATCHDOG_PORT, "127.0.0.1", () => {
   console.log(`[watchdog] Monitoring on port ${WATCHDOG_PORT}`);
   console.log(`[watchdog] Checking server on port ${SERVER_PORT} every ${CHECK_INTERVAL / 1000}s`);
 });

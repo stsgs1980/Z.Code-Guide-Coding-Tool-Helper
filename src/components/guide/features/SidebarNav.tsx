@@ -6,7 +6,6 @@ import { tocItems } from "../data/toc";
 import { ThemeToggle } from "./ThemeToggle";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
-import { NeuroLogo } from "../ui/NeuroLogo";
 
 interface SidebarNavProps {
   onSearchOpen: () => void;
@@ -24,11 +23,6 @@ export function SidebarNav({ onSearchOpen }: SidebarNavProps) {
 
   return (
     <nav className={`hidden md:flex flex-col items-center gap-1 py-4 px-2 fixed left-0 top-0 h-full z-40 bg-background/80 backdrop-blur-sm border-r ${th('border-white/5', 'border-oklch(0.88 0 0)')}`}>
-      {/* NEURO Logo at top of sidebar */}
-      <div className="mb-3 px-1">
-        <NeuroLogo height={28} />
-      </div>
-
       <button
         onClick={onSearchOpen}
         className={`p-2 rounded-lg transition-colors group mb-2 ${th('hover:bg-white/5', 'hover:bg-oklch(0.90 0 0)')}`}

@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Terminal, Zap, Shield, Globe, BookOpen } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
-import { NeuroLogo } from "../ui/NeuroLogo";
 
 const stats = [
   { icon: Terminal, value: "10+", label: "Инструментов" },
@@ -26,15 +25,6 @@ export function HeroSection() {
           transition={{ duration: 0.7 }}
           className="max-w-5xl"
         >
-          {/* NEURO Logo + Label */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-6"
-          >
-            <NeuroLogo height={44} showTagline />
-          </motion.div>
           <div className="nyc-label mb-5">Руководство пользователя</div>
           <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-5">
             <span className="nyc-gradient-text">Z Code</span>

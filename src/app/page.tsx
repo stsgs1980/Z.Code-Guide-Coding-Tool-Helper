@@ -41,7 +41,7 @@ function GuideContent() {
 
       {/* Mobile header */}
       <header className={`md:hidden fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-sm border-b px-4 py-3 flex items-center justify-between ${th('border-white/5', 'border-oklch(0.88 0 0)')}`}>
-        <NeuroLogo height={24} />
+        <span className="font-bold text-sm nyc-gradient-text">Z Code</span>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <button
