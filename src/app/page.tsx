@@ -21,11 +21,11 @@ import {
 import { ThemeToggle } from "@/components/guide/features/ThemeToggle";
 import { Menu, X } from "lucide-react";
 import { useActiveSection } from "@/components/guide/hooks/useActiveSection";
-import { useTheme } from "@/components/guide/hooks/useTheme";
+import { useTheme, ThemeProvider } from "@/components/guide/hooks/useTheme";
 import { tocItems } from "@/components/guide/data/toc";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function GuidePage() {
+function GuideContent() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const activeId = useActiveSection();
@@ -33,7 +33,7 @@ export default function GuidePage() {
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
 
   return (
-    <div className={`min-h-screen flex flex-col ${th('bg-background', 'bg-background')}`}>
+    <div className="min-h-screen flex flex-col bg-background">
       <ReadingProgress />
       <SidebarNav onSearchOpen={() => setSearchOpen(true)} />
       <SearchDialog />
@@ -87,9 +87,13 @@ export default function GuidePage() {
         )}
       </AnimatePresence>
 
-      {/* Main content */}
-      <main className="md:ml-14 max-w-4xl mx-auto px-4 md:px-8 pt-16 md:pt-4 pb-20 flex-1">
+      {/* Hero — full width */}
+      <div className="md:ml-14 pt-16 md:pt-0 flex-1">
         <HeroSection />
+      </div>
+
+      {/* Content sections — wider layout */}
+      <main className="md:ml-14 max-w-6xl mx-auto px-6 md:px-10 pb-20 flex-1">
         <QuickStartSection />
         <HelperSection />
         <ToolsSection />
@@ -122,5 +126,13 @@ export default function GuidePage() {
 
       <ScrollToTop />
     </div>
+  );
+}
+
+export default function GuidePage() {
+  return (
+    <ThemeProvider>
+      <GuideContent />
+    </ThemeProvider>
   );
 }

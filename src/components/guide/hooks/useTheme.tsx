@@ -1,8 +1,20 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, createContext, useContext, type ReactNode } from "react";
 
 export type Theme = "dark" | "light";
+
+interface ThemeContextValue {
+  theme: Theme;
+  setTheme: (t: Theme) => void;
+  toggleTheme: () => void;
+}
+
+const ThemeContext = createContext<ThemeContextValue>({
+  theme: "dark",
+  setTheme: () => {},
+  toggleTheme: () => {},
+});
 
 function applyThemeToDOM(newTheme: Theme) {
   const root = document.documentElement;
@@ -25,13 +37,12 @@ function applyThemeToDOM(newTheme: Theme) {
   }, 350);
 }
 
-export function useTheme() {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window === "undefined") return "dark";
     return (localStorage.getItem("z-guide-theme") as Theme) || "dark";
   });
 
-  // Apply theme to DOM on mount
   useEffect(() => {
     applyThemeToDOM(theme);
   }, [theme]);
@@ -47,5 +58,13 @@ export function useTheme() {
     setThemeState(next);
   }, [theme]);
 
-  return { theme, setTheme, toggleTheme };
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export function useTheme() {
+  return useContext(ThemeContext);
 }

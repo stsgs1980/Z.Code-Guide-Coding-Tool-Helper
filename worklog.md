@@ -47,3 +47,41 @@ Stage Summary:
 - No new CSS added to globals.css — th() is the primary mechanism, CSS overrides serve as backup
 - All existing functionality preserved — only className props changed
 - Build passes: lint 0 errors, next build compiles successfully
+---
+Task ID: 3
+Agent: Main Agent
+Task: Rebuild Z Code User Guide from scratch with anti-monolith architecture
+
+Work Log:
+- Fetched source material from docs.z.ai (FAQ, Coding Tool Helper, Quick Start, MCP servers)
+- Planned new guide structure: 11 sections (Hero, Quick Start, Coding Tool Helper, Tools, Install, MCP, GLM Coding Plan, Models, Examples, Troubleshoot, Sources)
+- Killed old 3261-line monolith page.tsx
+- Built modular component architecture:
+  - data/ (8 files): toc, tools, commands, plans, models, mcpServers, errors, sources
+  - hooks/ (3 hooks): useTheme (with Context), useActiveSection, useSearch
+  - ui/ (5 components): CodeBlock, CopyButton, SectionHeader, StatusDot, TaxiDivider
+  - sections/ (11 components): Hero through Sources
+  - features/ (5 components): SearchDialog, ThemeToggle, SidebarNav, ReadingProgress, ScrollToTop
+- page.tsx reduced from 3261 to 139 lines (ThemeProvider + GuideContent composition)
+- Fixed theme toggle: replaced per-component useState with React Context (ThemeProvider)
+- Added th() helper pattern for theme-aware class switching
+- Hero section now uses full width (separate div wrapper from content)
+- Content uses max-w-6xl (wider than old max-w-4xl)
+- Fixed useTheme.ts → .tsx rename (JSX in Provider component)
+- Removed tee from dev script (was causing server crashes)
+- VLM scores: Dark 8/10, Light 8/10
+
+Stage Summary:
+- Complete app rebuild with anti-monolith architecture
+- 35+ focused files replacing 3261-line monolith
+- Theme toggle works via React Context + th() helper
+- Hero section full width, content wider (max-w-6xl)
+- All content in Russian from docs.z.ai sources
+- 0 lint errors
+
+Unresolved Issues:
+- Server stability: Node process dies intermittently when agent-browser navigates
+- React theme toggle click may not always propagate (DOM class changes work manually)
+- Need to verify theme toggle works consistently via the button click
+- Some sections may need more content from additional docs.z.ai pages
+- Images/screenshots not yet generated for the guide
