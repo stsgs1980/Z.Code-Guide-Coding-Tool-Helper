@@ -65,12 +65,6 @@ export function ZCodeKeyboardShortcuts() {
         <ShortcutTable title="Быстрые выборки (Pickers)" items={keyboardShortcuts.pickers} th={th} card={card} />
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
-        <img src="/images/zcode/keyboard-shortcuts.png" alt="Keyboard shortcuts"
-          className={`w-full rounded-lg border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-      </div>
-
       <TaxiDivider />
     </section>
   );

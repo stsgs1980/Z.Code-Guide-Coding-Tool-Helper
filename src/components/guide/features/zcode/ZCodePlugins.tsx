@@ -62,11 +62,21 @@ export function ZCodePlugins() {
         ))}
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
+      {/* Screenshots */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <img
-          src="/images/zcode/plugins.png"
-          alt="ZCode plugins management"
+          src="/images/zcode/plugin-discover.png"
+          alt="Plugin Discover — поиск плагинов"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
+        />
+        <img
+          src="/images/zcode/plugin-installed.png"
+          alt="Plugin Installed — управление установленными"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
+        />
+        <img
+          src="/images/zcode/plugin-marketplace.png"
+          alt="Plugin Marketplace — маркетплейсы"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
         />
       </div>

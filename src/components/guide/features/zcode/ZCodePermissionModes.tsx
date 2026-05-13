@@ -69,7 +69,7 @@ export function ZCodePermissionModes() {
 
       {/* Screenshot */}
       <div className="mb-6">
-        <img src="/images/zcode/agents.png" alt="ZCode agents and permission modes" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/agent-permissions.png" alt="Режимы разрешений Agent в ZCode" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       {/* Tip */}

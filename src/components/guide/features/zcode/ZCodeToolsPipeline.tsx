@@ -52,10 +52,22 @@ export function ZCodeToolsPipeline() {
         })}
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
-        <img src="/images/zcode/ade-tools.png" alt="ADE tools overview"
-          className={`w-full rounded-lg border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+      {/* Screenshots — ADE tools */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <img src="/images/zcode/ade-task-manager.png" alt="ADE Task Manager — управление задачами"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/ade-menu.png" alt="ADE Menu — меню инструментов"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/ade-remote-dev.png" alt="ADE Remote Dev — удалённая разработка"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/ade-terminal.png" alt="ADE Terminal — встроенный терминал"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/ade-browser.png" alt="ADE Browser — встроенный браузер"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/ade-devtools.png" alt="ADE DevTools — инструменты разработчика"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/ade-diff-preview.png" alt="ADE Diff Preview — просмотр изменений"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       <TaxiDivider />

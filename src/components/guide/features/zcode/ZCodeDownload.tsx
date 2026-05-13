@@ -42,11 +42,6 @@ export function ZCodeDownload() {
         ))}
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
-        <img src="/images/zcode/install.png" alt="ZCode installation screen" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-      </div>
-
       {/* Install instructions */}
       <h3 className="text-lg font-semibold mb-4">Инструкции по установке</h3>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">

@@ -40,9 +40,11 @@ export function ZCodeApiKeySetup() {
         })}
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
-        <img src="/images/zcode/configuration.png" alt="ZCode API configuration screen" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+      {/* Screenshots — Setup steps */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <img src="/images/zcode/apikey-connect-modal.png" alt="Connect — модальное окно подключения провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/apikey-model-selector.jpg" alt="Model Selector — выбор модели" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/model-providers-settings.png" alt="Настройки провайдеров моделей" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       {/* Tip */}
@@ -79,6 +81,15 @@ export function ZCodeApiKeySetup() {
             </div>
           </motion.div>
         ))}
+      </div>
+
+      {/* Screenshots — Provider setups */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <img src="/images/zcode/apikey-zai.png" alt="Настройка Z.AI провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/apikey-anthropic.png" alt="Настройка Anthropic провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/apikey-openrouter.png" alt="Настройка OpenRouter провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/apikey-moonshot.png" alt="Настройка Moonshot провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/apikey-custom-provider.png" alt="Настройка Custom провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       <TaxiDivider />

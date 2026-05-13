@@ -70,10 +70,14 @@ export function ZCodeFeedback() {
         })}
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
-        <img src="/images/zcode/feedback.png" alt="Feedback and support"
-          className={`w-full rounded-lg border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+      {/* Screenshots */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <img src="/images/zcode/feedback-in-app.jpg" alt="Обратная связь — форма в приложении"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/feedback-macos.png" alt="Экспорт логов на macOS"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/feedback-win.jpg" alt="Экспорт логов на Windows"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       <TaxiDivider />

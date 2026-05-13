@@ -38,12 +38,6 @@ export function ZCodeFaq() {
         </Accordion>
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
-        <img src="/images/zcode/faq.png" alt="FAQ section"
-          className={`w-full rounded-lg border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-      </div>
-
       <TaxiDivider />
     </section>
   );

@@ -86,10 +86,12 @@ export function ZCodeMultiAgent() {
         ))}
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
-        <img src="/images/zcode/agent-framework.png" alt="Agent framework selection"
-          className={`w-full rounded-lg border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+      {/* Screenshots */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <img src="/images/zcode/cli-agents-select.png" alt="Выбор агентного фреймворка"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/cli-agents-switch.png" alt="Переключение между агентами"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       <TaxiDivider />

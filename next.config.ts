@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: [
     ".space-z.ai",
     ".chatglm.site",
+    "21.0.20.33",
   ],
 };
 

@@ -88,8 +88,8 @@ export function ZCodeSafety() {
 
       {/* Screenshot */}
       <div className="mb-6">
-        <img src="/images/zcode/safety.png" alt="Safety confirmation"
-          className={`w-full rounded-lg border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/safety-confirm.png" alt="Панель подтверждения безопасности"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       <TaxiDivider />

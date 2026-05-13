@@ -78,8 +78,8 @@ export function ZCodeCommands() {
       {/* Screenshot */}
       <div className="mb-6">
         <img
-          src="/images/zcode/commands.png"
-          alt="ZCode commands interface"
+          src="/images/zcode/commands-call.png"
+          alt="Вызов команды через слэш в чате"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
         />
       </div>

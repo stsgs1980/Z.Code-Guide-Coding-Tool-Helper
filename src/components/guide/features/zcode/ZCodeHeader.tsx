@@ -54,9 +54,10 @@ export function ZCodeHeader() {
         })}
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
-        <img src="/images/zcode/welcome.png" alt="ZCode Desktop welcome screen" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+      {/* Screenshots */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <img src="/images/zcode/welcome-login-modal.png" alt="ZCode Desktop — экран входа с модальным окном авторизации" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <img src="/images/zcode/welcome-new-task.png" alt="ZCode Desktop — создание новой задачи" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       <TaxiDivider />

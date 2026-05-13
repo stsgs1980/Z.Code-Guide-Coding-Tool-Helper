@@ -75,11 +75,16 @@ export function ZCodeSkills() {
         </ul>
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
+      {/* Screenshots */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <img
-          src="/images/zcode/skills.png"
-          alt="ZCode skills management"
+          src="/images/zcode/skill-call.png"
+          alt="Вызов навыка через $skill-name в чате"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
+        />
+        <img
+          src="/images/zcode/skill-list.png"
+          alt="Список навыков в настройках"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
         />
       </div>

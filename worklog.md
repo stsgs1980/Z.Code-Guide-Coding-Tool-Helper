@@ -38,3 +38,36 @@ Stage Summary:
 - Width/padding `md:ml-14 md:pr-18 lg:pr-18` remains untouched
 - ExamplesSection already lives in ZCodeSection.tsx (ZCode Desktop page)
 - Cron task created for periodic webDevReview (every 15 minutes)
+
+---
+Task ID: 3
+Agent: main
+Task: Update ALL ZCode components to use new meaningful screenshot images
+
+Work Log:
+- Read all 15 ZCode component files and verified existing image references
+- Verified all new image files exist in /public/images/zcode/ (37 files confirmed)
+- Updated ZCodeHeader.tsx: replaced single welcome.png with 2-image grid (welcome-login-modal.png, welcome-new-task.png) using `grid grid-cols-1 sm:grid-cols-2 gap-4`
+- Updated ZCodeDownload.tsx: removed screenshot div entirely (install.png)
+- Updated ZCodeApiKeySetup.tsx: replaced single configuration.png with 3-image grid (apikey-connect-modal.png, apikey-model-selector.jpg, model-providers-settings.png) + 5-image provider grid (apikey-zai.png, apikey-anthropic.png, apikey-openrouter.png, apikey-moonshot.png, apikey-custom-provider.png)
+- Updated ZCodePermissionModes.tsx: replaced agents.png with agent-permissions.png
+- Updated ZCodeEditHistory.tsx: replaced single edit-history.png with 2-image grid (edit-history-enter.png, edit-history-button.png)
+- Updated ZCodeCommands.tsx: replaced commands.png with commands-call.png
+- Updated ZCodePlugins.tsx: replaced single plugins.png with 3-image grid (plugin-discover.png, plugin-installed.png, plugin-marketplace.png)
+- Updated ZCodeMcpServices.tsx: replaced single mcp-services.png with 5-image grid (mcp-entry.png, mcp-list.png, mcp-domains.png, mcp-create.png, mcp-edit.png)
+- Updated ZCodeSkills.tsx: replaced single skills.png with 2-image grid (skill-call.png, skill-list.png)
+- Updated ZCodeMultiAgent.tsx: replaced single agent-framework.png with 2-image grid (cli-agents-select.png, cli-agents-switch.png)
+- Updated ZCodeSafety.tsx: replaced safety.png with safety-confirm.png
+- Updated ZCodeToolsPipeline.tsx: replaced single ade-tools.png with 7-image grid (ade-task-manager.png, ade-menu.png, ade-remote-dev.png, ade-terminal.png, ade-browser.png, ade-devtools.png, ade-diff-preview.png)
+- Updated ZCodeKeyboardShortcuts.tsx: removed screenshot div entirely
+- Updated ZCodeFaq.tsx: removed screenshot div entirely
+- Updated ZCodeFeedback.tsx: replaced single feedback.png with 3-image grid (feedback-in-app.jpg, feedback-macos.png, feedback-win.jpg)
+- All img styling preserved: `w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`
+- Lint passes cleanly with no errors
+
+Stage Summary:
+- All 15 ZCode components updated with new meaningful screenshots
+- No layout, padding, or text content changed
+- Only src and alt attributes modified, plus grid wrappers added for multi-image sections
+- Removed 3 screenshot sections entirely (Download, KeyboardShortcuts, FAQ) as no replacement images available
+- bun run lint passes cleanly

@@ -102,11 +102,31 @@ export function ZCodeMcpServices() {
         </p>
       </div>
 
-      {/* Screenshot */}
-      <div className="mb-6">
+      {/* Screenshots — MCP workflow */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <img
-          src="/images/zcode/mcp-services.png"
-          alt="ZCode MCP services configuration"
+          src="/images/zcode/mcp-entry.png"
+          alt="Вход в MCP настройки"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
+        />
+        <img
+          src="/images/zcode/mcp-list.png"
+          alt="Список MCP серверов"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
+        />
+        <img
+          src="/images/zcode/mcp-domains.png"
+          alt="Домены MCP сервисов"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
+        />
+        <img
+          src="/images/zcode/mcp-create.png"
+          alt="Создание MCP сервера"
+          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
+        />
+        <img
+          src="/images/zcode/mcp-edit.png"
+          alt="Редактирование MCP сервера"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
         />
       </div>
