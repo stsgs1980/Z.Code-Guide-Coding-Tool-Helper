@@ -71,3 +71,42 @@ Stage Summary:
 - Only src and alt attributes modified, plus grid wrappers added for multi-image sections
 - Removed 3 screenshot sections entirely (Download, KeyboardShortcuts, FAQ) as no replacement images available
 - bun run lint passes cleanly
+
+---
+Task ID: 4
+Agent: main
+Task: Restore lost pages from git force-push — recover GuideLayout, CodingHelper, Skills sections and implement 4-page navigation
+
+Work Log:
+- Read all recovered files from /tmp/recovered-*.tsx and current project state
+- Created `/src/components/guide/hooks/usePageState.ts` — hook with 4-page state (guide, zcode, helper, skills) and navigation handlers
+- Created `/src/components/guide/features/GuideLayout.tsx` — main layout component extracted from old inline page.tsx, handles 4-page rendering
+- Created `/src/components/guide/features/MobileHeader.tsx` — mobile header with back button for sub-pages
+- Created `/src/components/guide/features/MobileMenu.tsx` — mobile slide-out menu with 4-page navigation support
+- Updated `/src/components/guide/features/SidebarNav.tsx` — added onGoToGuide prop and 4-page active state detection
+- Created `/src/components/guide/features/ZCodePromoCard.tsx` — promo card for ZCode Desktop on guide page
+- Created `/src/components/guide/features/CodingHelperPromoCard.tsx` — promo card for Coding Tool Helper on guide page
+- Created `/src/components/guide/features/Footer.tsx` — shared footer component extracted from inline
+- Created `/src/components/guide/sections/CodingHelperSection.tsx` — full Coding Tool Helper page with features, wizard, commands, troubleshooting
+- Added `codingHelperCommands` data to `/src/components/guide/data/zcode/commands.ts`
+- Created `/src/components/guide/data/skills.ts` — all skills data extracted (builtinSkills, categoryColors, faqItems, etc.)
+- Split 527-line SkillsGuideSection into anti-monolith components:
+  - `/src/components/guide/sections/SkillsGuideSection.tsx` — main component (~95 lines) with tab switching
+  - `/src/components/guide/features/skills/SkillsWhatIs.tsx` — Tab 1: overview (~80 lines)
+  - `/src/components/guide/features/skills/SkillsBuiltIn.tsx` — Tab 2: built-in skills grid (~35 lines)
+  - `/src/components/guide/features/skills/SkillsCreate.tsx` — Tab 3: step-by-step creation (~110 lines)
+  - `/src/components/guide/features/skills/SkillsInstall.tsx` — Tab 4: install & transfer (~105 lines)
+  - `/src/components/guide/features/skills/SkillsInvoke.tsx` — Tab 5: invocation examples (~75 lines)
+  - `/src/components/guide/features/skills/index.ts` — barrel exports
+- Updated `/src/components/guide/data/toc.ts` — added coding-helper (isPage), skills-guide (isPage) with Sparkles icon
+- Updated `/src/app/page.tsx` — simplified to ThemeProvider + GuideLayout wrapper
+- Updated all barrel exports: guide/index.ts, sections/index.ts, features/index.ts, hooks/index.ts, data/index.ts
+- Verified: `bun run lint` passes cleanly, `next build` compiles successfully
+
+Stage Summary:
+- 4-page navigation fully functional: guide (main), zcode, helper, skills
+- All promo cards on guide page link to sub-pages correctly
+- SkillsGuideSection split from 527 lines to 6 components ≤ ~110 lines each + separate data file
+- Width/padding `md:ml-14 md:pr-18 lg:pr-18` preserved on all <main> elements
+- All text in Russian, th() helper used throughout, Lucide icons only
+- No lint errors, build succeeds

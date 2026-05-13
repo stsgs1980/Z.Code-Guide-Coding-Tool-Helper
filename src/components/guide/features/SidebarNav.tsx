@@ -10,10 +10,11 @@ import { motion } from "framer-motion";
 interface SidebarNavProps {
   onSearchOpen: () => void;
   onNavigate?: (page: string) => void;
+  onGoToGuide?: () => void;
   currentPage?: string;
 }
 
-export function SidebarNav({ onSearchOpen, onNavigate, currentPage }: SidebarNavProps) {
+export function SidebarNav({ onSearchOpen, onNavigate, onGoToGuide, currentPage }: SidebarNavProps) {
   const activeId = useActiveSection();
   const { theme } = useTheme();
   const th = (dark: string, light: string) => theme === "light" ? light : dark;
@@ -38,13 +39,18 @@ export function SidebarNav({ onSearchOpen, onNavigate, currentPage }: SidebarNav
       </button>
 
       {tocItems.map((item) => {
-        const isActive = item.isPage ? currentPage === item.id : activeId === item.id;
+        const isActive = item.isPage
+          ? (item.id === "zcode-desktop" && currentPage === "zcode") || (item.id === "coding-helper" && currentPage === "helper") || (item.id === "skills-guide" && currentPage === "skills")
+          : activeId === item.id;
         return (
           <button
             key={item.id}
             onClick={() => {
               if (item.isPage && onNavigate) {
                 onNavigate(item.id);
+              } else if (currentPage !== "guide" && onGoToGuide) {
+                onGoToGuide();
+                setTimeout(() => scrollTo(item.id), 150);
               } else {
                 scrollTo(item.id);
               }
