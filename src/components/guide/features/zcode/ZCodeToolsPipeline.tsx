@@ -18,7 +18,7 @@ export function ZCodeToolsPipeline() {
 
   return (
     <section id="zcode-ade-tools">
-      <SectionHeader num="08" title="Инструменты ADE" subtitle="Встроенные инструменты для полного цикла разработки" />
+      <SectionHeader num="14" title="Инструменты ADE" subtitle="Встроенные инструменты для полного цикла разработки" />
 
       <p className={`text-sm leading-relaxed mb-4 ${th("text-white/60", "text-oklch(0.35 0 0)")}`}>
         От планирования до деплоя — каждый инструмент встроен в рабочий процесс разработки Z Code.

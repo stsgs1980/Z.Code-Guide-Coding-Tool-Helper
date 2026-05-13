@@ -16,7 +16,7 @@ export function ZCodeFaq() {
 
   return (
     <section id="zcode-faq">
-      <SectionHeader num="10" title="Часто задаваемые вопросы" subtitle="Ответы на популярные вопросы о Z Code" />
+      <SectionHeader num="16" title="Часто задаваемые вопросы" subtitle="Ответы на популярные вопросы о Z Code" />
 
       <div className={`${card} overflow-hidden mb-6`}>
         <div className={`flex items-center gap-2 px-5 py-3 ${th("border-b border-white/5", "border-b border-oklch(0.88 0 0)")}`}>

@@ -51,7 +51,7 @@ export function ZCodeKeyboardShortcuts() {
 
   return (
     <section id="zcode-keyboard">
-      <SectionHeader num="09" title="Горячие клавиши" subtitle="Быстрое управление через клавиатуру" />
+      <SectionHeader num="15" title="Горячие клавиши" subtitle="Быстрое управление через клавиатуру" />
 
       <div className={`${th("bg-white/[0.03] border-l-2 border-nyc-taxi/30", "bg-oklch(0.96 0 0) border-l-2 border-oklch(0.78 0.16 85 / 30%)")} p-3 rounded-r-lg mb-6`}>
         <p className={`text-sm ${th("text-white/50", "text-oklch(0.40 0 0)")}`}>

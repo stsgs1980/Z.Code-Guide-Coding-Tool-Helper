@@ -110,3 +110,27 @@ Stage Summary:
 - Width/padding `md:ml-14 md:pr-18 lg:pr-18` preserved on all <main> elements
 - All text in Russian, th() helper used throughout, Lucide icons only
 - No lint errors, build succeeds
+
+---
+Task ID: 5a
+Agent: main
+Task: Fix duplicate section numbering in ZCode components — renumber sequentially 03–17
+
+Work Log:
+- Searched all 15 ZCode component files for `num="XX"` values in SectionHeader calls
+- Found duplicates: components 10–15 (MultiAgent through Feedback) reused numbers 06–11 that were already used by components 4–9 (PermissionModes through Skills)
+- Applied 6 find-and-replace edits:
+  - ZCodeMultiAgent.tsx: `num="06"` → `num="12"`
+  - ZCodeSafety.tsx: `num="07"` → `num="13"`
+  - ZCodeToolsPipeline.tsx: `num="08"` → `num="14"`
+  - ZCodeKeyboardShortcuts.tsx: `num="09"` → `num="15"`
+  - ZCodeFaq.tsx: `num="10"` → `num="16"`
+  - ZCodeFeedback.tsx: `num="11"` → `num="17"`
+- First 9 components (Header through Skills) already had correct numbers 03–11, no changes needed
+- Verified final numbering: 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17 — all sequential, no duplicates
+- `bun run lint` passes cleanly with no errors
+
+Stage Summary:
+- Section numbers now sequential from 03 to 17 with no duplicates
+- Only `num` attribute values changed, no other code modified
+- Lint passes

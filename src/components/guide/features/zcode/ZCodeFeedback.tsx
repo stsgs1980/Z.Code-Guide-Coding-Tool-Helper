@@ -15,7 +15,7 @@ export function ZCodeFeedback() {
 
   return (
     <section id="zcode-feedback">
-      <SectionHeader num="11" title="Обратная связь и поддержка" subtitle="Как сообщить о проблеме или предложить улучшение" />
+      <SectionHeader num="17" title="Обратная связь и поддержка" subtitle="Как сообщить о проблеме или предложить улучшение" />
 
       {/* Feedback methods */}
       <div className={`${th("nyc-card-highlight-enhanced", "rounded-xl border border-oklch(0.78 0.16 85 / 25%) bg-oklch(0.99 0 0) shadow-sm")} p-5 mb-6`}>

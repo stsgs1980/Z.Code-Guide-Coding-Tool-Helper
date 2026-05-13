@@ -29,7 +29,7 @@ export function ZCodeMultiAgent() {
 
   return (
     <section id="zcode-multi-agent">
-      <SectionHeader num="06" title="Мультиагентный фреймворк" subtitle="Z Code построен на мультиагентной платформе" />
+      <SectionHeader num="12" title="Мультиагентный фреймворк" subtitle="Z Code построен на мультиагентной платформе" />
 
       <p className={`text-sm leading-relaxed mb-4 ${th("text-white/60", "text-oklch(0.35 0 0)")}`}>
         Z Code интегрирует несколько AI-агентов в одном продукте. Каждый агент обладает уникальными преимуществами —

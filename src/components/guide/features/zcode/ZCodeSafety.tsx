@@ -23,7 +23,7 @@ export function ZCodeSafety() {
 
   return (
     <section id="zcode-safety">
-      <SectionHeader num="07" title="Подтверждение безопасности" subtitle="Ручное подтверждение перед выполнением рискованных действий" />
+      <SectionHeader num="13" title="Подтверждение безопасности" subtitle="Ручное подтверждение перед выполнением рискованных действий" />
 
       <p className={`text-sm leading-relaxed mb-4 ${th("text-white/60", "text-oklch(0.35 0 0)")}`}>
         Когда Agent пытается выполнить потенциально рискованное действие, выполнение приостанавливается автоматически.
