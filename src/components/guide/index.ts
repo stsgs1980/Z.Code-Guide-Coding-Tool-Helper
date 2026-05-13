@@ -1,7 +1,6 @@
 // Sections
 export { HeroSection } from "./sections/HeroSection";
 export { QuickStartSection } from "./sections/QuickStartSection";
-export { HelperSection } from "./sections/HelperSection";
 export { CodingHelperSection } from "./sections/CodingHelperSection";
 export { ZCodeSection } from "./sections/ZCodeSection";
 export { SkillsGuideSection } from "./sections/SkillsGuideSection";
