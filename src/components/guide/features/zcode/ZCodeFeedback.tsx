@@ -4,6 +4,7 @@ import { MessageCircle, Apple, Monitor, ExternalLink } from "lucide-react";
 import { useTheme } from "../../hooks/useTheme";
 import { SectionHeader } from "../../ui/SectionHeader";
 import { TaxiDivider } from "../../ui/TaxiDivider";
+import { ClickableImage } from "../../ui/ImageModal";
 import { feedbackMethods } from "../../data/zcode/misc";
 
 const platformIcon: Record<string, typeof Apple> = { macOS: Apple, Windows: Monitor };
@@ -72,11 +73,11 @@ export function ZCodeFeedback() {
 
       {/* Screenshots */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <img src="/images/zcode/feedback-in-app.jpg" alt="Обратная связь — форма в приложении"
+        <ClickableImage src="/images/zcode/feedback-in-app.jpg" alt="Обратная связь — форма в приложении"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/feedback-macos.png" alt="Экспорт логов на macOS"
+        <ClickableImage src="/images/zcode/feedback-macos.png" alt="Экспорт логов на macOS"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/feedback-win.jpg" alt="Экспорт логов на Windows"
+        <ClickableImage src="/images/zcode/feedback-win.jpg" alt="Экспорт логов на Windows"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 

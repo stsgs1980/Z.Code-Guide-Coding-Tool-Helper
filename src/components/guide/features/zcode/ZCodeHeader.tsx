@@ -5,6 +5,7 @@ import { MessageSquare, Eye, Shield, Layers, ShieldCheck, Clock, Users, Globe } 
 import { useTheme } from "../../hooks/useTheme";
 import { SectionHeader } from "../../ui/SectionHeader";
 import { TaxiDivider } from "../../ui/TaxiDivider";
+import { ClickableImage } from "../../ui/ImageModal";
 import { welcomeFeatures, newReleaseStrengths } from "../../data/zcode/features";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -56,8 +57,8 @@ export function ZCodeHeader() {
 
       {/* Screenshots */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <img src="/images/zcode/welcome-login-modal.png" alt="ZCode Desktop — экран входа с модальным окном авторизации" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/welcome-new-task.png" alt="ZCode Desktop — создание новой задачи" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/welcome-login-modal.png" alt="ZCode Desktop — экран входа с модальным окном авторизации" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/welcome-new-task.png" alt="ZCode Desktop — создание новой задачи" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       <TaxiDivider />

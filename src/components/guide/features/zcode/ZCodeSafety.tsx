@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useTheme } from "../../hooks/useTheme";
 import { SectionHeader } from "../../ui/SectionHeader";
 import { TaxiDivider } from "../../ui/TaxiDivider";
+import { ClickableImage } from "../../ui/ImageModal";
 import { safetyDecisionOptions, safetyScenarios } from "../../data/zcode/safety";
 
 const iconMap: Record<string, typeof Terminal> = { Terminal, Globe, AlertTriangle };
@@ -88,7 +89,7 @@ export function ZCodeSafety() {
 
       {/* Screenshot */}
       <div className="mb-6">
-        <img src="/images/zcode/safety-confirm.png" alt="Панель подтверждения безопасности"
+        <ClickableImage src="/images/zcode/safety-confirm.png" alt="Панель подтверждения безопасности"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 

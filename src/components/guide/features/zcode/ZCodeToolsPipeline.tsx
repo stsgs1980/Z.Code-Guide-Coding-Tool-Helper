@@ -5,6 +5,7 @@ import { ListTodo, Smartphone, Terminal, Globe, GitCompare } from "lucide-react"
 import { useTheme } from "../../hooks/useTheme";
 import { SectionHeader } from "../../ui/SectionHeader";
 import { TaxiDivider } from "../../ui/TaxiDivider";
+import { ClickableImage } from "../../ui/ImageModal";
 import { adeTools } from "../../data/zcode/misc";
 
 const iconMap: Record<string, typeof Terminal> = {
@@ -54,19 +55,19 @@ export function ZCodeToolsPipeline() {
 
       {/* Screenshots — ADE tools */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <img src="/images/zcode/ade-task-manager.png" alt="ADE Task Manager — управление задачами"
+        <ClickableImage src="/images/zcode/ade-task-manager.png" alt="ADE Task Manager — управление задачами"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/ade-menu.png" alt="ADE Menu — меню инструментов"
+        <ClickableImage src="/images/zcode/ade-menu.png" alt="ADE Menu — меню инструментов"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/ade-remote-dev.png" alt="ADE Remote Dev — удалённая разработка"
+        <ClickableImage src="/images/zcode/ade-remote-dev.png" alt="ADE Remote Dev — удалённая разработка"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/ade-terminal.png" alt="ADE Terminal — встроенный терминал"
+        <ClickableImage src="/images/zcode/ade-terminal.png" alt="ADE Terminal — встроенный терминал"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/ade-browser.png" alt="ADE Browser — встроенный браузер"
+        <ClickableImage src="/images/zcode/ade-browser.png" alt="ADE Browser — встроенный браузер"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/ade-devtools.png" alt="ADE DevTools — инструменты разработчика"
+        <ClickableImage src="/images/zcode/ade-devtools.png" alt="ADE DevTools — инструменты разработчика"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/ade-diff-preview.png" alt="ADE Diff Preview — просмотр изменений"
+        <ClickableImage src="/images/zcode/ade-diff-preview.png" alt="ADE Diff Preview — просмотр изменений"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 

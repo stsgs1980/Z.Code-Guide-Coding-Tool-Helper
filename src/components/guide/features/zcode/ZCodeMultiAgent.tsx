@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useTheme } from "../../hooks/useTheme";
 import { SectionHeader } from "../../ui/SectionHeader";
 import { TaxiDivider } from "../../ui/TaxiDivider";
+import { ClickableImage } from "../../ui/ImageModal";
 import { agentFrameworks, workflowSuggestions } from "../../data/zcode/agents";
 
 const colorMap: Record<string, string> = {
@@ -88,9 +89,9 @@ export function ZCodeMultiAgent() {
 
       {/* Screenshots */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <img src="/images/zcode/cli-agents-select.png" alt="Выбор агентного фреймворка"
+        <ClickableImage src="/images/zcode/cli-agents-select.png" alt="Выбор агентного фреймворка"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/cli-agents-switch.png" alt="Переключение между агентами"
+        <ClickableImage src="/images/zcode/cli-agents-switch.png" alt="Переключение между агентами"
           className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 

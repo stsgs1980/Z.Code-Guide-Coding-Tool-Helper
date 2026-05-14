@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useTheme } from "../../hooks/useTheme";
 import { SectionHeader } from "../../ui/SectionHeader";
 import { TaxiDivider } from "../../ui/TaxiDivider";
+import { ClickableImage } from "../../ui/ImageModal";
 import { permissionModes } from "../../data/zcode/features";
 
 const colorMap: Record<string, string> = {
@@ -69,7 +70,7 @@ export function ZCodePermissionModes() {
 
       {/* Screenshot */}
       <div className="mb-6">
-        <img src="/images/zcode/agent-permissions.png" alt="Режимы разрешений Agent в ZCode" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/agent-permissions.png" alt="Режимы разрешений Agent в ZCode" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       {/* Tip */}

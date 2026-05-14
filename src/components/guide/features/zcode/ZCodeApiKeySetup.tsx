@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useTheme } from "../../hooks/useTheme";
 import { SectionHeader } from "../../ui/SectionHeader";
 import { TaxiDivider } from "../../ui/TaxiDivider";
+import { ClickableImage } from "../../ui/ImageModal";
 import { apiSetupMethods, apiProviders } from "../../data/zcode/features";
 
 const methodIcons: Record<string, React.ElementType> = { LogIn, Settings };
@@ -42,9 +43,9 @@ export function ZCodeApiKeySetup() {
 
       {/* Screenshots — Setup steps */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <img src="/images/zcode/apikey-connect-modal.png" alt="Connect — модальное окно подключения провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/apikey-model-selector.jpg" alt="Model Selector — выбор модели" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/model-providers-settings.png" alt="Настройки провайдеров моделей" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/apikey-connect-modal.png" alt="Connect — модальное окно подключения провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/apikey-model-selector.jpg" alt="Model Selector — выбор модели" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/model-providers-settings.png" alt="Настройки провайдеров моделей" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       {/* Tip */}
@@ -85,11 +86,11 @@ export function ZCodeApiKeySetup() {
 
       {/* Screenshots — Provider setups */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <img src="/images/zcode/apikey-zai.png" alt="Настройка Z.AI провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/apikey-anthropic.png" alt="Настройка Anthropic провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/apikey-openrouter.png" alt="Настройка OpenRouter провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/apikey-moonshot.png" alt="Настройка Moonshot провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/apikey-custom-provider.png" alt="Настройка Custom провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/apikey-zai.png" alt="Настройка Z.AI провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/apikey-anthropic.png" alt="Настройка Anthropic провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/apikey-openrouter.png" alt="Настройка OpenRouter провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/apikey-moonshot.png" alt="Настройка Moonshot провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/apikey-custom-provider.png" alt="Настройка Custom провайдера" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       <TaxiDivider />

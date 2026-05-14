@@ -5,6 +5,7 @@ import { Pencil, MousePointerClick, RefreshCw } from "lucide-react";
 import { useTheme } from "../../hooks/useTheme";
 import { SectionHeader } from "../../ui/SectionHeader";
 import { TaxiDivider } from "../../ui/TaxiDivider";
+import { ClickableImage } from "../../ui/ImageModal";
 import { editUseCases } from "../../data/zcode/features";
 
 export function ZCodeEditHistory() {
@@ -57,8 +58,8 @@ export function ZCodeEditHistory() {
 
       {/* Screenshots */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <img src="/images/zcode/edit-history-enter.png" alt="Вход в режим редактирования — иконка карандаша" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
-        <img src="/images/zcode/edit-history-button.png" alt="Кнопка редактирования сообщения" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/edit-history-enter.png" alt="Вход в режим редактирования — иконка карандаша" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
+        <ClickableImage src="/images/zcode/edit-history-button.png" alt="Кнопка редактирования сообщения" className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`} />
       </div>
 
       {/* Use cases */}
