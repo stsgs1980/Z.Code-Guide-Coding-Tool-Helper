@@ -1,107 +1,100 @@
 "use client";
 
-import { Terminal, Plus, Play, FileText } from "lucide-react";
+import { Terminal, Plus, Play } from "lucide-react";
+import { motion } from "framer-motion";
 import { useTheme } from "../../hooks/useTheme";
 import { SectionHeader } from "../../ui/SectionHeader";
 import { TaxiDivider } from "../../ui/TaxiDivider";
-import { TipBox } from "../../ui/ZCodeUI";
 import { ClickableImage } from "../../ui/ImageModal";
-import { commandsData } from "../../data/zcode/newdocs";
+import { commandsSectionData } from "../../data/zcode/newdocs";
 
 export function CommandsSection() {
   const { theme } = useTheme();
   const th = (d: string, l: string) => (theme === "light" ? l : d);
+  const data = commandsSectionData;
 
   return (
     <section id="commands">
       <SectionHeader
-        num="06"
-        title="Commands"
-        subtitle="Переиспользуемые ярлыки для частых промптов"
+        num="04"
+        title={data.title}
+        subtitle={data.subtitle}
       />
 
-      {/* What is */}
-      <p className={`text-sm leading-relaxed mb-6 ${th("text-white/60", "text-oklch(0.35 0 0)")}`}>
-        {commandsData.whatIs}
-      </p>
-
-      {/* How to create */}
-      <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
-        <Plus className="h-4 w-4 text-nyc-taxi" />
-        Создание команды
-      </h3>
-
-      <div className="mb-4">
-        {commandsData.howTo.create.map((step, i) => (
-          <div key={i} className={`flex items-start gap-2 mb-2 ${th("text-white/60", "text-oklch(0.35 0 0)")}`}>
-            <span className="w-5 h-5 rounded-full bg-nyc-taxi text-black text-xs flex items-center justify-center flex-shrink-0">
-              {i + 1}
-            </span>
-            <span className="text-sm">{step}</span>
+      {/* What is Commands */}
+      <div className={`p-4 rounded-xl mb-6 ${th("nyc-card-enhanced", "border border-oklch(0.88 0 0) bg-oklch(0.98 0 0)")}`}>
+        <div className="flex items-center gap-3 mb-3">
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${th("bg-white/5", "bg-oklch(0.93 0 0)")}`}>
+            <Terminal className="h-5 w-5 text-nyc-taxi" />
           </div>
-        ))}
-      </div>
-
-      {/* Fields */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
-        {commandsData.fields.map((field) => (
-          <div key={field.name} className={`p-3 rounded-lg ${th("bg-white/[0.02]", "bg-oklch(0.97 0 0)")}`}>
-            <div className="text-sm font-semibold text-nyc-taxi">{field.name}</div>
-            <div className={`text-xs ${th("text-white/40", "text-oklch(0.55 0 0)")}`}>{field.desc}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Screenshot */}
-      <div className="mb-6">
-        <ClickableImage
-          src={commandsData.images.new}
-          alt="Создание новой команды"
-          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
-        />
-      </div>
-
-      {/* How to call */}
-      <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
-        <Play className="h-4 w-4 text-nyc-taxi" />
-        Вызов команды
-      </h3>
-
-      <div className="mb-4">
-        {commandsData.howTo.call.map((step, i) => (
-          <div key={i} className={`flex items-start gap-2 mb-2 ${th("text-white/60", "text-oklch(0.35 0 0)")}`}>
-            <span className="w-5 h-5 rounded-full bg-nyc-taxi text-black text-xs flex items-center justify-center flex-shrink-0">
-              {i + 1}
-            </span>
-            <span className="text-sm">{step}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Screenshot */}
-      <div className="mb-6">
-        <ClickableImage
-          src={commandsData.images.call}
-          alt="Вызов команды через /"
-          className={`w-full rounded-xl border ${th("border-white/5", "border-oklch(0.88 0 0)")}`}
-        />
-      </div>
-
-      {/* Example */}
-      <div className={`p-4 mb-6 rounded-lg ${th("bg-white/[0.02]", "bg-oklch(0.97 0 0)")}`}>
-        <div className="flex items-center gap-2 mb-2">
-          <FileText className="h-4 w-4 text-nyc-taxi" />
-          <span className="text-sm font-semibold">Пример команды</span>
+          <h4 className="font-semibold">{data.subsections.commands.title}</h4>
         </div>
-        <div className={`font-mono text-sm ${th("text-white/70", "text-oklch(0.30 0 0)")}`}>
-          <div><span className="text-nyc-taxi">Name:</span> review</div>
-          <div><span className="text-nyc-taxi">Prompt:</span> Review this code for bugs and suggest improvements: {"{{code}}"}</div>
-        </div>
-      </div>
+        <p className={`text-sm leading-relaxed mb-4 ${th("text-white/70", "text-oklch(0.35 0 0)")}`}>
+          {data.subsections.commands.desc}
+        </p>
 
-      <TipBox>
-        Используйте {"{{variable}}"} в промпте для создания параметров команды.
-      </TipBox>
+        {/* Create Steps */}
+        <div className="mb-4">
+          <h5 className={`text-sm font-medium mb-2 ${th("text-white/80", "text-oklch(0.30 0 0)")}`}>
+            <Plus className="h-4 w-4 inline mr-1" /> Создание команды:
+          </h5>
+          <div className="space-y-2">
+            {data.subsections.commands.steps.map((s) => (
+              <div key={s.step} className="flex items-start gap-2">
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 ${th("bg-nyc-taxi/20 text-nyc-taxi", "bg-oklch(0.93 0 0) text-oklch(0.78 0.16 85)")}`}>
+                  {s.step}
+                </span>
+                <p className={`text-sm ${th("text-white/60", "text-oklch(0.40 0 0)")}`}>{s.action}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Fields */}
+        <div className={`p-3 rounded-lg mb-4 ${th("bg-white/5", "bg-oklch(0.95 0 0)")}`}>
+          <h5 className={`text-sm font-medium mb-2 ${th("text-white/80", "text-oklch(0.30 0 0)")}`}>Поля команды:</h5>
+          <div className="space-y-1">
+            {data.subsections.commands.fields.map((f) => (
+              <div key={f.name} className="text-sm">
+                <code className="text-nyc-taxi">{f.name}</code>
+                <span className={th("text-white/50", "text-oklch(0.50 0 0)")}> — {f.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Usage */}
+        <div className="mb-4">
+          <h5 className={`text-sm font-medium mb-2 ${th("text-white/80", "text-oklch(0.30 0 0)")}`}>
+            <Play className="h-4 w-4 inline mr-1" /> Вызов команды:
+          </h5>
+          <div className="space-y-2">
+            {data.subsections.commands.usage.map((s) => (
+              <div key={s.step} className="flex items-start gap-2">
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 ${th("bg-nyc-taxi/20 text-nyc-taxi", "bg-oklch(0.93 0 0) text-oklch(0.78 0.16 85)")}`}>
+                  {s.step}
+                </span>
+                <p className={`text-sm ${th("text-white/60", "text-oklch(0.40 0 0)")}`}>{s.action}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Images */}
+        {data.subsections.commands.images && (
+          <div className="flex flex-wrap gap-3">
+            {data.subsections.commands.images.map((img, i) => (
+              <ClickableImage
+                key={i}
+                src={img}
+                alt={`Commands ${i + 1}`}
+                className={`w-40 rounded-lg border cursor-pointer hover:opacity-90 transition-opacity ${th("border-white/10", "border-oklch(0.88 0 0)")}`}
+                thumbnailHeight={100}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       <TaxiDivider />
     </section>

@@ -4,20 +4,18 @@ import { Monitor, ArrowLeft } from "lucide-react";
 import { SectionHeader } from "../ui";
 import { useTheme } from "../hooks/useTheme";
 import {
-  GettingStartedSection,
-  AgentChatSection,
-  RemoteConnectSection,
-  TasksSection,
-  SkillsSection,
-  CommandsSection,
-  PluginsSection,
-  MCPSection,
-  SubagentsSection,
-  SettingsSection,
-  ADEToolsSection,
-  ShortcutsSection,
   FeedbackSection,
-  FAQSection,
+  AgentsSection,
+  EditHistorySection,
+  CommandsSection,
+  PluginSection,
+  MCPSection,
+  SkillSection,
+  AgentFrameworkSection,
+  SafetyConfirmSection,
+  ADEToolsSection,
+  KeyboardShortcutsSection,
+  QASection,
 } from "./zcode";
 
 interface ZCodeSectionProps {
@@ -55,21 +53,19 @@ export function ZCodeSection({ onBack }: ZCodeSectionProps) {
         subtitle="Agentic Development Environment — полноценная среда AI-разработки"
       />
 
-      {/* New documentation sections */}
-      <GettingStartedSection />
-      <AgentChatSection />
-      <RemoteConnectSection />
-      <TasksSection />
-      <SkillsSection />
-      <CommandsSection />
-      <PluginsSection />
-      <MCPSection />
-      <SubagentsSection />
-      <SettingsSection />
-      <ADEToolsSection />
-      <ShortcutsSection />
+      {/* 12 Documentation sections based on official docs */}
       <FeedbackSection />
-      <FAQSection />
+      <AgentsSection />
+      <EditHistorySection />
+      <CommandsSection />
+      <PluginSection />
+      <MCPSection />
+      <SkillSection />
+      <AgentFrameworkSection />
+      <SafetyConfirmSection />
+      <ADEToolsSection />
+      <KeyboardShortcutsSection />
+      <QASection />
     </section>
   );
 }

@@ -8,9 +8,17 @@ interface ImageModalProps {
   src: string;
   alt: string;
   className?: string;
+  thumbnailHeight?: number;
+  thumbnailWidth?: number;
 }
 
-export function ClickableImage({ src, alt, className = "" }: ImageModalProps) {
+export function ClickableImage({ 
+  src, 
+  alt, 
+  className = "",
+  thumbnailHeight,
+  thumbnailWidth,
+}: ImageModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = useCallback(() => setIsOpen(true), []);
@@ -27,21 +35,34 @@ export function ClickableImage({ src, alt, className = "" }: ImageModalProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, closeModal]);
 
+  // Build inline styles for thumbnail sizing
+  const thumbnailStyle: React.CSSProperties = {};
+  if (thumbnailHeight) {
+    thumbnailStyle.maxHeight = `${thumbnailHeight}px`;
+  }
+  if (thumbnailWidth) {
+    thumbnailStyle.maxWidth = `${thumbnailWidth}px`;
+  }
+
   return (
     <>
       {/* Clickable Image */}
       <div
-        className={`relative group cursor-pointer ${className}`}
+        className={`relative group cursor-pointer overflow-hidden rounded-lg ${className}`}
         onClick={openModal}
       >
         <img
           src={src}
           alt={alt}
-          className="w-full rounded-xl transition-transform duration-200 group-hover:scale-[1.02]"
+          className="w-full h-auto object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+          style={thumbnailStyle}
         />
         {/* Hover Overlay */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all duration-200 rounded-xl">
-          <ZoomIn className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all duration-200 rounded-lg">
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/50 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <ZoomIn className="h-3 w-3" />
+            <span>Увеличить</span>
+          </div>
         </div>
       </div>
 

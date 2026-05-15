@@ -1,14 +1,37 @@
-export { GettingStartedSection } from "./GettingStartedSection";
-export { AgentChatSection } from "./AgentChatSection";
-export { RemoteConnectSection } from "./RemoteConnectSection";
-export { TasksSection } from "./TasksSection";
-export { SkillsSection } from "./SkillsSection";
-export { CommandsSection } from "./CommandsSection";
-export { PluginsSection } from "./PluginsSection";
-export { MCPSection } from "./MCPSection";
-export { SubagentsSection } from "./SubagentsSection";
-export { SettingsSection } from "./SettingsSection";
-export { ADEToolsSection } from "./ADEToolsSection";
-export { ShortcutsSection } from "./ShortcutsSection";
+// ZCode Documentation Sections - 12 sections based on official docs
+
+// 01. Feedback
 export { FeedbackSection } from "./FeedbackSection";
-export { FAQSection } from "./FAQSection";
+
+// 02. Agents
+export { AgentsSection } from "./AgentsSection";
+
+// 03. Edit History
+export { EditHistorySection } from "./EditHistorySection";
+
+// 04. Commands
+export { CommandsSection } from "./CommandsSection";
+
+// 05. Plugin
+export { PluginSection } from "./PluginSection";
+
+// 06. MCP Services
+export { MCPSection } from "./MCPSection";
+
+// 07. Skill
+export { SkillSection } from "./SkillSection";
+
+// 08. Agent Framework
+export { AgentFrameworkSection } from "./AgentFrameworkSection";
+
+// 09. Safety Confirm
+export { SafetyConfirmSection } from "./SafetyConfirmSection";
+
+// 10. ADE Tools
+export { ADEToolsSection } from "./ADEToolsSection";
+
+// 11. Keyboard Shortcuts
+export { KeyboardShortcutsSection } from "./KeyboardShortcutsSection";
+
+// 12. Q&A
+export { QASection } from "./QASection";
