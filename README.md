@@ -29,7 +29,7 @@
 ## Запуск
 
 ```bash
-git clone https://github.com/stsgs1980/Z.Code-Guide-Coding-Tool-Helper.git Z.Code.Guide
+git clone https://github.com/stsgs1980/Z.Code.Guide.git
 cd Z.Code.Guide
 bun install
 bun run dev
