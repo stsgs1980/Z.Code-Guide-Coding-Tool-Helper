@@ -1,26 +1,24 @@
 "use client";
 
 import { Monitor, ArrowLeft } from "lucide-react";
-import { SectionHeader, TaxiDivider } from "../ui";
+import { SectionHeader } from "../ui";
 import { useTheme } from "../hooks/useTheme";
 import {
-  ZCodeHeader,
-  ZCodeDownload,
-  ZCodeApiKeySetup,
-  ZCodePermissionModes,
-  ZCodeEditHistory,
-  ZCodeCommands,
-  ZCodePlugins,
-  ZCodeMcpServices,
-  ZCodeSkills,
-  ZCodeMultiAgent,
-  ZCodeSafety,
-  ZCodeToolsPipeline,
-  ZCodeKeyboardShortcuts,
-  ZCodeFaq,
-  ZCodeFeedback,
-} from "../features/zcode";
-import { ExamplesSection } from "./ExamplesSection";
+  GettingStartedSection,
+  AgentChatSection,
+  RemoteConnectSection,
+  TasksSection,
+  SkillsSection,
+  CommandsSection,
+  PluginsSection,
+  MCPSection,
+  SubagentsSection,
+  SettingsSection,
+  ADEToolsSection,
+  ShortcutsSection,
+  FeedbackSection,
+  FAQSection,
+} from "./zcode";
 
 interface ZCodeSectionProps {
   onBack?: () => void;
@@ -57,37 +55,21 @@ export function ZCodeSection({ onBack }: ZCodeSectionProps) {
         subtitle="Agentic Development Environment — полноценная среда AI-разработки"
       />
 
-      <ZCodeHeader />
-      <TaxiDivider />
-      <ZCodeDownload />
-      <TaxiDivider />
-      <ZCodeApiKeySetup />
-      <TaxiDivider />
-      <ZCodePermissionModes />
-      <TaxiDivider />
-      <ZCodeEditHistory />
-      <TaxiDivider />
-      <ZCodeCommands />
-      <TaxiDivider />
-      <ZCodePlugins />
-      <TaxiDivider />
-      <ZCodeMcpServices />
-      <TaxiDivider />
-      <ZCodeSkills />
-      <TaxiDivider />
-      <ZCodeMultiAgent />
-      <TaxiDivider />
-      <ZCodeToolsPipeline />
-      <TaxiDivider />
-      <ZCodeSafety />
-      <TaxiDivider />
-      <ZCodeKeyboardShortcuts />
-      <TaxiDivider />
-      <ExamplesSection />
-      <TaxiDivider />
-      <ZCodeFaq />
-      <TaxiDivider />
-      <ZCodeFeedback />
+      {/* New documentation sections */}
+      <GettingStartedSection />
+      <AgentChatSection />
+      <RemoteConnectSection />
+      <TasksSection />
+      <SkillsSection />
+      <CommandsSection />
+      <PluginsSection />
+      <MCPSection />
+      <SubagentsSection />
+      <SettingsSection />
+      <ADEToolsSection />
+      <ShortcutsSection />
+      <FeedbackSection />
+      <FAQSection />
     </section>
   );
 }
