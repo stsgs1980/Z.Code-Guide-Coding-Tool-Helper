@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZCode — 3 варианта компоновки (Wireframes)</title>
+  <style>
+    /* Reset & Base */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --fib-3: 1.5rem;   /* 24px */
+      --fib-5: 2.5rem;   /* 40px */
+      --fib-8: 4rem;     /* 64px */
+      --phi: 1.618;
+      --wireframe-bg: #1a1a2e;
+      --wireframe-surface: #16213e;
+      --wireframe-border: #0f3460;
+      --wireframe-accent: #e94560;
+      --wireframe-text: #eaeaea;
+      --wireframe-muted: #8892b0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--wireframe-bg);
+      color: var(--wireframe-text);
+      line-height: 1.6;
+    }
+    
+    /* Typography */
+    h1 { font-size: 2rem; font-weight: 700; }
+    h2 { font-size: 1.5rem; font-weight: 600; }
+    h3 { font-size: 1.125rem; font-weight: 500; }
+    
+    /* Layout */
+    .page { padding: var(--fib-5); }
+    .section { margin-bottom: var(--fib-8); }
+    .section-header { 
+      display: flex; 
+      align-items: center; 
+      gap: var(--fib-3); 
+      margin-bottom: var(--fib-3);
+      padding-bottom: var(--fib-3);
+      border-bottom: 1px solid var(--wireframe-border);
+    }
+    .section-number {
+      background: var(--wireframe-accent);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+    }
+    
+    /* Wireframe Components */
+    .wireframe {
+      background: var(--wireframe-surface);
+      border: 1px solid var(--wireframe-border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: var(--fib-5);
+    }
+    
+    .wireframe-header {
+      background: var(--wireframe-border);
+      padding: var(--fib-3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .wireframe-title { font-weight: 600; }
+    
+    .wireframe-grid {
+      display: grid;
+      gap: var(--fib-3);
+      padding: var(--fib-3);
+    }
+    
+    .wireframe-block {
+      background: rgba(233, 69, 96, 0.1);
+      border: 1px dashed var(--wireframe-accent);
+      border-radius: 8px;
+      padding: var(--fib-3);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      min-height: 80px;
+    }
+    
+    .wireframe-block.sidebar {
+      background: rgba(15, 52, 96, 0.5);
+      border-color: var(--wireframe-border);
+    }
+    
+    .wireframe-block.hero {
+      background: rgba(233, 69, 96, 0.2);
+      min-height: 200px;
+    }
+    
+    .wireframe-block.content {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .wireframe-label {
+      font-size: 0.75rem;
+      color: var(--wireframe-muted);
+      margin-bottom: 0.25rem;
+    }
+    
+    .wireframe-value {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    /* Pattern badges */
+    .pattern-badge {
+      display: inline-block;
+      background: var(--wireframe-accent);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    /* CSS Code Block */
+    .css-code {
+      background: #0d1117;
+      border-radius: 8px;
+      padding: var(--fib-3);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.8125rem;
+      overflow-x: auto;
+      margin-top: var(--fib-3);
+    }
+    
+    .css-code .comment { color: #8b949e; }
+    .css-code .property { color: #79c0ff; }
+    .css-code .value { color: #a5d6ff; }
+    .css-code .selector { color: #ff7b72; }
+    
+    /* Pros/Cons */
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--fib-3);
+      margin-top: var(--fib-3);
+    }
+    
+    .pros, .cons {
+      padding: var(--fib-3);
+      border-radius: 8px;
+    }
+    
+    .pros {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    
+    .cons {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .pros h4, .cons h4 { margin-bottom: 0.5rem; }
+    .pros ul, .cons ul { list-style: none; }
+    .pros li::before { content: "+ "; color: #22c55e; }
+    .cons li::before { content: "- "; color: #ef4444; }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page { padding: var(--fib-3); }
+      .pros-cons { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header style="text-align: center; margin-bottom: var(--fib-8); padding-bottom: var(--fib-5); border-bottom: 1px solid var(--wireframe-border);">
+      <h1>ZCode Guide — 3 варианта компоновки</h1>
+      <p style="color: var(--wireframe-muted); margin-top: 0.5rem;">
+        Wireframe-схемы с применением золотого сечения (phi-layout)
+      </p>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- VARIANT 1: Zeitgeist Grid -->
+    <!-- ============================================ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <div>
+          <h2>Zeitgeist Grid</h2>
+          <span class="pattern-badge">Pattern 15</span>
+        </div>
+      </div>
+      
+      <p style="color: var(--wireframe-muted); margin-bottom: var(--fib-5);">
+        Стиль Linear/Vercel/Stripe: контент в центральной золотой колонке, 
+        боковые зоны для "воздуха". Идеально для премиум-документации.
+      </p>
+      
+      <div class="wireframe">
+        <div class="wireframe-header">
+          <span class="wireframe-title">Desktop View (> 1440px)</span>
+          <span style="color: var(--wireframe-muted); font-size: 0.75rem;">grid-template-columns: 1fr 1.618fr 1fr</span>
+        </div>
+        
+        <div class="wireframe-grid" style="grid-template-columns: 1fr 1.618fr 1fr;">
+          <!-- Left breath zone -->
+          <div class="wireframe-block sidebar" style="grid-row: 1 / 4;">
+            <div class="wireframe-label">Breath Zone</div>
+            <div class="wireframe-value">38.2%</div>
+          </div>
+          
+          <!-- Center content -->
+          <div class="wireframe-block hero">
+            <div class="wireframe-label">Hero Section</div>
+            <div class="wireframe-value">Заголовок + CTA + Stats Grid</div>
+          </div>
+          
+          <div class="wireframe-block content" style="min-height: 400px;">
+            <div class="wireframe-label">Main Content</div>
+            <div class="wireframe-value">11 секций документации</div>
+            <div style="margin-top: 1rem; font-size: 0.75rem; color: var(--wireframe-muted);">
+              QuickStart, Tools, Install, MCP, Plan...
+            </div>
+          </div>
+          
+          <div class="wireframe-block content">
+            <div class="wireframe-label">Footer</div>
+            <div class="wireframe-value">Навигация + Ссылки</div>
+          </div>
+          
+          <!-- Right breath zone -->
+          <div class="wireframe-block sidebar" style="grid-row: 1 / 4;">
+            <div class="wireframe-label">Breath Zone</div>
+            <div class="wireframe-value">38.2%</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mobile -->
+      <div class="wireframe">
+        <div class="wireframe-header">
+          <span class="wireframe-title">Mobile View (&lt; 768px)</span>
+          <span style="color: var(--wireframe-muted); font-size: 0.75rem;">grid-template-columns: 1fr</span>
+        </div>
+        
+        <div class="wireframe-grid" style="grid-template-columns: 1fr;">
+          <div class="wireframe-block hero">
+            <div class="wireframe-label">Hero (full width)</div>
+          </div>
+          <div class="wireframe-block content" style="min-height: 300px;">
+            <div class="wireframe-label">Content</div>
+          </div>
+          <div class="wireframe-block sidebar">
+            <div class="wireframe-label">Mobile Nav (bottom sheet)</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- CSS -->
+      <div class="css-code">
+        <span class="selector">.zeitgeist-layout</span> {<br>
+        &nbsp;&nbsp;display: grid;<br>
+        &nbsp;&nbsp;<span class="property">grid-template-columns</span>: <span class="value">1fr 1.618fr 1fr</span>; <span class="comment">/* phi center */</span><br>
+        &nbsp;&nbsp;<span class="property">gap</span>: <span class="value">2.5rem</span>; <span class="comment">/* Fib-val 5 */</span><br>
+        &nbsp;&nbsp;<span class="property">min-height</span>: <span class="value">100vh</span>;<br>
+        }<br><br>
+        <span class="selector">.content-main</span> { <span class="property">grid-column</span>: <span class="value">2</span>; }<br>
+        <span class="selector">.hero-full</span> { <span class="property">grid-column</span>: <span class="value">1 / -1</span>; }<br><br>
+        <span class="comment">/* Responsive */</span><br>
+        <span class="selector">@media (max-width: 768px)</span> {<br>
+        &nbsp;&nbsp;<span class="selector">.zeitgeist-layout</span> { <span class="property">grid-template-columns</span>: <span class="value">1fr</span>; }<br>
+        }
+      </div>
+      
+      <!-- Pros/Cons -->
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Плюсы</h4>
+          <ul>
+            <li>Премиум-вид как у Vercel/Linear</li>
+            <li>Контент в фокусе, минимум отвлекающих факторов</li>
+            <li>Идеально для лонгридов и документации</li>
+            <li>Простая реализация</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Минусы</h4>
+          <ul>
+            <li>Большое пустое пространство на широких экранах</li>
+            <li>Sidebar вынесен в overlay или скрыт</li>
+            <li>Сложнее навигация между секциями</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- VARIANT 2: Dashboard Golden -->
+    <!-- ============================================ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <div>
+          <h2>Dashboard Golden</h2>
+          <span class="pattern-badge">Pattern 12</span>
+        </div>
+      </div>
+      
+      <p style="color: var(--wireframe-muted); margin-bottom: var(--fib-5);">
+        Bento-style компоновка с явными зонами: hero-баннер, KPI-карточки, 
+        основная документация и боковая панель навигации.
+      </p>
+      
+      <div class="wireframe">
+        <div class="wireframe-header">
+          <span class="wireframe-title">Desktop View (> 1024px)</span>
+          <span style="color: var(--wireframe-muted); font-size: 0.75rem;">grid-template-columns: 3fr 5fr 2fr</span>
+        </div>
+        
+        <div class="wireframe-grid" style="grid-template-columns: 3fr 5fr 2fr; grid-template-rows: auto 1fr 1.618fr;">
+          <!-- Hero full width -->
+          <div class="wireframe-block hero" style="grid-column: 1 / -1;">
+            <div class="wireframe-label">Hero Banner</div>
+            <div class="wireframe-value">ZCode + Stats + CTA</div>
+          </div>
+          
+          <!-- Left sidebar -->
+          <div class="wireframe-block sidebar" style="grid-row: 2 / 4;">
+            <div class="wireframe-label">Navigation</div>
+            <div class="wireframe-value">11 разделов</div>
+            <div style="margin-top: 0.5rem; font-size: 0.625rem; color: var(--wireframe-muted);">
+              Hero, QuickStart, Tools, Install...
+            </div>
+          </div>
+          
+          <!-- Main content -->
+          <div class="wireframe-block content" style="grid-row: 2 / 4;">
+            <div class="wireframe-label">Documentation Content</div>
+            <div class="wireframe-value">Текущий раздел + подсекции</div>
+            <div style="margin-top: 0.5rem; font-size: 0.625rem; color: var(--wireframe-muted);">
+              Markdown рендеринг<br>
+              Code blocks<br>
+              Images<br>
+              Tables
+            </div>
+          </div>
+          
+          <!-- Right aside -->
+          <div class="wireframe-block sidebar">
+            <div class="wireframe-label">TOC / Related</div>
+            <div class="wireframe-value">Содержание раздела</div>
+          </div>
+          
+          <div class="wireframe-block content">
+            <div class="wireframe-label">Quick Links</div>
+            <div class="wireframe-value">Модели | Тарифы | MCP</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- CSS -->
+      <div class="css-code">
+        <span class="selector">.dashboard-golden</span> {<br>
+        &nbsp;&nbsp;display: grid;<br>
+        &nbsp;&nbsp;<span class="property">grid-template-columns</span>: <span class="value">3fr 5fr 2fr</span>; <span class="comment">/* Fib proportions */</span><br>
+        &nbsp;&nbsp;<span class="property">grid-template-rows</span>: <span class="value">auto 1fr 1.618fr</span>;<br>
+        &nbsp;&nbsp;<span class="property">gap</span>: <span class="value">1.5rem</span>; <span class="comment">/* Fib-val 3 */</span><br>
+        &nbsp;&nbsp;<span class="property">min-height</span>: <span class="value">100vh</span>;<br>
+        }<br><br>
+        <span class="selector">.hero-banner</span> { <span class="property">grid-column</span>: <span class="value">1 / -1</span>; }<br>
+        <span class="selector">.nav-sidebar</span> { <span class="property">grid-row</span>: <span class="value">2 / 4</span>; }<br>
+        <span class="selector">.main-content</span> { <span class="property">grid-row</span>: <span class="value">2 / 4</span>; }
+      </div>
+      
+      <!-- Pros/Cons -->
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Плюсы</h4>
+          <ul>
+            <li>Всегда виден sidebar навигации</li>
+            <li>TOC на месте — быстрый переход</li>
+            <li>Bento-стиль — современный тренд</li>
+            <li>Хорошо для dashboard-подобного контента</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Минусы</h4>
+          <ul>
+            <li>Более сложная responsive логика</li>
+            <li>Уже основная колонка контента</li>
+            <li>Требует продуманного TOC</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- VARIANT 3: Magazine Layout -->
+    <!-- ============================================ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <div>
+          <h2>Magazine Layout</h2>
+          <span class="pattern-badge">Pattern 11</span>
+        </div>
+      </div>
+      
+      <p style="color: var(--wireframe-muted); margin-bottom: var(--fib-5);">
+        Редакционный стиль: главная "статья" (Hero + QuickStart) занимает доминирующую 
+        позицию, второстепенные материалы — по сторонам. Идеально для контентных проектов.
+      </p>
+      
+      <div class="wireframe">
+        <div class="wireframe-header">
+          <span class="wireframe-title">Desktop View (> 1280px)</span>
+          <span style="color: var(--wireframe-muted); font-size: 0.75rem;">grid-template-columns: 5fr 3fr 2fr</span>
+        </div>
+        
+        <div class="wireframe-grid" style="grid-template-columns: 5fr 3fr 2fr; grid-template-rows: 8fr 5fr 3fr;">
+          <!-- Lead story -->
+          <div class="wireframe-block hero" style="grid-row: 1 / 3;">
+            <div class="wireframe-label">Lead: Hero + QuickStart</div>
+            <div class="wireframe-value">Главный контент (61.8%)</div>
+            <div style="margin-top: 0.5rem; font-size: 0.625rem; color: var(--wireframe-muted);">
+              Самые важные секции<br>
+              CTA кнопки<br>
+              Ключевая информация
+            </div>
+          </div>
+          
+          <!-- Feature -->
+          <div class="wireframe-block content" style="grid-column: 2 / 4;">
+            <div class="wireframe-label">Feature: Tools + Install</div>
+            <div class="wireframe-value">Второстепенный контент</div>
+          </div>
+          
+          <!-- Side stories -->
+          <div class="wireframe-block sidebar">
+            <div class="wireframe-label">Side A: MCP</div>
+          </div>
+          
+          <div class="wireframe-block sidebar">
+            <div class="wireframe-label">Side B: Models</div>
+          </div>
+          
+          <!-- Quick reads -->
+          <div class="wireframe-block content">
+            <div class="wireframe-label">Bottom Row</div>
+            <div class="wireframe-value">Plan + Troubleshoot</div>
+          </div>
+          
+          <div class="wireframe-block sidebar" style="grid-column: 3;">
+            <div class="wireframe-label">Quick Links</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Navigation overlay -->
+      <div class="wireframe" style="max-width: 300px;">
+        <div class="wireframe-header">
+          <span class="wireframe-title">Navigation (overlay/hamburger)</span>
+        </div>
+        <div class="wireframe-grid" style="grid-template-columns: 1fr; gap: 0.5rem; padding: 1rem;">
+          <div class="wireframe-block sidebar" style="min-height: 40px;">
+            <div class="wireframe-value">00 Z Code</div>
+          </div>
+          <div class="wireframe-block sidebar" style="min-height: 40px;">
+            <div class="wireframe-value">01 Быстрый старт</div>
+          </div>
+          <div class="wireframe-block sidebar" style="min-height: 40px;">
+            <div class="wireframe-value">02 Coding Helper</div>
+          </div>
+          <div class="wireframe-block sidebar" style="min-height: 40px;">
+            <div class="wireframe-value">03 ZCode Desktop</div>
+          </div>
+          <div class="wireframe-block sidebar" style="min-height: 40px; background: rgba(233, 69, 96, 0.2);">
+            <div class="wireframe-value">...</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- CSS -->
+      <div class="css-code">
+        <span class="selector">.magazine-layout</span> {<br>
+        &nbsp;&nbsp;display: grid;<br>
+        &nbsp;&nbsp;<span class="property">grid-template-columns</span>: <span class="value">5fr 3fr 2fr</span>; <span class="comment">/* 5:3:2 Fib */</span><br>
+        &nbsp;&nbsp;<span class="property">grid-template-rows</span>: <span class="value">8fr 5fr 3fr</span>; <span class="comment">/* Same Fib */</span><br>
+        &nbsp;&nbsp;<span class="property">gap</span>: <span class="value">1.5rem</span>; <span class="comment">/* Fib-val 3 */</span><br>
+        }<br><br>
+        <span class="selector">.lead-story</span> { <span class="property">grid-column</span>: <span class="value">1</span>; <span class="property">grid-row</span>: <span class="value">1 / 3</span>; }<br>
+        <span class="selector">.feature</span> { <span class="property">grid-column</span>: <span class="value">2 / 4</span>; <span class="property">grid-row</span>: <span class="value">1</span>; }<br>
+        <span class="selector">.side-a</span> { <span class="property">grid-column</span>: <span class="value">2</span>; <span class="property">grid-row</span>: <span class="value">2</span>; }<br>
+        <span class="selector">.side-b</span> { <span class="property">grid-column</span>: <span class="value">3</span>; <span class="property">grid-row</span>: <span class="value">2 / 4</span>; }
+      </div>
+      
+      <!-- Pros/Cons -->
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Плюсы</h4>
+          <ul>
+            <li>Редакционный вид — как журнал</li>
+            <li>Визуальная иерархия контента</li>
+            <li>Интересная компоновка секций</li>
+            <li>Отлично для лендингов</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Минусы</h4>
+          <ul>
+            <li>Навигация скрыта в overlay</li>
+            <li>Сложнее реализовать scroll</li>
+            <li>Не типично для документации</li>
+            <li>Требует переработки контента</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- COMPARISON TABLE -->
+    <!-- ============================================ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-number">VS</div>
+        <div>
+          <h2>Сравнение вариантов</h2>
+        </div>
+      </div>
+      
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+        <thead>
+          <tr style="background: var(--wireframe-border);">
+            <th style="padding: 1rem; text-align: left; border: 1px solid var(--wireframe-border);">Критерий</th>
+            <th style="padding: 1rem; text-align: center; border: 1px solid var(--wireframe-border);">1. Zeitgeist</th>
+            <th style="padding: 1rem; text-align: center; border: 1px solid var(--wireframe-border);">2. Dashboard</th>
+            <th style="padding: 1rem; text-align: center; border: 1px solid var(--wireframe-border);">3. Magazine</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border);">Навигация</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Overlay / Hidden</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center; color: #22c55e;">Всегда видна</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Hamburger menu</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border);">Фокус на контент</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center; color: #22c55e;">Максимальный</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Средний</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Высокий</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border);">Responsive сложность</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center; color: #22c55e;">Низкая</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Средняя</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Высокая</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border);">Премиум-вид</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center; color: #22c55e;">Vercel/Linear</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Dashboard</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Editorial</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border);">Для документации</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center; color: #22c55e;">Отлично</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center; color: #22c55e;">Отлично</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Нужна адаптация</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border);">TOC (содержание)</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Inline</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center; color: #22c55e;">Fixed sidebar</td>
+            <td style="padding: 0.75rem; border: 1px solid var(--wireframe-border); text-align: center;">Inline</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- RECOMMENDATION -->
+    <!-- ============================================ -->
+    <section class="section" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: var(--fib-5);">
+      <h2 style="color: #22c55e; margin-bottom: var(--fib-3);">Рекомендация</h2>
+      <p>
+        Для текущего проекта <strong>ZCode Guide</strong> рекомендуется <strong>Вариант 2 (Dashboard Golden)</strong>:
+      </p>
+      <ul style="margin-top: 1rem; margin-left: 1.5rem; list-style: disc;">
+        <li>Сохраняет видимый sidebar навигации — ключевой элемент документации</li>
+        <li>Добавляет TOC sidebar справа — улучшает навигацию внутри разделов</li>
+        <li>Bento-стиль современен и трендов</li>
+        <li>Хорошо сочетается с существующими компонентами (Hero, Stats, PromoCards)</li>
+        <li>Минимальные изменения в структуре контента</li>
+      </ul>
+    </section>
+
+    <footer style="text-align: center; padding-top: var(--fib-8); border-top: 1px solid var(--wireframe-border); color: var(--wireframe-muted); font-size: 0.75rem;">
+      Wireframes generated with phi-layout skill | ZCode Guide Project
+    </footer>
+  </div>
+</body>
+</html>
