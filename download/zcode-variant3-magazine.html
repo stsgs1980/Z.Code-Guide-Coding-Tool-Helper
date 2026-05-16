@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вариант 3: Magazine Layout</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --fib-3: 1.5rem; --fib-5: 2.5rem; --fib-8: 4rem;
+      --surface: #1e293b; --border: #334155; --accent: #8b5cf6;
+      --text: #f1f5f9; --muted: #94a3b8;
+    }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: var(--text); padding: 2rem; }
+    .header { text-align: center; margin-bottom: 2rem; }
+    .header h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .header .badge { background: var(--accent); color: #fff; padding: 0.25rem 1rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+    .grid-label { text-align: center; color: var(--muted); font-size: 0.875rem; margin-bottom: 1rem; font-family: monospace; }
+    .wireframe { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .wireframe-grid { display: grid; grid-template-columns: 5fr 3fr 2fr; grid-template-rows: 8fr 5fr 3fr; gap: 1.5rem; padding: 1.5rem; min-height: 500px; }
+    .block { background: rgba(139, 92, 246, 0.1); border: 2px dashed var(--accent); border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 1rem; }
+    .block.sidebar { background: rgba(51, 65, 85, 0.6); border-color: var(--border); }
+    .block.hero { background: rgba(139, 92, 246, 0.25); }
+    .block.content { background: rgba(241, 245, 249, 0.05); border-color: rgba(241, 245, 249, 0.3); }
+    .block-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 0.25rem; }
+    .block-value { font-size: 0.875rem; font-weight: 600; }
+    .block-percent { font-size: 1.25rem; font-weight: 700; color: var(--accent); margin-top: 0.25rem; }
+    .css-box { background: #0d1117; border-radius: 8px; padding: 1.5rem; margin-top: 2rem; font-family: monospace; font-size: 0.875rem; overflow-x: auto; }
+    .css-box .comment { color: #8b949e; }
+    .css-box .prop { color: #79c0ff; }
+    .css-box .val { color: #a5d6ff; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Вариант 3: Magazine Layout</h1>
+    <span class="badge">Pattern 11</span>
+  </div>
+  
+  <div class="grid-label">grid-template-columns: 5fr 3fr 2fr | grid-template-rows: 8fr 5fr 3fr</div>
+  
+  <div class="wireframe">
+    <div class="wireframe-grid">
+      <!-- Lead story - Hero + QuickStart -->
+      <div class="block hero" style="grid-row: 1 / 3;">
+        <div class="block-label">Lead Story</div>
+        <div class="block-value">Hero + QuickStart</div>
+        <div class="block-percent">61.8%</div>
+        <div style="font-size: 0.625rem; color: var(--muted); margin-top: 0.5rem;">
+          Главная информация<br>
+          CTA кнопки
+        </div>
+      </div>
+      
+      <!-- Feature - Tools + Install -->
+      <div class="block content" style="grid-column: 2 / 4;">
+        <div class="block-label">Feature</div>
+        <div class="block-value">Tools + Install</div>
+      </div>
+      
+      <!-- Side A - MCP -->
+      <div class="block sidebar">
+        <div class="block-label">Side A</div>
+        <div class="block-value">MCP Servers</div>
+      </div>
+      
+      <!-- Side B - Models -->
+      <div class="block sidebar" style="grid-row: 2 / 4;">
+        <div class="block-label">Side B</div>
+        <div class="block-value">Models</div>
+      </div>
+      
+      <!-- Bottom row -->
+      <div class="block content">
+        <div class="block-label">Bottom Row</div>
+        <div class="block-value">Plan + Troubleshoot</div>
+      </div>
+      
+      <!-- Quick links -->
+      <div class="block sidebar">
+        <div class="block-label">Quick Links</div>
+        <div class="block-value">Sources</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="css-box">
+    <span class="prop">display</span>: <span class="val">grid</span>;<br>
+    <span class="prop">grid-template-columns</span>: <span class="val">5fr 3fr 2fr</span>; <span class="comment">/* 5:3:2 Fib */</span><br>
+    <span class="prop">grid-template-rows</span>: <span class="val">8fr 5fr 3fr</span>; <span class="comment">/* Same Fib */</span><br>
+    <span class="prop">gap</span>: <span class="val">1.5rem</span>; <span class="comment">/* Fib-val 3 */</span><br><br>
+    <span class="comment">/* Lead spans 2 rows */</span><br>
+    <span class="prop">grid-row</span>: <span class="val">1 / 3</span>;
+  </div>
+</body>
+</html>

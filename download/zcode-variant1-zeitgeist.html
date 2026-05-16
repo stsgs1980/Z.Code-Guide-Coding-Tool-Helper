@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вариант 1: Zeitgeist Grid</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --fib-3: 1.5rem; --fib-5: 2.5rem; --fib-8: 4rem;
+      --surface: #1e293b; --border: #334155; --accent: #f59e0b;
+      --text: #f1f5f9; --muted: #94a3b8;
+    }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: var(--text); padding: 2rem; }
+    .header { text-align: center; margin-bottom: 2rem; }
+    .header h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .header .badge { background: var(--accent); color: #000; padding: 0.25rem 1rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+    .grid-label { text-align: center; color: var(--muted); font-size: 0.875rem; margin-bottom: 1rem; font-family: monospace; }
+    .wireframe { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .wireframe-grid { display: grid; grid-template-columns: 1fr 1.618fr 1fr; gap: 1.5rem; padding: 1.5rem; min-height: 500px; }
+    .block { background: rgba(245, 158, 11, 0.1); border: 2px dashed var(--accent); border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 1.5rem; }
+    .block.breath { background: rgba(51, 65, 85, 0.5); border-color: var(--border); }
+    .block.hero { background: rgba(245, 158, 11, 0.2); min-height: 180px; }
+    .block.content { background: rgba(241, 245, 249, 0.05); border-color: rgba(241, 245, 249, 0.3); }
+    .block-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.25rem; }
+    .block-value { font-size: 1rem; font-weight: 600; }
+    .block-percent { font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-top: 0.5rem; }
+    .css-box { background: #0d1117; border-radius: 8px; padding: 1.5rem; margin-top: 2rem; font-family: monospace; font-size: 0.875rem; overflow-x: auto; }
+    .css-box .comment { color: #8b949e; }
+    .css-box .prop { color: #79c0ff; }
+    .css-box .val { color: #a5d6ff; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Вариант 1: Zeitgeist Grid</h1>
+    <span class="badge">Pattern 15</span>
+  </div>
+  
+  <div class="grid-label">grid-template-columns: 1fr 1.618fr 1fr</div>
+  
+  <div class="wireframe">
+    <div class="wireframe-grid">
+      <div class="block breath" style="grid-row: 1 / 4;">
+        <div class="block-label">Breath Zone</div>
+        <div class="block-value">Отступ</div>
+        <div class="block-percent">38.2%</div>
+      </div>
+      
+      <div class="block hero">
+        <div class="block-label">Hero Section</div>
+        <div class="block-value">Заголовок + Stats + CTA</div>
+      </div>
+      
+      <div class="block content" style="min-height: 280px;">
+        <div class="block-label">Main Content</div>
+        <div class="block-value">11 секций документации</div>
+      </div>
+      
+      <div class="block content">
+        <div class="block-label">Footer</div>
+        <div class="block-value">Навигация + Ссылки</div>
+      </div>
+      
+      <div class="block breath" style="grid-row: 1 / 4;">
+        <div class="block-label">Breath Zone</div>
+        <div class="block-value">Отступ</div>
+        <div class="block-percent">38.2%</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="css-box">
+    <span class="prop">display</span>: <span class="val">grid</span>;<br>
+    <span class="prop">grid-template-columns</span>: <span class="val">1fr 1.618fr 1fr</span>; <span class="comment">/* phi center */</span><br>
+    <span class="prop">gap</span>: <span class="val">2.5rem</span>; <span class="comment">/* Fib-val 5 */</span><br><br>
+    <span class="comment">/* Content in center column */</span><br>
+    <span class="prop">grid-column</span>: <span class="val">2</span>;
+  </div>
+</body>
+</html>
