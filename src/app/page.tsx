@@ -7,6 +7,7 @@
 
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { usePageState } from '@/hooks/usePageState';
+import { useTheme } from '@/providers/ThemeProvider';
 import {
   SidebarNav,
   MobileHeader,
@@ -16,6 +17,8 @@ import {
   SearchDialog,
   TableOfContents,
   Footer,
+  CodingHelperPromoCard,
+  ZCodePromoCard,
 } from '@/features';
 import {
   HeroSection,
@@ -27,15 +30,10 @@ import {
   ModelsSection,
   TroubleshootSection,
   SourcesSection,
+  CodingHelperSection,
+  ZCodeSection,
+  SkillsGuideSection,
 } from '@/sections';
-import { useTheme } from '@/providers/ThemeProvider';
-
-// Import subpages
-import { CodingHelperSection } from '@/components/guide/sections/CodingHelperSection';
-import { ZCodeSection } from '@/components/guide/sections/ZCodeSection';
-import { SkillsGuideSection } from '@/components/guide/sections/SkillsGuideSection';
-import { ZCodePromoCard } from '@/components/guide/features/ZCodePromoCard';
-import { CodingHelperPromoCard } from '@/components/guide/features/CodingHelperPromoCard';
 
 function GuideContent() {
   const {

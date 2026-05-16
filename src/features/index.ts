@@ -18,3 +18,10 @@ export { SearchDialog } from './SearchDialog';
 
 // Layout features
 export { Footer } from './Footer';
+
+// Promo cards
+export { CodingHelperPromoCard } from './CodingHelperPromoCard';
+export { ZCodePromoCard } from './ZCodePromoCard';
+
+// Layout wrapper
+export { GuideLayout } from './GuideLayout';
